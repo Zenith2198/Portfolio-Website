@@ -12,7 +12,7 @@ export default function Home({ allPostsData }) {
         		<title>{siteTitle}</title>
     		</Head>
     		<section className='p-1 text-2xl'>
-				<h1>Hello, Paig here. <a href="https://x.com">Porn</a></h1>
+				<h1>Hello, Paig here.</h1>
     			<h2 className='text-3xl'>Blog</h2>
 				<ul>
 					{allPostsData.map(({ path, title, date }) => (
