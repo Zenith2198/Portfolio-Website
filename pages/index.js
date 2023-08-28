@@ -1,15 +1,13 @@
-'use client';
-
 import Head from 'next/head';
-import Layout, { siteTitle } from '../components/layout';
+import Layout from '../components/layout';
 import { getSortedPostsData } from '../lib/posts';
 import BlogPreview from '../components/blogPreview';
 
 export default function Home({ allPostsData }) {
 	return (
-    	<Layout home>
+    	<Layout allPostsData={allPostsData}>
     		<Head>
-        		<title>{siteTitle}</title>
+        		<title>Paige's Blog</title>
     		</Head>
     		<section className='p-1 text-2xl'>
 				<h1>Hello, Paig here.</h1>
