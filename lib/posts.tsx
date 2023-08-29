@@ -5,13 +5,13 @@ import html from "remark-html";
 
 
 export async function getSortedPostsData() {
-	let allPostsData = await query({
+	let allPostsDataArr = await query({
 		query: "SELECT * FROM posts"
 	});
 
-	fixDates(allPostsData);
+	fixDates(allPostsDataArr);
 
-	return allPostsData.sort((a, b) => {
+	return allPostsDataArr.sort((a, b) => {
 		if (a.date < b.date) {
 			return 1;
 		} else {
@@ -25,11 +25,11 @@ export async function getAllPaths(postType?: string) {
 	if (postType !== undefined) {
 		q = q.concat(` WHERE postType="${postType}"`);
 	}
-	let allPaths = await query({
+	let allPathsArr = await query({
 		query: q
 	});
 
-	return allPaths;
+	return allPathsArr;
 }
 
 export async function getPostData(path: string) {
@@ -58,4 +58,26 @@ export async function getPostTitle(path: string) {
 	let postTitle = postTitleArr[0];
 
 	return postTitle;
+}
+
+export async function getPrimaryStory() {
+	let primaryStoryArr = await query({
+		query: "SELECT * FROM posts WHERE primaryStory=TRUE"
+	});
+
+	fixDates(primaryStoryArr);
+	let primaryStory = primaryStoryArr[0];
+
+	return primaryStory;
+}
+
+export async function getRecentsOfType(type: string, num:number=1) {
+	let recentsArr = await query({
+		query: "SELECT * FROM posts WHERE postType=? ORDER BY date DESC LIMIT ?",
+		values: [type, num.toString()]
+	});
+
+	fixDates(recentsArr);
+
+	return recentsArr;
 }
