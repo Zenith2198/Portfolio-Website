@@ -1,6 +1,6 @@
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation"
 
-export default function BlogPreview({ path, title, date }) {
+export default function BlogPreview({ path, title, date }: { path: string, title: string, date: string }) {
 	const router = useRouter();
 
 	return (
