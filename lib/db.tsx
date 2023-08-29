@@ -1,5 +1,5 @@
 import mysql from "mysql2/promise";
-import { Post } from "./types";
+import { Post } from "../types/types";
 
 export async function query({ query, values = [] }: { query: string, values?: Array<string>}) {
 	const dbConn = await mysql.createConnection({

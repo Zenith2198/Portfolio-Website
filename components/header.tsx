@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Search from "./search";
-import { Post } from "@/lib/types";
+import { Post } from "@/types/types";
 
 export default function Header({ allPostsData }: { allPostsData: Array<Post> }) {
 	let shortStories: Array<Post> = [];
@@ -9,10 +9,10 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 	//TODO: optimize to not use allPostData
 	allPostsData.forEach((post) => {
 		switch(post.postType) {
-			case "shortStory":
+			case "shortStories":
 				shortStories.push(post);
 				break;
-			case "longStory":
+			case "longStories":
 				longStories.push(post);
 				break;
 			default:
@@ -30,7 +30,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 						</label>
 						<ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-300 rounded-box">
 							<Search/>
-							<li>
+							<li key="shortWorks">
 								<a>Short Works</a>
 								<ul className="p-2">
 									{shortStories.map(({ title, path }, i) => (
@@ -40,7 +40,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 									))}
 								</ul>
 							</li>
-							<li>
+							<li key="longWorks">
 								<a>Long Works</a>
 								<ul className="p-2">
 									{longStories.map(({ title, path }, i) => (
@@ -50,7 +50,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 									))}
 								</ul>
 							</li>
-							<li>
+							<li key="blogs">
 								<a>Blogs</a>
 								<ul className="p-2">
 									{blogs.map(({ title, path }, i) => (
@@ -77,7 +77,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 					{/* make dropdown disappear after clicking */}
 					{/* MAYBE make clicking label navigate to link and open dropdown on hover (what to do on mobile?) */}
 					<ul className="menu menu-horizontal">
-						<li tabIndex={0} className="dropdown">
+						<li tabIndex={0} className="dropdown" key="shortWorks">
 							<label tabIndex={0} className="btn m-1 flex flex-col text-2xl">Short Works</label>
 							<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
 								{shortStories.map(({ title, path }, i) => (
@@ -87,7 +87,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 								))}
 							</ul>
 						</li>
-						<li tabIndex={0} className="dropdown">
+						<li tabIndex={0} className="dropdown" key="longWorks">
 							<label tabIndex={0} className="btn m-1 flex flex-col text-2xl">Long Works</label>
 							<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
 								{longStories.map(({ title, path }, i) => (
@@ -97,7 +97,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 								))}
 							</ul>
 						</li>
-						<li tabIndex={0} className="dropdown">
+						<li tabIndex={0} className="dropdown" key="blogs">
 							<label tabIndex={0} className="btn m-1 flex flex-col text-2xl">Blogs</label>
 							<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
 								{blogs.map(({ title, path }, i) => (

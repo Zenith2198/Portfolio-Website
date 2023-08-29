@@ -2,7 +2,7 @@ import { getAllPaths, getPostData, getPostTitle } from "@/lib/posts";
 
 export const dynamicParams = false;
 
-export default async function Blog({ params }: { params: { path: string } }) {
+export default async function Blogs({ params }: { params: { path: string } }) {
 	const postData = await getPostData(params.path);
 
 	return (
@@ -17,7 +17,7 @@ export default async function Blog({ params }: { params: { path: string } }) {
 }
 
 export async function generateStaticParams() {
-	const allPaths = await getAllPaths("blog");
+	const allPaths = await getAllPaths("blogs");
 	return allPaths;
 }
 

@@ -39,4 +39,4 @@ next-env.d.ts
 .vscode
 
 # sql
-*.sql
+test.session.sql

@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default async function Home() {
 	let primaryStory = await getPrimaryStory();
-	let recentShortStoryArr = await getRecentsOfType("shortStory");
+	let recentShortStoryArr = await getRecentsOfType("shortStories");
 	let recentShortStory = recentShortStoryArr[0];
-	let recentBlogs = await getRecentsOfType("blog", 4);
+	let recentBlogs = await getRecentsOfType("blogs", 4);
 
 	return (
 		<main className="min-w-full">

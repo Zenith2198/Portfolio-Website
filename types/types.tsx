@@ -6,5 +6,7 @@ export interface Post extends mysql.RowDataPacket {
 	content: string,
 	date: string,
 	path: string,
-	postType: string
+	postType: string,
+	primaryStory: boolean,
+	category: string
 }

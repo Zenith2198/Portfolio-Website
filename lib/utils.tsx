@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Post } from "./types";
+import { Post } from "../types/types";
 
 // TODO: convert to local time
 export function fixDates(target: Array<Post>) {
