@@ -1,14 +1,15 @@
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "../auth/[...nextauth]/route"
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../api/auth/[...nextauth]/options";
+import { redirect } from "next/navigation";
 
 export default async function Admin() {
 	const session = await getServerSession(authOptions);
 
-	if (session) {
-	  // Signed in
-	  console.log("logged in");
-	} else {
-	  // Not Signed in
-	  console.log("not logged in");
+	if (!session) {
+		redirect("/api/auth/signin?callbackUrl=/admin");
 	}
-  }
+
+	return (
+		<div>Hi there!</div>
+	);
+}

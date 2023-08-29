@@ -110,7 +110,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 					</ul>
 				</div>
 				<div className="navbar-end">
-
+					
 				</div>
 			</div>
 		</header>
