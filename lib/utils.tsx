@@ -4,8 +4,8 @@ import bcrypt from 'bcrypt';
 
 export function fixDates(target: Array<Post>) {
 	target.forEach((item) => {
-		item.dateModified = moment(item.dateModified as number * 1000).format('YYYY-MM-DD hh:mm:ss a');
-		item.datePosted = moment(item.datePosted as number * 1000).format('YYYY-MM-DD hh:mm:ss a');
+		item.dateModified = moment(item.dateModified as number * 1000).format("M.D.YYYY");
+		item.datePosted = moment(item.datePosted as number * 1000).format("M.D.YYYY");
 	});
 }
 
@@ -19,4 +19,10 @@ export async function checkPass(unHashPass: string, hashPass: string) {
 	return bcrypt.compare(unHashPass, hashPass).then((result: boolean) => {
 		return result;
 	});
+}
+
+export function smartTrim(str: string, len: number) {
+	let trimmedString = str.substring(0, len);
+	trimmedString = trimmedString.substring(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")));
+	return trimmedString
 }

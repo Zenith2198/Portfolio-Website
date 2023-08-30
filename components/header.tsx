@@ -21,7 +21,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 	});
 
 	return (
-		<header className="sticky top-0 z-50">
+		<header className="sticky top-0 z-40">
 			<div className="justify-between navbar bg-base-100">
 				<div className="navbar-start">
 					<div className="dropdown">

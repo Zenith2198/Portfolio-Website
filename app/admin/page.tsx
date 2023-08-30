@@ -1,20 +1,29 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../api/auth/[...nextauth]/options";
-import { redirect } from "next/navigation";
+"use client"
+
+import { useSession } from "next-auth/react"
+import React, { useState } from 'react';
+import { redirect } from "next/navigation"
 import Link from "next/link";
+import Editor from "@/components/editor";
 
-export default async function Admin() {
-	const session = await getServerSession(authOptions);
+export default function Admin() {
+	const [data, setData] = useState(false);
 
-	if (!session) {
-		redirect("/api/auth/signin?callbackUrl=/admin");
-	}
-	let user = session.user;
+    const { data: session } = useSession({
+        required: true,
+        onUnauthenticated() {
+            redirect("/api/auth/signin?callbackUrl=/admin")
+        }
+    })
 
-	return (
-		<div>
-			<p>Hello {user.name}, you are a(n) {user.role}</p>
+    if (!session?.user) return
+
+    return (
+        <div>
+            <p>Hello {session.user.name}, you are a(n) {session.user.role}</p>
+			<Editor setData={setData}/>
+			<div>{JSON.stringify(data)}</div>
 			<Link href="/api/auth/signout?callbackUrl=/">Sign Out</Link>
-		</div>
-	);
+        </div>
+    )
 }
