@@ -28,7 +28,7 @@ export default async function Home() {
 				</div>
 				<div className="card w-96 bg-neutral text-primary-content">
 					{recentBlogs.map(({ title, path }, i) => (
-						<Link href={`/blogs/${path}`} className={`card-body border-black border-t-${i === 0 ? 0 : 2}`}>
+						<Link href={`/blogs/${path}`} className={"card-body"}>
 							<h2  className="card-title flex justify-center text-center">{title}</h2>
 						</Link>
 					))}

@@ -81,3 +81,14 @@ export async function getRecentsOfType(type: string, num:number=1) {
 
 	return recentsArr;
 }
+
+export async function getUser(username: string) {
+	let userArr = await query({
+		query: "SELECT * from users WHERE name=?",
+		values: [username]
+	});
+
+	let user = userArr[0];
+
+	return user;
+}

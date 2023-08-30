@@ -1,5 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { getUser } from "@/lib/posts";
+import { checkPass } from "@/lib/utils";
 
 export const authOptions: NextAuthOptions = {
 	providers: [
@@ -17,17 +19,32 @@ export const authOptions: NextAuthOptions = {
 			},
 			//@ts-ignore
 			async authorize(credentials) {
-				// Add logic here to look up the user from the credentials supplied
-				const user = { userId: "1", username: "admin", password: "admin" };
-				console.log(1)
-				console.log(credentials)
+				if (!credentials?.username || !credentials?.password) {
+					return null;
+				}
 
-				if (credentials?.username === user.username && credentials?.password === user.password) {
+				const user = await getUser(credentials.username);
+
+				if (credentials.username === user.name && await checkPass(credentials.password, user.passwordHash)) {
 					return user;
 				} else {
 					return null;
 				}
 			}
 		})
-	]
+	],
+	callbacks: {
+		async jwt({ token, user }) {
+			if (user) {
+				token.role = user.role;
+			}
+			return token;
+		},
+		async session ({ session, token }) {
+			if (session?.user) {
+				session.user.role = token.role;
+			}
+			return session;
+		}
+	}
 };
