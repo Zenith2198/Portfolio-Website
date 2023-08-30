@@ -1,4 +1,4 @@
-import { getAllPaths, getPostData, getPostTitle } from "@/lib/posts";
+import { getAllPaths, getPostData, getPostTitle } from "@/lib/db";
 
 export const dynamicParams = false;
 

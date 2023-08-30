@@ -1,19 +1,18 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { getSortedPostsData } from '@/lib/posts';
+import { getSortedPostsData } from '@/lib/db';
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
 	const allPostsData = await getSortedPostsData();
 
 	return (
-		<body className="flex flex-col min-h-screen">
-			{/* TODO: make background image zoom in on mobile */}
-			<img src="/images/bg.jpg" className="fixed z-0"/>
+		<div className="flex flex-col min-h-screen">
+			<img src="/images/bg.jpg" className="fixed z-0 object-cover min-h-full max-w-full"/>
 			<Header allPostsData={allPostsData}/>
-			<div className="flex justify-center z-40">
+			<div className="flex justify-center z-40 flex-1">
 				{children}
 			</div>
 			<Footer/>
-		</body>
+		</div>
 	)
 }

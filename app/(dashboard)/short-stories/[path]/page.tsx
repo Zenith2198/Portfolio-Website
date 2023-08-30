@@ -1,4 +1,4 @@
-import { getAllPaths, getPostData, getPostTitle } from "@/lib/posts";
+import { getAllPaths, getPostData, getPostTitle } from "@/lib/db";
 
 export const dynamicParams = false;
 
@@ -8,7 +8,8 @@ export default async function ShortStories({ params }: { params: { path: string 
 	return (
 		<div>
 			<h1 className='text-5xl'>{postData.title}</h1>
-			<div>{postData.date}</div>
+			<div>{postData.datePosted}</div>
+			<div>Last modified: {postData.dateModified}</div>
 			<div className='m-20'>
 				<div className='m-20' dangerouslySetInnerHTML={{__html: postData.content}}/>
 			</div>

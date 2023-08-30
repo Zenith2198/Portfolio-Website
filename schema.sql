@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS posts (
 	postId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	title VARCHAR(255) NOT NULL UNIQUE,
 	content TEXT,
-	date DATETIME NOT NULL,
+	dateModified INT NOT NULL, --unix time in seconds
+	datePosted INT NOT NULL, --unix time in seconds
 	path VARCHAR(255) NOT NULL UNIQUE,
 	postType VARCHAR(255) NOT NULL, --should only be shortStories, longStories, or blogs; not enforced
 	primaryStory BOOLEAN
@@ -24,7 +25,7 @@ CREATE TABLE IF NOT EXISTS tags (
 -- @block users table
 CREATE TABLE IF NOT EXISTS users (
 	userId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	username VARCHAR(100) NOT NULL UNIQUE,
+	name VARCHAR(100) NOT NULL UNIQUE,
 	passwordHash VARCHAR(50) NOT NULL,
 	role VARCHAR(255)
 );

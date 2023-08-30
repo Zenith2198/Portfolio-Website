@@ -2,10 +2,10 @@ import moment from "moment";
 import { Post } from "../types/types";
 import bcrypt from 'bcrypt';
 
-// TODO: convert to local time
 export function fixDates(target: Array<Post>) {
 	target.forEach((item) => {
-		item.date = moment(item.date).format('YYYY-MM-DD hh:mm:ss a');
+		item.dateModified = moment(item.dateModified as number * 1000).format('YYYY-MM-DD hh:mm:ss a');
+		item.datePosted = moment(item.datePosted as number * 1000).format('YYYY-MM-DD hh:mm:ss a');
 	});
 }
 

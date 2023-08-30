@@ -1,6 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { getUser } from "@/lib/posts";
+import { getUser } from "@/lib/db";
 import { checkPass } from "@/lib/utils";
 
 export const authOptions: NextAuthOptions = {
@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
 
 				const user = await getUser(credentials.username);
 
-				if (credentials.username === user.name && await checkPass(credentials.password, user.passwordHash)) {
+				if (user && credentials.username === user.name && await checkPass(credentials.password, user.passwordHash)) {
 					return user;
 				} else {
 					return null;
