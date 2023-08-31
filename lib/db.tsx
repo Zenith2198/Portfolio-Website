@@ -4,7 +4,6 @@ import { fixDates, sortChapters } from "./utils";
 import { remark } from "remark";
 import html from "remark-html";
 import mysql from "mysql2/promise";
-import { Post, Chapter } from "../types/types";
 
 // database functions
 export async function query({ query, values = [] }) {
@@ -16,7 +15,7 @@ export async function query({ query, values = [] }) {
 	});
 
 	try {
-		const [results] = await dbConn.execute<Array<Post | Chapter>>(query, values);
+		const [results] = await dbConn.execute(query, values);
 		dbConn.end();
 		return results;
 	} catch (err) {

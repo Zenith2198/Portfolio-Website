@@ -31,7 +31,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 						<ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-300 rounded-box">
 							<Search/>
 							<li key="longWorks">
-								<a>Long Works</a>
+								<Link href="/long-stories" className="break-words">Long Works</Link>
 								<ul className="p-2">
 									{longStories.map(({ title, path }, i) => (
 										<li key={i}>
@@ -41,7 +41,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 								</ul>
 							</li>
 							<li key="shortWorks">
-								<a>Short Works</a>
+								<Link href="/short-stories" className="break-words">Short Works</Link>
 								<ul className="p-2">
 									{shortStories.map(({ title, path }, i) => (
 										<li key={i}>
@@ -51,7 +51,7 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 								</ul>
 							</li>
 							<li key="blogs">
-								<a>Blogs</a>
+								<Link href="/blogs" className="break-words">Blogs</Link>
 								<ul className="p-2">
 									{blogs.map(({ title, path }, i) => (
 										<li key={i}>
@@ -77,8 +77,10 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 					{/* make dropdown disappear after clicking */}
 					{/* MAYBE make clicking label navigate to link and open dropdown on hover (what to do on mobile?) */}
 					<ul className="menu menu-horizontal">
-						<li key="longWorks" tabIndex={0} className="dropdown">
-							<label tabIndex={0} className="btn m-1 flex flex-col text-2xl">Long Works</label>
+						<li key="longWorks" tabIndex={0} className="dropdown dropdown-hover">
+							<label tabIndex={0} className="btn m-1 flex flex-col text-2xl">
+								<Link href="/long-stories" className="break-words">Long Works</Link>
+							</label>
 							<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
 								{longStories.map(({ title, path }, i) => (
 									<li key={i}>
@@ -87,8 +89,10 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 								))}
 							</ul>
 						</li>
-						<li key="shortWorks" tabIndex={0} className="dropdown">
-							<label tabIndex={0} className="btn m-1 flex flex-col text-2xl">Short Works</label>
+						<li key="shortWorks" tabIndex={0} className="dropdown dropdown-hover">
+							<label tabIndex={0} className="btn m-1 flex flex-col text-2xl">
+								<Link href="/short-stories" className="break-words">Short Works</Link>
+							</label>
 							<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
 								{shortStories.map(({ title, path }, i) => (
 									<li key={i}>
@@ -97,8 +101,10 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 								))}
 							</ul>
 						</li>
-						<li key="blogs" tabIndex={0} className="dropdown">
-							<label tabIndex={0} className="btn m-1 flex flex-col text-2xl">Blogs</label>
+						<li key="blogs" tabIndex={0} className="dropdown dropdown-hover">
+							<label tabIndex={0} className="btn m-1 flex flex-col text-2xl">
+								<Link href="/blogs" className="break-words ">Blogs</Link>
+							</label>
 							<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
 								{blogs.map(({ title, path }, i) => (
 									<li key={i}>

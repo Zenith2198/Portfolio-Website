@@ -5,12 +5,18 @@ CREATE TABLE IF NOT EXISTS posts (
 	dateModified INT NOT NULL, --unix time in seconds
 	datePosted INT NOT NULL, --unix time in seconds
 	path VARCHAR(255) NOT NULL UNIQUE,
-	postType VARCHAR(255) NOT NULL, --should only be shortStories, longStories, or blogs; not enforced
+	postType VARCHAR(255) NOT NULL,
 	primaryStory BOOLEAN,
-	image VARCHAR(255)
+	image VARCHAR(255),
+	FOREIGN KEY (postType) REFERENCES postTypes(postType)
 );
 
--- @block create new table
+-- @block postTypes table
+CREATE TABLE IF NOT EXISTS postTypes (
+	postType VARCHAR(255) NOT NULL PRIMARY KEY
+);
+
+-- @block chapters table
 CREATE TABLE IF NOT EXISTS chapters (
 	postId INT NOT NULL,
 	number INT NOT NULL,

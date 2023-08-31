@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getPrimaryStory, getRecentsOfType } from "@/lib/db";
@@ -12,7 +14,7 @@ export default async function Home() {
 	let primaryStory = await getPrimaryStory();
 	let recentShortStoryArr = await getRecentsOfType("shortStories");
 	let recentShortStory = recentShortStoryArr[0];
-	let recentBlogs = await getRecentsOfType("blogs", 4);
+	let recentBlogs = await getRecentsOfType("blogs", 2);
 
 	return (
 		<main className="min-w-full">
@@ -46,14 +48,14 @@ export default async function Home() {
 				</div>
 				<div className="card w-96 bg-neutral text-primary-content max-w-full items-stretch overflow-hidden">
 					{recentBlogs.map((blog, i) => (
-						<Link href={`/blogs/${blog.path}`} className={`card-body p-0 relative border-base-300 ${i===0?"border-t-0":"border-t"} ${i===recentBlogs.length?"border-b-0":"border-b"} h-full group`}>
+						<Link href={`/blogs/${blog.path}`} className="card-body p-0 relative border-base-300 [&:not(:first-child)]:border-t [&:not(:last-child)]:border-b h-full group">
 							<div className="h-full flex flex-col">
 								<div className="card-body pb-5 transition duration-300 ease-in-out group-hover:opacity-0">
 									<h2 className="card-title flex justify-center">{blog.title}</h2>
 								</div>
 								<div className="bg-cover bg-no-repeat bg-center h-full" style={{backgroundImage: `url(${blog?.image || ""})`}}></div>
 							</div>
-							<div className={`card px-10 py-5 absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-black bg-fixed opacity-0 transition duration-300 ease-in-out group-hover:opacity-[90%] ${i===0?"rounded-b-none":""} ${i===recentBlogs.length?"rounded-t-none":""}`}>
+							<div className={`card px-10 py-5 absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-black bg-fixed opacity-0 transition duration-300 ease-in-out group-hover:opacity-[90%] ${i===0?"rounded-b-none":""} ${i===recentBlogs.length-1?"rounded-t-none":""}`}>
 								<h1 className="text-info text-xl pb-2 mb-5 border-default border-b-2">
 									{blog.dateModified}
 								</h1>
