@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS posts (
 	datePosted INT NOT NULL, --unix time in seconds
 	path VARCHAR(255) NOT NULL UNIQUE,
 	postType VARCHAR(255) NOT NULL,
-	primaryStory BOOLEAN,
+	primaryStory BOOLEAN UNIQUE,
 	image VARCHAR(255),
 	FOREIGN KEY (postType) REFERENCES postTypes(postType)
 );

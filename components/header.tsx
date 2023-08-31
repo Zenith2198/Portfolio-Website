@@ -9,10 +9,10 @@ export default function Header({ allPostsData }: { allPostsData: Array<Post> }) 
 	//TODO: optimize to not use allPostData
 	allPostsData.forEach((post) => {
 		switch(post.postType) {
-			case "shortStories":
+			case "short-stories":
 				shortStories.push(post);
 				break;
-			case "longStories":
+			case "long-stories":
 				longStories.push(post);
 				break;
 			default:

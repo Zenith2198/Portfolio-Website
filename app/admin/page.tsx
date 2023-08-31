@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import Link from "next/link";
 import AdminPanel from "@/components/adminPanel";
 import type { Metadata } from "next";

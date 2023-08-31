@@ -1,9 +1,10 @@
 //@ts-nocheck
 
-import { fixDates, sortChapters } from "./utils";
+import { fixDates } from "./utils";
 import { remark } from "remark";
 import html from "remark-html";
 import mysql from "mysql2/promise";
+import type { Post, PostType } from "@/types/types";
 
 // database functions
 export async function query({ query, values = [] }) {
@@ -24,23 +25,23 @@ export async function query({ query, values = [] }) {
 }
 
 //get functions
-export async function getSortedPostsDataNoChapters() {
+export async function getSortedPostsDataNoChapters():Array<Post> {
 	let allPostsDataArr = await query({
-		query: "SELECT * FROM posts"
+		query: "SELECT * FROM posts ORDER BY dateModified DESC"
 	});
 
 	fixDates(allPostsDataArr);
 
-	return allPostsDataArr.sort((a, b) => {
-		if (a.dateModified < b.dateModified) {
-			return 1;
-		} else {
-			return -1;
-		}
+	return allPostsDataArr;
+}
+
+export async function getAllPostTypes():Array<Post> {
+	return await query({
+		query: "SELECT postType from postTypes"
 	});
 }
 
-export async function getAllPaths(postType) {
+export async function getAllPaths(postType):Array<PostType> {
 	let q = "SELECT path FROM posts";
 	if (postType !== undefined) {
 		q = q.concat(` WHERE postType="${postType}"`);
@@ -60,11 +61,7 @@ export async function getPostData(path) {
 
 	fixDates(postDataArr);
 	let postData = postDataArr[0];
-	let chaptersArr = await query({
-		query: "SELECT * FROM chapters WHERE postId=?",
-		values: [postData.postId.toString()]
-	});
-	postData.chapters = sortChapters(chaptersArr);
+	postData.chapters = await getChapters(postData.postId);
 
 	let remarkedContent = await remark()
 		.use(html)
@@ -92,11 +89,7 @@ export async function getPrimaryStory() {
 
 	fixDates(primaryStoryArr);
 	let primaryStory = primaryStoryArr[0];
-	let chaptersArr = await query({
-		query: "SELECT * FROM chapters WHERE postId=?",
-		values: [primaryStory.postId.toString()]
-	});
-	primaryStory.chapters = sortChapters(chaptersArr);
+	primaryStory.chapters = await getChapters(primaryStory.postId);
 
 	return primaryStory;
 }
@@ -109,11 +102,7 @@ export async function getRecentsOfType(type, num=1) {
 
 	fixDates(recentsArr);
 	for (const recent of recentsArr) {
-		let chaptersArr = await query({
-			query: "SELECT * FROM chapters WHERE postId=?",
-			values: [recent.postId.toString()]
-		});
-		recent.chapters = sortChapters(chaptersArr);
+		recent.chapters = await getChapters(recent.postId);
 	}
 
 	return recentsArr;
@@ -128,6 +117,13 @@ export async function getUser(username) {
 	let user = userArr[0];
 
 	return user;
+}
+
+export async function getChapters(postId) {
+	return await query({
+		query: "SELECT * FROM chapters WHERE postId=? ORDER BY number ASC",
+		values: [postId]
+	});
 }
 
 //set functions

@@ -27,11 +27,3 @@ export function smartTrim(str: string, len: number) {
 	trimmedString = trimmedString.substring(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")));
 	return trimmedString;
 }
-
-export function sortChapters(chaptersArr: Array<Chapter>) {
-	let sortedChapters:Array<Chapter> = [];
-	chaptersArr.forEach((chapter) => {
-		sortedChapters[chapter.number - 1] = chapter;
-	});
-	return sortedChapters;
-}
