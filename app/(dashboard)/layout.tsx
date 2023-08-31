@@ -1,9 +1,9 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { getSortedPostsData } from '@/lib/db';
+import { getSortedPostsDataNoChapters } from '@/lib/db';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-	const allPostsData = await getSortedPostsData();
+	const allPostsData = await getSortedPostsDataNoChapters();
 
 	return (
 		<div className="flex flex-col min-h-screen">

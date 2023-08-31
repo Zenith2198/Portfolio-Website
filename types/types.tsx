@@ -4,12 +4,18 @@ import mysql from "mysql2/promise";
 export interface Post extends mysql.RowDataPacket {
 	postId: number,
 	title: string,
-	content: string,
 	dateModified: number | string,
 	datePosted: number | string,
 	path: string,
 	postType: string,
-	primaryStory: boolean
+	primaryStory: boolean, //optional
+	image: string, //optional
+}
+
+export interface Chapter extends mysql.RowDataPacket {
+	postId: number,
+	number: number,
+	title: string
 }
 
 export interface PostTag extends mysql.RowDataPacket {
@@ -26,5 +32,5 @@ export interface User extends mysql.RowDataPacket {
 	userId: number,
 	name: string,
 	passwordHash: string,
-	role: string
+	role: string //optional
 }

@@ -1,6 +1,7 @@
 import moment from "moment";
 import { Post } from "../types/types";
 import bcrypt from 'bcrypt';
+import { Chapter } from "@/types/types";
 
 export function fixDates(target: Array<Post>) {
 	target.forEach((item) => {
@@ -24,5 +25,13 @@ export async function checkPass(unHashPass: string, hashPass: string) {
 export function smartTrim(str: string, len: number) {
 	let trimmedString = str.substring(0, len);
 	trimmedString = trimmedString.substring(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")));
-	return trimmedString
+	return trimmedString;
+}
+
+export function sortChapters(chaptersArr: Array<Chapter>) {
+	let sortedChapters:Array<Chapter> = [];
+	chaptersArr.forEach((chapter) => {
+		sortedChapters[chapter.number - 1] = chapter;
+	});
+	return sortedChapters;
 }

@@ -22,8 +22,8 @@ export default function Admin() {
         <div>
             <p>Hello {session.user.name}, you are a(n) {session.user.role}</p>
 			<Editor setData={setData}/>
-			<div>{JSON.stringify(data)}</div>
 			<Link href="/api/auth/signout?callbackUrl=/">Sign Out</Link>
+			<div>{data}</div>
         </div>
     )
 }
