@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getPrimaryStory, getRecentsOfType } from "@/lib/db";
 import { smartTrim } from "@/lib/utils";
 
-export const metadata: Metadata = {
+export let metadata: Metadata = {
 	title: "Paig's Bog",
 	description: "",
 }
@@ -25,7 +25,7 @@ export default async function Home() {
 					</Link>
 				</div>
 				<div className="card w-96 bg-neutral text-primary-content max-w-full overflow-hidden">
-					<Link href={`/short-stories/${recentShortStory.path}`} className={`card-body p-0 relative group`}>
+					<Link href={`/short-stories/${recentShortStory.path}`} className="card-body p-0 relative group">
 						<div className="h-full flex flex-col">
 							<div className="card-body pb-5 transition duration-300 ease-in-out group-hover:opacity-0">
 								<h2 className="card-title flex justify-center">{recentShortStory.title}</h2>

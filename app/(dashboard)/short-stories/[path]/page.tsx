@@ -11,7 +11,7 @@ export default async function ShortStories({ params }: { params: { path: string 
 			<div>{postData.datePosted}</div>
 			<div>Last modified: {postData.dateModified}</div>
 			<div className='m-20'>
-				<div className='m-20' dangerouslySetInnerHTML={{__html: postData.content}}/>
+				<div className='m-20' dangerouslySetInnerHTML={{__html: postData.chapters[0].content}}/>
 			</div>
 		</div>
 	);

@@ -9,8 +9,9 @@ export default async function Blogs({ params }: { params: { path: string } }) {
 		<div>
 			<h1 className='text-5xl'>{postData.title}</h1>
 			<div>{postData.date}</div>
+			<div>Last modified: {postData.dateModified}</div>
 			<div className='m-20'>
-				<div className='m-20' dangerouslySetInnerHTML={{__html: postData.content}}/>
+				<div className='m-20' dangerouslySetInnerHTML={{__html: postData.chapters[0].content}}/>
 			</div>
 		</div>
 	);

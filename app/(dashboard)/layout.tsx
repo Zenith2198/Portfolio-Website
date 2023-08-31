@@ -1,7 +1,6 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { getSortedPostsDataNoChapters } from '@/lib/db';
-import type { Post } from "@/types/types"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
 	const allPostsData = await getSortedPostsDataNoChapters();
