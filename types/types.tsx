@@ -12,13 +12,14 @@ export interface Post extends RowDataPacket {
 	image?: string
 }
 
-export interface PostTypes extends RowDataPacket {
-	postType: string
+export interface PostType extends RowDataPacket {
+	postType: string,
+	displayName: string
 }
 
 export interface Chapter extends RowDataPacket {
 	postId: number,
-	number: number,
+	chapterNum: number,
 	title?: string,
 	content: string
 }

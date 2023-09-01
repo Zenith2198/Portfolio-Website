@@ -13,16 +13,17 @@ CREATE TABLE IF NOT EXISTS posts (
 
 -- @block postTypes table
 CREATE TABLE IF NOT EXISTS postTypes (
-	postType VARCHAR(255) NOT NULL PRIMARY KEY
+	postType VARCHAR(255) NOT NULL PRIMARY KEY,
+	displayName VARCHAR(255) NOT NULL
 );
 
 -- @block chapters table
 CREATE TABLE IF NOT EXISTS chapters (
 	postId INT NOT NULL,
-	number INT NOT NULL,
+	chapterNum INT NOT NULL,
 	title VARCHAR(255),
 	content TEXT NOT NULL,
-	PRIMARY KEY (postId, number),
+	PRIMARY KEY (postId, chapterNum),
 	FOREIGN KEY (postId) REFERENCES posts(postId)
 );
 

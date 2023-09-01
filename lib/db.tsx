@@ -35,13 +35,13 @@ export async function getSortedPostsDataNoChapters():Array<Post> {
 	return allPostsDataArr;
 }
 
-export async function getAllPostTypes():Array<Post> {
+export async function getAllPostTypes():Array<PostType> {
 	return await query({
-		query: "SELECT postType from postTypes"
+		query: "SELECT * from postTypes"
 	});
 }
 
-export async function getAllPaths(postType):Array<PostType> {
+export async function getAllPaths(postType):Array<Post> {
 	let q = "SELECT path FROM posts";
 	if (postType !== undefined) {
 		q = q.concat(` WHERE postType="${postType}"`);
@@ -121,7 +121,7 @@ export async function getUser(username) {
 
 export async function getChapters(postId) {
 	return await query({
-		query: "SELECT * FROM chapters WHERE postId=? ORDER BY number ASC",
+		query: "SELECT * FROM chapters WHERE postId=? ORDER BY chapterNum ASC",
 		values: [postId]
 	});
 }

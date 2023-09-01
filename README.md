@@ -10,5 +10,6 @@ next-auth
 mysql2
 bcrypt
 ckeditor
+react-hook-form
 remark/remark-html
 moment

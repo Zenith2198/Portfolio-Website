@@ -13,7 +13,7 @@ export default async function Post({ params }: { params: { postType: string, pat
 			<div>Last modified: {postData.dateModified}</div>
 			<div className='m-20'>
 				{postData.chapters.map((chapter: Chapter) =>(
-					<div>
+					<div key={chapter.chapterNum}>
 						<h2 className='text-2xl'>{chapter.title}</h2>
 						<div className='m-20' dangerouslySetInnerHTML={{__html: chapter.content}}/>
 					</div>
@@ -35,7 +35,6 @@ export async function generateStaticParams() {
 			});
 		}
 	}
-	console.log(allPosts)
 	return allPosts;
 }
 

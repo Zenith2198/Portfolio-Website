@@ -10,7 +10,7 @@ export let metadata: Metadata = {
 	description: "",
 }
 
-export default async function Home() {
+export default async function Dashboard() {
 	let primaryStory = await getPrimaryStory();
 	let recentShortStoryArr = await getRecentsOfType("short-stories");
 	let recentShortStory = recentShortStoryArr[0];
@@ -65,7 +65,7 @@ export default async function Home() {
 				</div>
 				<div className="card w-96 bg-neutral text-primary-content max-w-full items-stretch overflow-hidden">
 					{recentBlogs.map((blog, i) => (
-						<Link href={`/blogs/${blog.path}`} className="card-body p-0 relative border-base-300 [&:not(:first-child)]:border-t [&:not(:last-child)]:border-b h-full group">
+						<Link href={`/blogs/${blog.path}`} key={i} className="card-body p-0 relative border-base-300 [&:not(:first-child)]:border-t [&:not(:last-child)]:border-b h-full group">
 							<div className="h-full flex flex-col">
 								<div className="card-body pb-5 transition duration-300 ease-in-out group-hover:opacity-0">
 									<h2 className="card-title flex justify-center">{blog.title}</h2>

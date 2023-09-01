@@ -1,7 +1,6 @@
 import moment from "moment";
-import { Post } from "../types/types";
+import type { Post } from "../types/types";
 import bcrypt from 'bcrypt';
-import { Chapter } from "@/types/types";
 
 export function fixDates(target: Array<Post>) {
 	target.forEach((item) => {
