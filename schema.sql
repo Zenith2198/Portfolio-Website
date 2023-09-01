@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS posts (
 	path VARCHAR(255) NOT NULL UNIQUE,
 	postType VARCHAR(255) NOT NULL,
 	primaryStory BOOLEAN UNIQUE,
-	image VARCHAR(255),
+	image BLOB,
+	wip BOOLEAN,
 	FOREIGN KEY (postType) REFERENCES postTypes(postType)
 );
 

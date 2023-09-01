@@ -25,7 +25,7 @@ export async function query({ query, values = [] }) {
 }
 
 //get functions
-export async function getSortedPostsDataNoChapters():Array<Post> {
+export async function getSortedPostsNoChapters():Array<Post> {
 	let allPostsDataArr = await query({
 		query: "SELECT * FROM posts ORDER BY dateModified DESC"
 	});
@@ -42,15 +42,10 @@ export async function getAllPostTypes():Array<PostType> {
 }
 
 export async function getAllPaths(postType):Array<Post> {
-	let q = "SELECT path FROM posts";
-	if (postType !== undefined) {
-		q = q.concat(` WHERE postType="${postType}"`);
-	}
-	let allPathsArr = await query({
-		query: q
+	return await query({
+		query: "SELECT path FROM posts WHERE postType=?",
+		values: [postType]
 	});
-
-	return allPathsArr;
 }
 
 export async function getPostData(path) {
@@ -94,10 +89,10 @@ export async function getPrimaryStory() {
 	return primaryStory;
 }
 
-export async function getRecentsOfType(type, num=1) {
+export async function getRecentsOfPostType(postType, num=1) {
 	let recentsArr = await query({
 		query: "SELECT * FROM posts WHERE postType=? ORDER BY dateModified DESC LIMIT ?",
-		values: [type, num.toString()]
+		values: [postType, num.toString()]
 	});
 
 	fixDates(recentsArr);
@@ -106,6 +101,13 @@ export async function getRecentsOfType(type, num=1) {
 	}
 
 	return recentsArr;
+}
+
+export async function getSortedOfPostTypeNoChapters(postType):Array<Post> {
+	return await query({
+		query: "SELECT * FROM posts WHERE postType=? ORDER BY title ASC",
+		values: [postType]
+	});
 }
 
 export async function getUser(username) {
@@ -126,4 +128,14 @@ export async function getChapters(postId) {
 	});
 }
 
+export async function getTest() {
+	return {test: "valid"}
+}
+
 //set functions
+export async function setImageOfPost(file, path) {
+	return await query({
+		query: "UPDATE posts SET image=? WHERE path=?",
+		values: [file, path]
+	})
+}

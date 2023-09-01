@@ -2,8 +2,8 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getPrimaryStory, getRecentsOfType } from "@/lib/db";
-import { smartTrim } from "@/lib/utils";
+import { getPrimaryStory, getRecentsOfPostType } from "@/app/api/lib/db";
+import { smartTrim } from "@/app/api/lib/utils";
 
 export let metadata: Metadata = {
 	title: "Paig's Bog",
@@ -12,9 +12,9 @@ export let metadata: Metadata = {
 
 export default async function Dashboard() {
 	let primaryStory = await getPrimaryStory();
-	let recentShortStoryArr = await getRecentsOfType("short-stories");
+	let recentShortStoryArr = await getRecentsOfPostType("short-stories");
 	let recentShortStory = recentShortStoryArr[0];
-	let recentBlogs = await getRecentsOfType("blogs", 2);
+	let recentBlogs = await getRecentsOfPostType("blogs", 2);
 
 	return (
 		<main className="min-w-full">
@@ -89,5 +89,5 @@ export default async function Dashboard() {
 				</div>
 			</div>
 		</main>
-	)
+	);
 }

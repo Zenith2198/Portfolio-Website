@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { smartTrim } from "@/lib/utils";
+import { smartTrim } from "@/app/api/lib/utils";
 import type { Post } from "@/types/types"
 
 export default function HoverCard({ post, className="" }: { post: Post, className?: string }) {

@@ -9,7 +9,8 @@ export interface Post extends RowDataPacket {
 	path: string,
 	postType: string,
 	primaryStory?: boolean,
-	image?: string
+	image?: string,
+	wip?: boolean
 }
 
 export interface PostType extends RowDataPacket {

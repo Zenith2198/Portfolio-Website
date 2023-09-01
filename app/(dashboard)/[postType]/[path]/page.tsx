@@ -1,4 +1,4 @@
-import { getAllPostTypes, getAllPaths, getPostData, getPostTitle } from "@/lib/db";
+import { getAllPostTypes, getAllPaths, getPostData, getPostTitle } from "@/app/api/lib/db";
 import type { Chapter } from "@/types/types"
 
 export const dynamicParams = false;

@@ -6,6 +6,7 @@ typescript
 tailwind
 daisyui
 node/react/next
+swr
 next-auth
 mysql2
 bcrypt

@@ -1,5 +1,5 @@
 import moment from "moment";
-import type { Post } from "../types/types";
+import type { Post } from "../../../types/types";
 import bcrypt from 'bcrypt';
 
 export function fixDates(target: Array<Post>) {
