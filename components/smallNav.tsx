@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { Post } from "@/types/types";
 import { fetchURL } from "@/app/api/lib/fetchers";
-// import Search from "./search";
+// import Search from "./Search";
 
 export default function SmallNav() {
 	const data = fetchURL("/api/posts");

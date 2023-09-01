@@ -1,7 +1,7 @@
 import Link from "next/link";
-import SmallNav from "./smallNav";
-import Nav from "./nav";
-// import Search from "./search";
+import SmallNav from "./SmallNav";
+import Nav from "./Nav";
+// import Search from "./Search";
 
 export default function Header() {
 	return (

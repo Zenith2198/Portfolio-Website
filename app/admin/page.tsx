@@ -1,5 +1,5 @@
 import Link from "next/link";
-import AdminPanel from "@/components/adminPanel";
+import AdminPanel from "@/components/AdminPanel";
 import type { Metadata } from "next";
 import { authOptions } from "../api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth/next";

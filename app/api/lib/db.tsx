@@ -83,10 +83,9 @@ export async function getPrimaryStory() {
 	});
 
 	fixDates(primaryStoryArr);
-	let primaryStory = primaryStoryArr[0];
-	primaryStory.chapters = await getChapters(primaryStory.postId);
+	primaryStoryArr[0].chapters = await getChapters(primaryStoryArr[0].postId);
 
-	return primaryStory;
+	return primaryStoryArr;
 }
 
 export async function getRecentsOfPostType(postType, num=1) {

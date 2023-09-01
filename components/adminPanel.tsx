@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
-import Editor from "@/components/editor";
+import Editor from "@/components/Editor";
 import type { ChangeEvent, FormEvent, MouseEvent } from "react";
 import type { PostType } from "@/types/types";
 import { fetchURL } from "@/app/api/lib/fetchers";
