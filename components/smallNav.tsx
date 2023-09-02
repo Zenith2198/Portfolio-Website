@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import type { Post } from "@/types/types";
-import { fetchURL } from "@/app/api/lib/fetchers";
+import { getURL } from "@/app/api/lib/fetchers";
 // import Search from "./Search";
 
 export default function SmallNav() {
-	const data = fetchURL("/api/posts");
-	if (!data) return <div className="lg:hidden">Loading...</div>
+	const { data, isLoading, error } = getURL("/api/posts");
+	if (isLoading) return <div className="lg:hidden">Loading...</div>;
+  	if (error) return <div className="lg:hidden">Error</div>;
 	const allPostsData: Array<Post> = data.allPostsData;
 
 	let shortStories: Array<Post> = [];

@@ -20,9 +20,9 @@ export default async function Admin() {
     return (
         <div>
             <p>Hello {session.user.name}, you are a(n) {session.user.role}</p>
-			<AdminPanel/>
 			<Link href="/">Home</Link>
 			<Link href="/api/auth/signout?callbackUrl=/">Sign Out</Link>
+			<AdminPanel/>
         </div>
     );
 }

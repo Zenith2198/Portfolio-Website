@@ -13,7 +13,6 @@ export default async function Dashboard() {
 	let primaryStoryArr = await getPrimaryStory();
 	let recentShortStoryArr = await getRecentsOfPostType("short-stories");
 	let recentBlogs = await getRecentsOfPostType("blogs", 2);
-	console.log(recentBlogs)
 
 	return (
 		<main className="min-w-full">

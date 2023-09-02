@@ -16,8 +16,11 @@ export async function query({ query, values = [] }) {
 	});
 
 	try {
-		const [results] = await dbConn.execute(query, values);
+		const [err, results] = await dbConn.execute(query, values);
 		dbConn.end();
+		if (err) {
+			return err;
+		}
 		return results;
 	} catch (err) {
 		throw err;
@@ -27,7 +30,7 @@ export async function query({ query, values = [] }) {
 //get functions
 export async function getSortedPostsNoChapters():Array<Post> {
 	let allPostsDataArr = await query({
-		query: "SELECT * FROM posts ORDER BY dateModified DESC"
+		query: "SELECT * FROM posts ORDER BY dateModified DESC;"
 	});
 
 	fixDates(allPostsDataArr);
@@ -43,14 +46,14 @@ export async function getAllPostTypes():Array<PostType> {
 
 export async function getAllPaths(postType):Array<Post> {
 	return await query({
-		query: "SELECT path FROM posts WHERE postType=?",
+		query: "SELECT path FROM posts WHERE postType=?;",
 		values: [postType]
 	});
 }
 
 export async function getPostData(path) {
 	let postDataArr = await query({
-		query: "SELECT * FROM posts WHERE path=?",
+		query: "SELECT * FROM posts WHERE path=?;",
 		values: [path]
 	});
 
@@ -68,7 +71,7 @@ export async function getPostData(path) {
 
 export async function getPostTitle(path) {
 	let postTitleArr = await query({
-		query: "SELECT title FROM posts WHERE path=?",
+		query: "SELECT title FROM posts WHERE path=?;",
 		values: [path]
 	});
 
@@ -79,7 +82,7 @@ export async function getPostTitle(path) {
 
 export async function getPrimaryStory() {
 	let primaryStoryArr = await query({
-		query: "SELECT * FROM posts WHERE primaryStory=TRUE"
+		query: "SELECT * FROM posts WHERE primaryStory=TRUE;"
 	});
 
 	fixDates(primaryStoryArr);
@@ -90,7 +93,7 @@ export async function getPrimaryStory() {
 
 export async function getRecentsOfPostType(postType, num=1) {
 	let recentsArr = await query({
-		query: "SELECT * FROM posts WHERE postType=? ORDER BY dateModified DESC LIMIT ?",
+		query: "SELECT * FROM posts WHERE postType=? ORDER BY dateModified DESC LIMIT ?;",
 		values: [postType, num.toString()]
 	});
 
@@ -104,14 +107,14 @@ export async function getRecentsOfPostType(postType, num=1) {
 
 export async function getSortedOfPostTypeNoChapters(postType):Array<Post> {
 	return await query({
-		query: "SELECT * FROM posts WHERE postType=? ORDER BY title ASC",
+		query: "SELECT * FROM posts WHERE postType=? ORDER BY title ASC;",
 		values: [postType]
 	});
 }
 
 export async function getUser(username) {
 	let userArr = await query({
-		query: "SELECT * from users WHERE name=?",
+		query: "SELECT * from users WHERE name=?;",
 		values: [username]
 	});
 
@@ -122,7 +125,7 @@ export async function getUser(username) {
 
 export async function getChapters(postId) {
 	return await query({
-		query: "SELECT * FROM chapters WHERE postId=? ORDER BY chapterNum ASC",
+		query: "SELECT * FROM chapters WHERE postId=? ORDER BY chapterNum ASC;",
 		values: [postId]
 	});
 }
@@ -131,10 +134,46 @@ export async function getTest() {
 	return {test: "valid"}
 }
 
+export async function getAllPostTitles() {
+	const allPostTitles = await query({
+		query: "SELECT title FROM posts;"
+	});
+	return allPostTitles.map(obj => obj.title);
+}
+
 //set functions
 export async function setImageOfPost(file, path) {
 	return await query({
-		query: "UPDATE posts SET image=? WHERE path=?",
+		query: "UPDATE posts SET image=? WHERE path=?;",
 		values: [file, path]
 	})
+}
+
+export async function setNewPost(post, chapters) {
+	post.dateModified = Date.now() / 1000;
+	post.datePosted = Date.now() / 1000;
+	post.path = encodeURIComponent(post.title);
+
+	if (post.primaryStory) {
+		const unsetPrimaryStory =  await query({
+			query: "UPDATE posts SET primaryStory=NULL WHERE primaryStory=TRUE"
+		})
+	}
+	const postInsert =  await query({
+		query: "INSERT INTO posts (" + Object.keys(post).join(",") + ") VALUES ('" + Object.values(post).join("','") + "');"
+	})
+	
+	chapters.forEach((chapter, i) => {
+		chapter.chapterNum = i;
+		chapter.postId = postInsert.insertId;
+	});
+	let chaptersStr = chapters.map((chapter) => {
+		return "('" + Object.values(chapter).join("','") + "')";
+	}).join(",");
+	const chapterInsert =  await query({
+		query: "INSERT INTO chapters (" + Object.keys(chapters[0]).join(",") + ") VALUES " + chaptersStr + ";",
+		values: [chapters.map((chapter) => {return Object.values(chapter)})]
+	})
+
+	return;
 }

@@ -4,65 +4,93 @@ import React, { useState } from 'react';
 import Editor from "@/components/Editor";
 import type { ChangeEvent, FormEvent, MouseEvent } from "react";
 import type { PostType } from "@/types/types";
-import { fetchURL } from "@/app/api/lib/fetchers";
+import { getURL } from "@/app/api/lib/fetchers";
 
-export default function Admin() {
+export default function AdminPanel() {
 	const [optionSelect, setOptionSelect] = useState("newPost");
-	const [newTitle, setNewTitle] = useState("");
-	const [newPath, setNewPath] = useState("");
-	const [image, setImage] = useState();
 	const [chapters, setChapters] = useState([
 		{
-			chapterTitle: "",
-			chapterContent: ""
+			title: "",
+			content: ""
 		}
 	]);
 	
-	const data = fetchURL("/api/postTypes");
-	if (!data) return <div>Loading...</div>
-	const allPostTypes: Array<PostType> = data.allPostTypes;
+	const postTypesResponse = getURL("/api/postTypes");
+	const postTitlesResponse = getURL("/api/postTitles");
+	if (postTypesResponse.isLoading || postTitlesResponse.isLoading) return <div>Loading...</div>;
+  	if (postTypesResponse.error || postTitlesResponse.error) return <div>Error</div>;
+	const allPostTypes: Array<PostType> = postTypesResponse.data.allPostTypes;
+	const allPostTitles: Array<string> = postTitlesResponse.data.allPostTitles;
 
 	const handleOptionSelect = (event: ChangeEvent<HTMLInputElement>) => {
 		setOptionSelect(event.target.value);
 	};
-	const handleNewTitle = (event: ChangeEvent<HTMLInputElement>) => {
-		setNewTitle(event.target.value);
-		setNewPath(encodeURIComponent(event.target.value));
+
+	const handleTitle = (event: ChangeEvent<HTMLInputElement>) => {
+		const titleMatchArr = allPostTitles.filter((str) => event.target.value.toLowerCase() === str.toLowerCase());
+		const titleError = document.getElementById("titleError");
+		if (titleMatchArr.length !== 0) {
+			if (!event.target.className.includes(" input-error")) {
+				if (titleError) {
+					titleError.className = titleError.className.replace(" hidden", "");
+				}
+				event.target.className += " input-error";
+			}
+		} else {
+			if (titleError && !titleError.className.includes(" hidden")) {
+				titleError.className += " hidden";
+			}
+			event.target.className = event.target.className.replace(" input-error", "");
+		}
+	};
+
+	const handleChapterTitle = (event: ChangeEvent<HTMLInputElement>, i: number) => {
+		let cs = [...chapters];
+		cs[i].title = event.target.value;
+		setChapters(cs);
 	};
 	const handleChapterContent = (chapterContent: string, i: number) => {
 		let cs = [...chapters];
-		cs[i].chapterContent = chapterContent;
+		cs[i].content = chapterContent;
 		setChapters(cs);
 	};
 	const handleAddChapter = (event: MouseEvent<HTMLInputElement>) => {
 		let cs = [...chapters];
 		cs.push({
-			chapterTitle: "",
-			chapterContent: ""
+			title: "",
+			content: ""
 		});
 		setChapters(cs);
 	};
-	const handleChapterTitle = (event: ChangeEvent<HTMLInputElement>, i: number) => {
+	const handleRemoveChapter = (event: MouseEvent<HTMLInputElement>) => {
+		//TODO: ARE YOU SURE ABOUT THAT?
 		let cs = [...chapters];
-		cs[i].chapterTitle = event.target.value;
-		setChapters(cs);
-	};
-	const handleRemoveChapter = (event: MouseEvent<HTMLInputElement>, i: number) => {
-		let cs = [...chapters];
-		cs.splice(i, 1)
+		cs.pop();
 		setChapters(cs);
 	};
 
-	const handleImage = async (event: ChangeEvent<HTMLInputElement>) => {
-		if (event.target.files && event.target.files[0]) {
-			let img = event.target.files[0];
-			// await setImageOfPost(img, "bonebreaker");
-		}
-	};
-
-	const onSubmit = (event: FormEvent) => {
+	const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		console.log(event.target);
+
+		const titleError = document.getElementById("titleError");
+		if (titleError && !titleError.className.includes(" hidden")) {
+			titleError.scrollIntoView({ behavior: "smooth" });
+			return false;
+		}
+
+		//@ts-ignore
+		let formData = new FormData(event.currentTarget);
+		//@ts-ignore
+		if (formData.get("image").size === 0) {
+			formData.delete("image");
+		}
+		formData.append("chapters", JSON.stringify(chapters));
+
+		const response = await fetch("/api/posts", {
+			method: "POST",
+			body: formData
+		}).then((res) => res.json());
+		console.log(response)
 	};
 
     return (
@@ -71,41 +99,69 @@ export default function Admin() {
 				<input value="newPost" defaultChecked className="join-item btn" type="radio" name="options" aria-label="New Post"/>
 				<input value="editPost" className="join-item btn" type="radio" name="options" aria-label="Edit Post"/>
 			</div>
-			<form onSubmit={onSubmit} className={`${optionSelect==="newPost"?"block":"hidden"}`}>
-				<input required name="newTitle" onChange={handleNewTitle} value={newTitle} type="text" placeholder="Title" className="input input-bordered w-full max-w-xs"/>
-				<select defaultValue="" className="select select-bordered w-full max-w-xs">
-					<option value="" disabled>Post type</option>
-					{allPostTypes.map(({ postType, displayName }) => (
-						<option value={postType} key={postType}>{displayName}</option>
-					))}
-				</select>
+			<form onSubmit={onSubmit} autoComplete="off" className={`${optionSelect==="newPost"?"block":"hidden"}`}>
+				<div className="form-control w-full max-w-xs">
+					<label className="label">
+						<span className="label-text">Post Title</span>
+						<span id="titleError" className="label-text-alt hidden">Title already exists</span>
+					</label>
+					<input required name="title" onChange={handleTitle} type="text" placeholder="Enter post title" className="input input-bordered w-full max-w-xs"/>
+					<label className="label">
+						<span></span>
+						<span className="label-text-alt">Required</span>
+					</label>
+				</div>
+				<div className="form-control w-full max-w-xs">
+					<label className="label">
+						<span className="label-text">Post Type</span>
+					</label>
+					<select name="postType" required defaultValue="" className="select select-bordered w-full max-w-xs">
+						<option value="" disabled>Select post type</option>
+						{allPostTypes.map(({ postType, displayName }) => (
+							<option value={postType} key={postType}>{displayName}</option>
+						))}
+					</select>
+					<label className="label">
+						<span></span>
+						<span className="label-text-alt">Required</span>
+					</label>
+				</div>
 				<div className="form-control w-full max-w-xs">
 					<label className="label">
 						<span className="label-text">Image</span>
 					</label>
-					<input type="file" onChange={handleImage} accept=".jpg, .jpeg, .png" className="file-input file-input-bordered w-full max-w-xs"/>
+					<input type="file" name="image" accept=".jpg, .jpeg, .png" className="file-input file-input-bordered w-full max-w-xs"/>
+				</div>
+				<div className="form-control">
+					<label className="label cursor-pointer place-content-start">
+						<span className="label-text">Primary Story?</span> 
+						<input type="checkbox" name="primaryStory" value="1" className="checkbox" />
+					</label>
+				</div>
+				<div className="form-control">
+					<label className="label cursor-pointer place-content-start">
+						<span className="label-text">WIP</span> 
+						<input type="checkbox" name="wip" value="1" className="checkbox" />
+					</label>
 				</div>
 				<button type="submit" className="btn btn-outline btn-xs sm:btn-sm md:btn-md lg:btn-lg">Submit</button>
+				<div>
+					<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
+					<input onClick={handleRemoveChapter} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
+					{chapters.map(({ title: chapterTitle }, i) => (
+						<div key={i}>
+							<label className="label">
+								<span className="label-text">Chapter Title</span>
+							</label>
+							<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className="input input-bordered w-full max-w-xs"/>
+							<Editor setData={(chapterContent: string) => handleChapterContent(chapterContent, i)}/>
+						</div>
+					))}
+				</div>
 			</form>
-			<form onSubmit={onSubmit} className={`${optionSelect==="editPost"?"block":"hidden"}`}>
+			<form onSubmit={onSubmit} autoComplete="off" className={`${optionSelect==="editPost"?"block":"hidden"}`}>
 				EDIT
 			</form>
-			<div>
-				<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
-				{chapters.map(({ chapterTitle }, i) => (
-					<div key={i}>
-						<input name={`${i}`} onClick={(e) => handleRemoveChapter(e, i)} type="button" value="-" className={`btn btn-outline ${i===0?"hidden":""}`} />
-						<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className="input input-bordered w-full max-w-xs"/>
-						<Editor setData={(chapterContent: string) => handleChapterContent(chapterContent, i)}/>
-					</div>
-				))}
-				{chapters.map(({ chapterTitle, chapterContent }, i) => (
-					<div key={i}>
-						<div>{chapterTitle}</div>
-						<div>{chapterContent}</div>
-					</div>
-				))}
-			</div>
         </div>
     );
 }

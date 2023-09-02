@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import type { Post } from "@/types/types";
-import { fetchURL } from "@/app/api/lib/fetchers";
+import { getURL } from "@/app/api/lib/fetchers";
 
 export default function Nav() {
-	const data = fetchURL("/api/posts");
-	if (!data) return <div>Loading...</div>
+	const { data, isLoading, error } = getURL("/api/posts");
+	if (isLoading) return <div>Loading...</div>;
+  	if (error) return <div>Error</div>;
 	const allPostsData: Array<Post> = data.allPostsData;
 
 	let shortStories: Array<Post> = [];
