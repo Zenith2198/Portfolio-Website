@@ -7,6 +7,9 @@ export async function GET(request: Request) {
 	const url = new URL(request.url);
 	const processedURL = processURL(url);
 
+	const postType = url.pathname.split("/").pop();
+	processedURL.filter.push(`postType,${postType}`);
+
 	const hasChapters = processedURL.fields.includes("chapters");
 	if (hasChapters) {
 		processedURL.fields.splice(processedURL.fields.indexOf("chapters"));
@@ -15,7 +18,6 @@ export async function GET(request: Request) {
 	const queryObj = assembleQuery("posts", processedURL);
 
 	let response = await query(queryObj) as Array<Post>;
-
 	fixDates(response);
 
 	for (let post of response) {

@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS chapters (
 	chapterNum INT NOT NULL,
 	title VARCHAR(255),
 	content TEXT NOT NULL,
+	dateModified INT NOT NULL, --unix time in seconds
+	datePosted INT NOT NULL, --unix time in seconds
 	PRIMARY KEY (postId, chapterNum),
 	FOREIGN KEY (postId) REFERENCES posts(postId)
 );

@@ -2,20 +2,19 @@
 
 import Link from "next/link";
 import type { Post } from "@/types/types";
-import { getURL } from "@/app/api/lib/fetchers";
+import { getURL } from "@/lib/fetchers";
 // import Search from "./Search";
 
-export default function SmallNav() {
-	const { data, isLoading, error } = getURL("/api/posts");
+export default function SmallNav({ urlQuery }: { urlQuery: string }) {
+	const { data, isLoading, error } = getURL(`/api/posts${urlQuery}`);
 	if (isLoading) return <div className="lg:hidden">Loading...</div>;
   	if (error) return <div className="lg:hidden">Error</div>;
-	const allPostsData: Array<Post> = data.allPostsData;
 
 	let shortStories: Array<Post> = [];
 	let longStories: Array<Post> = [];
 	let blogs: Array<Post> = [];
 	// TODO: optimize to not use allPostData
-	allPostsData.forEach((post) => {
+	data.forEach((post: Post) => {
 		switch(post.postType) {
 			case "short-stories":
 				shortStories.push(post);

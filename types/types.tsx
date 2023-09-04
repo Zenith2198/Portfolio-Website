@@ -22,7 +22,9 @@ export interface Chapter extends RowDataPacket {
 	postId: number,
 	chapterNum: number,
 	title?: string,
-	content: string
+	content: string,
+	dateModified: number | string,
+	datePosted: number | string,
 }
 
 export interface PostTag extends RowDataPacket {

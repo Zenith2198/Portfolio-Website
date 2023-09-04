@@ -1,10 +1,11 @@
-import { getAllPostTypes, getAllPaths, getPostData, getPostTitle } from "@/app/api/lib/db";
+import { buildURLQuery } from "@/lib/utils";
 import type { Chapter } from "@/types/types"
 
 export const dynamicParams = false;
 
 export default async function Post({ params }: { params: { postType: string, path: string } }) {
-	const postData = await getPostData(params.path);
+	const postDataRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/${params.path}`);
+	const postData = await postDataRes.json();
 
 	return (
 		<div>
@@ -12,10 +13,12 @@ export default async function Post({ params }: { params: { postType: string, pat
 			<div>{postData.datePosted}</div>
 			<div>Last modified: {postData.dateModified}</div>
 			<div className='m-20'>
-				{postData.chapters.map((chapter: Chapter) =>(
+				{postData.chapters.map((chapter: Chapter) => (
 					<div key={chapter.chapterNum}>
 						<h2 className='text-2xl'>{chapter.title}</h2>
-						<div className='m-20' dangerouslySetInnerHTML={{__html: chapter.content}}/>
+						<div>{chapter.datePosted}</div>
+						<div>Last modified: {chapter.dateModified}</div>
+						<div className='m-20' dangerouslySetInnerHTML={{ __html: chapter.content }} />
 					</div>
 				))}
 			</div>
@@ -25,13 +28,19 @@ export default async function Post({ params }: { params: { postType: string, pat
 
 export async function generateStaticParams() {
 	let allPosts = [];
-	const allPostTypes = await getAllPostTypes();
-	for (const postType of allPostTypes) {
-		const allPaths =  await getAllPaths(postType);
-		for (const path of allPaths) {
+
+	const allPostTypesRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/postTypes`, { cache: 'no-store' }); //TODO: remove caching
+	const allPostTypes = await allPostTypesRes.json();
+
+	for (const { postType } of allPostTypes) {
+		const urlQuery = buildURLQuery({ fields: ["path"] });
+		const allPathsRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/postTypes/${postType}${urlQuery}`);
+		const allPaths = await allPathsRes.json();
+
+		for (const { path } of allPaths) {
 			allPosts.push({
-				postType: postType,
-				path: path
+				postType,
+				path
 			});
 		}
 	}
@@ -39,7 +48,10 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: { postType: string, path: string } }) {
-	const postTitle = await getPostTitle(params.path);
+	const urlQuery = buildURLQuery({ fields: ["title"] });
+	const postTitleRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/${params.path}${urlQuery}`);
+	const postTitle = await postTitleRes.json();
+
 	return {
 		title: postTitle.title
 	};
