@@ -19,10 +19,10 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	if (postTypesResponse.isLoading || postTitlesResponse.isLoading) return <div>Loading...</div>;
   	if (postTypesResponse.error || postTitlesResponse.error) return <div>Error</div>;
 	const allPostTypes: Array<PostType> = postTypesResponse.data;
-	const allPostTitles: Array<string> = postTitlesResponse.data;
+	const allPostTitles: Array<{ title: string }> = postTitlesResponse.data;
 
 	const handleTitle = (event: ChangeEvent<HTMLInputElement>) => {
-		const titleMatchArr = allPostTitles.filter((str) => event.target.value.toLowerCase() === str.toLowerCase());
+		const titleMatchArr = allPostTitles.filter((str) => event.target.value?.toLowerCase() === str.title.toLowerCase());
 		const titleError = document.getElementById("titleError");
 		if (titleMatchArr.length !== 0) {
 			if (!event.target.className.includes(" input-error")) {
@@ -81,7 +81,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 		formData.append("chapters", JSON.stringify(chapters));
 
-		const response = await fetch("/api/posts", {
+		const response = await fetch("/api/posts/admin", {
 			method: "POST",
 			body: formData
 		}).then((res) => res.json());

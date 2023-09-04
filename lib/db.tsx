@@ -1,6 +1,8 @@
 import mysql from "mysql2/promise";
 import SqlString from "sqlstring";
-import type * as DBTypes from "@/types/types";
+import type { Table, Query } from "@/types/types";
+
+
 
 // database functions
 let globalPool: mysql.Pool | undefined = undefined;
@@ -20,14 +22,11 @@ async function dbConnect() {
 	return await globalPool.getConnection();
 }
 
-export async function query({ query, values = [] }: {
-	query: string,
-	values?: Array<string | number | Array<string> | Array<number>>
-}): Promise<Array<DBTypes.Post | DBTypes.PostType | DBTypes.Chapter | DBTypes.PostTag | DBTypes.Tag | DBTypes.User>> {
-	const queryStr = SqlString.format(query, values);
+export async function query({ queryStr, values = [] }: Query): Promise<Array<Table>> {
+	const formattedQueryStr = SqlString.format(queryStr, values);
 	try {
 		const dbConnection = await dbConnect();
-		const [err, results] = await dbConnection.query(queryStr);
+		const [err, results] = await dbConnection.query(formattedQueryStr);
 		dbConnection.release();
 		if (err) {
 			//@ts-ignore
@@ -40,10 +39,40 @@ export async function query({ query, values = [] }: {
 	}
 }
 
+
+export async function transaction(callbacks: Array<(results?: Table) => Query>) {
+	const dbConnection = await dbConnect();
+	await dbConnection.query("START TRANSACTION");
+
+	try {
+		let results: Table = {} as Table;
+		for (const callback of callbacks) {
+			const query = callback(results);
+			const formattedQueryStr = SqlString.format(query.queryStr, query.values);
+			//@ts-ignore
+			const queryResults = await dbConnection.query(formattedQueryStr);
+			if (queryResults[1]) { //error
+				await dbConnection.query("ROLLBACK");
+				dbConnection.release();
+				return queryResults[1]
+			}
+			//@ts-ignore
+			results = queryResults[0];
+		}
+
+		await dbConnection.query("COMMIT");
+		dbConnection.release();
+	} catch (err) {
+		await dbConnection.query("ROLLBACK");
+		dbConnection.release();
+		throw err;
+	}
+}
+
 //get functions
 export async function getUser(username: string) {
 	let userArr = await query({
-		query: "SELECT * from users WHERE name=?;",
+		queryStr: "SELECT * from users WHERE name=?;",
 		values: [username]
 	});
 
@@ -155,53 +184,53 @@ export async function getUser(username: string) {
 // }
 
 //set functions
-export async function setImageOfPost(file, path) {
-	return await query2({
-		query: "UPDATE posts SET image=? WHERE path=?;",
-		values: [file, path]
-	})
-}
+// export async function setImageOfPost(file, path) {
+// 	return await query2({
+// 		query: "UPDATE posts SET image=? WHERE path=?;",
+// 		values: [file, path]
+// 	})
+// }
 
-export async function setNewPost(post, chapters) {
-	post.dateModified = Date.now() / 1000;
-	post.datePosted = Date.now() / 1000;
-	post.path = encodeURIComponent(post.title);
+// export async function setNewPost(post, chapters) {
+// 	post.dateModified = Date.now() / 1000;
+// 	post.datePosted = Date.now() / 1000;
+// 	post.path = encodeURIComponent(post.title);
 
-	if (post.primaryStory) {
-		const unsetPrimaryStory =  await query2({
-			query: "UPDATE posts SET primaryStory=NULL WHERE primaryStory=TRUE"
-		})
-	}
+// 	if (post.primaryStory) {
+// 		const unsetPrimaryStory =  await query2({
+// 			query: "UPDATE posts SET primaryStory=NULL WHERE primaryStory=TRUE"
+// 		})
+// 	}
 	
-	console.log(1)
-	for (const k in post) {
-		if (typeof post[k] === "string") {
-			post[k] = post[k].replace("'", "\\'");
-		}
-	}
-	console.log(1)
-	const postInsert =  await query2({
-		query: "INSERT INTO posts (" + Object.keys(post).join(",") + ") VALUES ('" + Object.values(post).join("','") + "');"
-	})
+// 	console.log(1)
+// 	for (const k in post) {
+// 		if (typeof post[k] === "string") {
+// 			post[k] = post[k].replace("'", "\\'");
+// 		}
+// 	}
+// 	console.log(1)
+// 	const postInsert =  await query2({
+// 		query: "INSERT INTO posts (" + Object.keys(post).join(",") + ") VALUES ('" + Object.values(post).join("','") + "');"
+// 	})
 
-	console.log(1)
-	let chaptersStrArr = [];
-	chapters.forEach((chapter, i) => {
-		console.log(chapter)
-		chapter.chapterNum = i;
-		chapter.postId = postInsert.insertId;
+// 	console.log(1)
+// 	let chaptersStrArr = [];
+// 	chapters.forEach((chapter, i) => {
+// 		console.log(chapter)
+// 		chapter.chapterNum = i;
+// 		chapter.postId = postInsert.insertId;
 
-		chaptersStrArr.push("('"
-			+ chapter.title.replace("'", "\\'") + "','"
-			+ chapter.content.replace("'", "\\'") + "','"
-			+ i + "','"
-			+ postInsert.insertId
-			+ "')");
-	});
-	const chapterInsert =  await query2({
-		query: "INSERT INTO chapters (" + Object.keys(chapters[0]).join(",") + ") VALUES " + chaptersStrArr.join(",") + ";",
-		values: [chapters.map((chapter) => {return Object.values(chapter)})]
-	})
+// 		chaptersStrArr.push("('"
+// 			+ chapter.title.replace("'", "\\'") + "','"
+// 			+ chapter.content.replace("'", "\\'") + "','"
+// 			+ i + "','"
+// 			+ postInsert.insertId
+// 			+ "')");
+// 	});
+// 	const chapterInsert =  await query2({
+// 		query: "INSERT INTO chapters (" + Object.keys(chapters[0]).join(",") + ") VALUES " + chaptersStrArr.join(",") + ";",
+// 		values: [chapters.map((chapter) => {return Object.values(chapter)})]
+// 	})
 
-	return;
-}
+// 	return;
+// }

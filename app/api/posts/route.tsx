@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 	for (let post of response) {
 		if (!processedURL.fields?.length || hasChapters) {
 			post.chapters = await query({
-				query: "SELECT * FROM chapters WHERE postId=? ORDER BY chapterNum ASC;",
+				queryStr: "SELECT * FROM chapters WHERE postId=? ORDER BY chapterNum ASC;",
 				values: [post.postId]
 			});
 			fixDates(post.chapters);

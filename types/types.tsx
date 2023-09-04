@@ -43,3 +43,10 @@ export interface User extends RowDataPacket {
 	passwordHash: string,
 	role?: string
 }
+
+export interface Table extends Post, PostType, PostTag, Tag, User {};
+
+export interface Query {
+	queryStr: string,
+	values?: Array<string | number | Array<string> | Array<number>>
+}

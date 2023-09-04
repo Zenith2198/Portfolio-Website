@@ -18,7 +18,7 @@ export default function AdminPanel() {
 				<input value="editPost" className="join-item btn" type="radio" name="options" aria-label="Edit Post"/>
 			</div>
 			<NewPostPanel className={`${optionSelect==="newPost"?"block":"hidden"}`}/>
-			<EditPostPanel className={`${optionSelect==="newPost"?"block":"hidden"}`}/>
+			<EditPostPanel className={`${optionSelect==="editPost"?"block":"hidden"}`}/>
         </div>
     );
 }

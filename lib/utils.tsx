@@ -43,21 +43,21 @@ export function processURL(url: URL) {
 }
 
 export function assembleQuery(table: string, { fields, filter, sort }: { fields?: Array<string>, filter?: Array<string>, sort?: Array<string> }) {
-	let query = "SELECT ";
+	let queryStr = "SELECT ";
 	let values = [];
 
 	if (fields?.length) {
-		query += "??";
+		queryStr += "??";
 		values.push(fields);
 	} else {
-		query += "*";
+		queryStr += "*";
 	}
 
-	query += " FROM " + table;
+	queryStr += " FROM " + table;
 
 	if (filter?.length) {
-		query += " WHERE ";
-		query += filter.map((q) => {
+		queryStr += " WHERE ";
+		queryStr += filter.map((q) => {
 			const qArr = q.split(",");
 			values.push(qArr[1]);
 			return `${qArr[0]}=?`; //POTENTIAL SQL INJECTION POINT, CAN'T REMOVE QUOTES
@@ -65,8 +65,8 @@ export function assembleQuery(table: string, { fields, filter, sort }: { fields?
 	}
 
 	if (sort?.length) {
-		query += " ORDER BY ";
-		query += sort.map((q) => {
+		queryStr += " ORDER BY ";
+		queryStr += sort.map((q) => {
 			const qArr = q.split(":");
 
 			let order = "ASC";
@@ -87,7 +87,7 @@ export function assembleQuery(table: string, { fields, filter, sort }: { fields?
 	}
 
 	return {
-		query,
+		queryStr,
 		values
 	}
 }
