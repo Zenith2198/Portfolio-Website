@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 	}
 	queries.push(() => {
 		return {
-			queryStr: `INSERT INTO posts (??) VALUES (?);`,
+			queryStr: "INSERT INTO posts (??) VALUES (?);",
 			values: [Object.keys(post), Object.values(post)]
 		}
 	});

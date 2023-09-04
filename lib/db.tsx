@@ -1,5 +1,4 @@
 import mysql from "mysql2/promise";
-import SqlString from "sqlstring";
 import type { Table, Query } from "@/types/types";
 
 
@@ -7,9 +6,9 @@ import type { Table, Query } from "@/types/types";
 // database functions
 let globalPool: mysql.Pool | undefined = undefined;
 
-async function dbConnect() {
+async function getDBPool() {
 	if(typeof globalPool !== 'undefined') {
-		return await globalPool.getConnection();
+		return globalPool;
 	}
 
 	globalPool = await mysql.createPool({
@@ -19,19 +18,13 @@ async function dbConnect() {
 		database: process.env.DB_NAME,
 		connectionLimit: 10
 	});
-	return await globalPool.getConnection();
+	return globalPool;
 }
 
 export async function query({ queryStr, values = [] }: Query): Promise<Array<Table>> {
-	const formattedQueryStr = SqlString.format(queryStr, values);
+	const dbPool = await getDBPool();
 	try {
-		const dbConnection = await dbConnect();
-		const [err, results] = await dbConnection.query(formattedQueryStr);
-		dbConnection.release();
-		if (err) {
-			//@ts-ignore
-			return err;
-		}
+		const [results] = await dbPool.query(queryStr, values);
 		//@ts-ignore
 		return results;
 	} catch (err) {
@@ -41,23 +34,16 @@ export async function query({ queryStr, values = [] }: Query): Promise<Array<Tab
 
 
 export async function transaction(callbacks: Array<(results?: Table) => Query>) {
-	const dbConnection = await dbConnect();
+	const dbPool = await getDBPool();
+	const dbConnection = await dbPool.getConnection();
 	await dbConnection.query("START TRANSACTION");
 
 	try {
 		let results: Table = {} as Table;
 		for (const callback of callbacks) {
 			const query = callback(results);
-			const formattedQueryStr = SqlString.format(query.queryStr, query.values);
 			//@ts-ignore
-			const queryResults = await dbConnection.query(formattedQueryStr);
-			if (queryResults[1]) { //error
-				await dbConnection.query("ROLLBACK");
-				dbConnection.release();
-				return queryResults[1]
-			}
-			//@ts-ignore
-			results = queryResults[0];
+			[results] = await dbConnection.query(query.queryStr, query.values);
 		}
 
 		await dbConnection.query("COMMIT");

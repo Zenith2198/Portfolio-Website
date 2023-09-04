@@ -59,8 +59,10 @@ export function assembleQuery(table: string, { fields, filter, sort }: { fields?
 		queryStr += " WHERE ";
 		queryStr += filter.map((q) => {
 			const qArr = q.split(",");
-			values.push(qArr[1]);
-			return `${qArr[0]}=?`; //POTENTIAL SQL INJECTION POINT, CAN'T REMOVE QUOTES
+			values.push({
+				[qArr[0]]: qArr[1]
+			});
+			return "?";
 		}).join(" AND ");
 	}
 
@@ -76,10 +78,12 @@ export function assembleQuery(table: string, { fields, filter, sort }: { fields?
 				sortQ = qArr[0].substring(1);
 			}
 
-			let qStr = `${sortQ} ${order}`; //POTENTIAL SQL INJECTION POINT, CAN'T REMOVE QUOTES
+			values.push(sortQ);
+			let qStr = `?? ${order}`;
 
 			if (qArr[1]) {
-				qStr += ` LIMIT ${qArr[1]}`; //POTENTIAL SQL INJECTION POINT, CAN'T REMOVE QUOTES
+				values.push(Number(qArr[1]));
+				qStr += " LIMIT ?";
 			}
 
 			return qStr;
