@@ -21,10 +21,10 @@ export default function HoverCard({ posts, contentLen = 500 }: { posts: Array<Po
 						<div dangerouslySetInnerHTML={{__html: smartTrim(post.chapters[0]?.content, contentLen)}}>
 							{/* {`${smartTrim(post.chapters[0].content, contentLen)}...`} */}
 						</div>
-					<h1 className="text-info text-3xl text-center pt-2">
-						Read More
-					</h1>
-				</div>
+						<h1 className="text-info text-3xl text-center pt-2">
+							Read More
+						</h1>
+					</div>
 				</Link>
 			))}
 		</div>

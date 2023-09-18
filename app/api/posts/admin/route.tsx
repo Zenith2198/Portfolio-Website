@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 	queries.push((results) => {
 		let insertValues: Array<string> = [];
 		chapters.forEach((chapter: Chapter, i: number) => {
-			chapter.chapterNum = i;
+			chapter.chapterNum = i + 1;
 			chapter.postId = results?.insertId;
 			chapter.dateModified = Math.floor(Date.now() / 1000);
 			chapter.datePosted = Math.floor(Date.now() / 1000);

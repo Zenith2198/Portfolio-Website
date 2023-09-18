@@ -1,12 +1,12 @@
-import { buildURLQuery } from "@/lib/utils";
+import { buildURLParams } from "@/lib/utils";
 import Link from "next/link";
 import type { Post } from "@/types/types";
 
 export const dynamicParams = false;
 
 export default async function PostType({ params }: { params: { postType: string } }) {
-	const urlQuery = buildURLQuery({ sort: [{ sortField: "dateModified" }] });
-	const allPostsOfTypeRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/postTypes/${params.postType}${urlQuery}`);
+	const urlQuery = buildURLParams({ sort: [{ sortField: "dateModified", desc: true }] });
+	const allPostsOfTypeRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/postTypes/${params.postType}${urlQuery}`, { cache: 'no-store' }); //TODO: remove caching
 	const allPostsOfType: Array<Post> = await allPostsOfTypeRes.json();
 
 	return (
@@ -18,17 +18,4 @@ export default async function PostType({ params }: { params: { postType: string 
 			))}
 		</div>
 	);
-}
-
-export async function generateStaticParams() {
-	const allPostTypesRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/postTypes`, { cache: 'no-store' });
-	const allPostTypes = await allPostTypesRes.json();
-
-	return allPostTypes;
-}
-
-export async function generateMetadata({ params }: { params: { postType: string } }) {
-	return {
-		title: params.postType
-	};
 }

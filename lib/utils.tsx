@@ -38,11 +38,16 @@ export function processURL(url: URL) {
 	const fields = url.searchParams.getAll("fields[]");
 	const filter = url.searchParams.getAll("filter[]");
 	const sort = url.searchParams.get("sort")?.split(",");
+	const chapters = url.searchParams.get("chapters");
 
-	return { fields, filter, sort };
+	return { fields, filter, sort, chapters };
 }
 
-export function assembleQuery(table: string, { fields, filter, sort }: { fields?: Array<string>, filter?: Array<string>, sort?: Array<string> }) {
+export function buildQuery(table: string, { fields, filter, sort }: {
+	fields?: Array<string>,
+	filter?: Array<string>,
+	sort?: Array<string>
+}) {
 	let queryStr = "SELECT ";
 	let values = [];
 
@@ -96,28 +101,29 @@ export function assembleQuery(table: string, { fields, filter, sort }: { fields?
 	}
 }
 
-export function buildURLQuery({ fields, filter, sort }: {
+export function buildURLParams({ fields, filter, sort, chapters }: {
 	fields?: Array<string>,
 	filter?: Array<{ filterField: string, filterValue: string }>,
 	sort?: Array<{ sortField: string, desc?: boolean, limit?: number }>
+	chapters?: boolean
 }) {
-	let urlQueryArr = [];
+	let urlParamsArr = [];
 
 	if (fields?.length) {
-		urlQueryArr.push(fields.map((field) => {
+		urlParamsArr.push(fields.map((field) => {
 			return `fields[]=${field}`;
 		}).join("&"));
 	}
 
 	if (filter?.length) {
-		urlQueryArr.push(filter.map(({ filterField, filterValue }) => {
+		urlParamsArr.push(filter.map(({ filterField, filterValue }) => {
 			return `filter[]=${filterField},${filterValue}`;
 		}).join("&"));
 	}
 
 	if (sort?.length) {
-		let sortQuerry = "sort=";
-		sortQuerry += sort.map(({ sortField, desc, limit }) => {
+		let sortParams = "sort=";
+		sortParams += sort.map(({ sortField, desc, limit }) => {
 			let temp = "";
 			if (desc) {
 				temp += "-";
@@ -128,8 +134,12 @@ export function buildURLQuery({ fields, filter, sort }: {
 			}
 			return temp;
 		}).join(",");
-		urlQueryArr.push(sortQuerry);
+		urlParamsArr.push(sortParams);
 	}
 
-	return "?" + urlQueryArr.join("&");
+	if (chapters) {
+		urlParamsArr.push("chapters=true");
+	}
+
+	return "?" + urlParamsArr.join("&");
 }

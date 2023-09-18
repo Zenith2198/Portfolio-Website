@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 }
 
 export default async function Admin() {
-	const session = await getServerSession(authOptions)
+	const session = await getServerSession(authOptions);
 
     if (!session) {
-        redirect('/api/auth/signin?callbackUrl=/admin')
+        redirect('/api/auth/signin?callbackUrl=/admin');
     }
 
     return (

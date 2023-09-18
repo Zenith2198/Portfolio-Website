@@ -39,7 +39,7 @@ export async function transaction(callbacks: Array<(results?: Table) => Query>) 
 	await dbConnection.query("START TRANSACTION");
 
 	try {
-		let results: Table = {} as Table;
+		let results = {} as Table;
 		for (const callback of callbacks) {
 			const query = callback(results);
 			//@ts-ignore

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import SmallNav from "./SmallNav";
 import Nav from "./Nav";
-import { buildURLQuery } from "@/lib/utils";
+import { buildURLParams } from "@/lib/utils";
 // import Search from "./Search";
 
 export default function Header() {
-	const urlQuery = buildURLQuery({ sort: [{ sortField: "dateModified", desc: true }] });
+	const urlQuery = buildURLParams({ sort: [{ sortField: "dateModified", desc: true }] });
 
 	return (
 		<header className="sticky top-0 z-40">
