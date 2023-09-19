@@ -20,8 +20,8 @@ export default async function Admin() {
     return (
         <div>
             <p>Hello {session.user.name}, you are a(n) {session.user.role}</p>
-			<Link href="/">Home</Link>
-			<Link href="/api/auth/signout?callbackUrl=/">Sign Out</Link>
+			<Link href={`${process.env.PUBLIC_URL_DEV}/`}>Home</Link>
+			<Link href={`${process.env.PUBLIC_URL_DEV}/api/auth/signout?callbackUrl=/`}>Sign Out</Link>
 			<AdminPanel/>
         </div>
     );

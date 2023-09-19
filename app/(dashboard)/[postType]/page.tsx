@@ -13,7 +13,7 @@ export default async function PostType({ params }: { params: { postType: string 
 		<div>
 			{allPostsOfType.map(({ title, path }, i) => (
 				<div key={i}>
-					<Link href={`/${params.postType}/${path}`} className="break-words">{title}</Link>
+					<Link href={`${process.env.PUBLIC_URL_DEV}/${params.postType}/${path}`} className="break-words">{title}</Link>
 				</div>
 			))}
 		</div>

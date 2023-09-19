@@ -5,11 +5,21 @@ export default async function PostLayout({ children, params }: { children: React
 	const postData = await postDataRes.json();
 
 	return (
-		<div>
-			<h1 className='text-5xl'>{postData.title}</h1>
-			<div>{postData.datePosted}</div>
-			<div>Last modified: {postData.dateModified}</div>
-			{children}
+		<div className="flex-1 grid grid-cols-4 gap-5 m-5">
+			<div>
+				<div className="card lg:card-side bg-base-100 shadow-xl">
+					<figure><img src={postData.image} className="object-contain max-h-[32rem]" /></figure>
+					<div className="card-body justify-center">
+						<h2 className="card-title">{postData.title}</h2>
+						<h1 className="text-info text-xl pb-2 mb-5">
+							{postData.dateModified}
+						</h1>
+					</div>
+				</div>
+			</div>
+			<div className="col-span-3">
+				{children}
+			</div>
 		</div>
 	);
 }

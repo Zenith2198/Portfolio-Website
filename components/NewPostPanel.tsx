@@ -81,7 +81,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 		formData.append("chapters", JSON.stringify(chapters));
 
-		const response = await fetch("/api/posts/admin", {
+		const response = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin`, {
 			method: "POST",
 			body: formData
 		}).then((res) => res.json());

@@ -35,31 +35,31 @@ export default function SmallNav({ urlQuery }: { urlQuery: string }) {
 			<ul className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-300 rounded-box">
 				{/* <Search/> */}
 				<li key="longWorks">
-					<Link href="/long-stories" className="break-words">Long Works</Link>
+					<Link href={`${process.env.PUBLIC_URL_DEV}/long-stories`} className="break-words">Long Works</Link>
 					<ul className="p-2">
 						{longStories.map(({ title, path }, i) => (
 							<li key={i}>
-								<Link href={`/long-stories/${path}`} className="break-words">{title}</Link>
+								<Link href={`${process.env.PUBLIC_URL_DEV}/long-stories/${path}`} className="break-words">{title}</Link>
 							</li>
 						))}
 					</ul>
 				</li>
 				<li key="shortWorks">
-					<Link href="/short-stories" className="break-words">Short Works</Link>
+					<Link href={`${process.env.PUBLIC_URL_DEV}/short-stories`} className="break-words">Short Works</Link>
 					<ul className="p-2">
 						{shortStories.map(({ title, path }, i) => (
 							<li key={i}>
-								<Link href={`/short-stories/${path}`} className="break-words">{title}</Link>
+								<Link href={`${process.env.PUBLIC_URL_DEV}/short-stories/${path}`} className="break-words">{title}</Link>
 							</li>
 						))}
 					</ul>
 				</li>
 				<li key="blogs">
-					<Link href="/blogs" className="break-words">Blogs</Link>
+					<Link href={`${process.env.PUBLIC_URL_DEV}/blogs`} className="break-words">Blogs</Link>
 					<ul className="p-2">
 						{blogs.map(({ title, path }, i) => (
 							<li key={i}>
-								<Link href={`/blogs/${path}`} className="break-words">{title}</Link>
+								<Link href={`${process.env.PUBLIC_URL_DEV}/blogs/${path}`} className="break-words">{title}</Link>
 							</li>
 						))}
 					</ul>

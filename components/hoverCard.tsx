@@ -6,7 +6,7 @@ export default function HoverCard({ posts, contentLen = 500 }: { posts: Array<Po
 	return (
 		<div className="card w-96 bg-neutral text-primary-content max-w-full items-stretch overflow-hidden">
 			{posts.map((post, i) => (
-				<Link href={`/${post.postType}/${post.path}`} key={i} className="card-body p-0 relative border-base-300 [&:not(:first-child)]:border-t [&:not(:last-child)]:border-b h-full group">
+				<Link href={`${process.env.PUBLIC_URL_DEV}/${post.postType}/${post.path}`} key={i} className="card-body p-0 relative border-base-300 [&:not(:first-child)]:border-t [&:not(:last-child)]:border-b h-full group">
 					<div className="h-full flex flex-col">
 						<div className="card-body pb-5 transition duration-300 ease-in-out group-hover:opacity-0">
 							<h2 className="card-title flex justify-center">{post.title}</h2>

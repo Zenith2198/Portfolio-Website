@@ -26,18 +26,32 @@ export async function POST(request: Request) {
 		}
 	}
 
-	let queries: Array<(err?: Table, results?: Table) => Query> = [];
+	let image = post.image;
+	delete post.image;
+
+	// set up transaction query chain
+	let queries: Array<(results?: Table) => Query> = [];
+	let errors: Array<() => void> = [];
 	if (post.primaryStory) {
 		queries.push(() => {
 			return {
 				queryStr: "UPDATE posts SET primaryStory=NULL WHERE primaryStory=TRUE;"
-			}
+			};
 		});
 	}
 	queries.push(() => {
+		if (image) {
+			//TODO: upload image to AWS S3 and add URL to post.image
+			post.image = `${process.env.PUBLIC_URL_DEV}/images/bonebreaker.png`;
+		}
 		return {
 			queryStr: "INSERT INTO posts (??) VALUES (?);",
 			values: [Object.keys(post), Object.values(post)]
+		};
+	});
+	errors.push(() => {
+		if (image) {
+			//TODO: remove image from AWS S3
 		}
 	});
 	queries.push((results) => {
@@ -53,10 +67,10 @@ export async function POST(request: Request) {
 		return {
 			queryStr: `INSERT INTO chapters (??) VALUES ${insertValues.join(",")};`,
 			values: [Object.keys(chapters[0]), ...chapters.map((chapter: Chapter) => {return Object.values(chapter)})]
-		}
+		};
 	});
 
-	transaction(queries);
+	transaction(queries, errors);
 
 	return NextResponse.json({ response: "success" });
 }
