@@ -18,7 +18,10 @@ export default async function Post({ params }: { params: { postType: string, pat
 
 	return (
 		<div>
-			<div className='m-10' dangerouslySetInnerHTML={{ __html: postData.chapters[0].content }} />
+			<div className="card bg-base-100 shadow-xl p-10">
+				<h1 className="text-5xl pb-5">{postData.chapters[0].title}</h1>
+				<div className="m-5" dangerouslySetInnerHTML={{ __html: postData.chapters[0].content }} />
+			</div>
 		</div>
 	);
 }

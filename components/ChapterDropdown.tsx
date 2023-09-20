@@ -22,7 +22,7 @@ export default function ChapterDropdown({ className, path, chapterNum, urlQuery 
 
 	return (
 		<div className={`${className} dropdown border-r-2`}>
-			<label tabIndex={0} className="btn px-4">Chapters</label>
+			<label tabIndex={0} className="btn px-4">Chapters ▼</label>
 			<ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
 				{/* @ts-ignore */}
 				{data.chapters.map((chapter, i) => (

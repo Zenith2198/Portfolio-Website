@@ -12,7 +12,6 @@ export default function Nav({ urlQuery }: { urlQuery: string }) {
 	let shortStories: Array<Post> = [];
 	let longStories: Array<Post> = [];
 	let blogs: Array<Post> = [];
-	// TODO: optimize to not use allPostData
 	data.forEach((post: Post) => {
 		switch(post.postType) {
 			case "short-stories":

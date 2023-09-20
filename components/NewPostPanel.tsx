@@ -49,7 +49,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		cs[i].content = chapterContent;
 		setChapters(cs);
 	};
-	const handleAddChapter = (event: MouseEvent<HTMLInputElement>) => {
+	const handleAddChapter = () => {
 		let cs = [...chapters];
 		cs.push({
 			title: "",
@@ -57,8 +57,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		});
 		setChapters(cs);
 	};
-	const handleRemoveChapter = (event: MouseEvent<HTMLInputElement>) => {
-		//TODO: ARE YOU SURE ABOUT THAT?
+	const handleRemoveChapter = () => {
 		let cs = [...chapters];
 		cs.pop();
 		setChapters(cs);
@@ -67,7 +66,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
-		const titleError = document.getElementById("titleError");
+		const titleError = document.getElementById("newTitleError");
 		if (titleError && !titleError.className.includes(" hidden")) {
 			titleError.scrollIntoView({ behavior: "smooth" });
 			return false;
@@ -88,61 +87,77 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	};
 
 	return (
-		<form onSubmit={onSubmit} autoComplete="off" className={`${className}`}>
-			<div className="form-control w-full max-w-xs">
-				<label className="label">
-					<span className="label-text">Post Title</span>
-					<span id="titleError" className="label-text-alt hidden">Title already exists</span>
-				</label>
-				<input required name="title" onChange={handleTitle} type="text" placeholder="Enter post title" className="input input-bordered w-full max-w-xs"/>
-				<label className="label">
-					<span></span>
-					<span className="label-text-alt">Required</span>
-				</label>
-			</div>
-			<div className="form-control w-full max-w-xs">
-				<label className="label">
-					<span className="label-text">Post Type</span>
-				</label>
-				<select name="postType" required defaultValue="" className="select select-bordered w-full max-w-xs">
-					<option value="" disabled>Select post type</option>
-					{allPostTypes.map(({ postType, displayName }) => (
-						<option value={postType} key={postType}>{displayName}</option>
+		<div>
+			<form onSubmit={onSubmit} autoComplete="off" className={`${className}`}>
+				<div className="form-control w-full max-w-xs">
+					<label className="label">
+						<span className="label-text">Post Title</span>
+						<span id="newTitleError" className="label-text-alt hidden">Title already exists</span>
+					</label>
+					<input required name="title" onChange={handleTitle} type="text" placeholder="Enter post title" className="input input-bordered w-full max-w-xs"/>
+					<label className="label">
+						<span></span>
+						<span className="label-text-alt">Required</span>
+					</label>
+				</div>
+				<div className="form-control w-full max-w-xs">
+					<label className="label">
+						<span className="label-text">Post Type</span>
+					</label>
+					<select name="postType" required defaultValue="" className="select select-bordered w-full max-w-xs">
+						<option value="" disabled>Select post type</option>
+						{allPostTypes.map(({ postType, displayName }) => (
+							<option value={postType} key={postType}>{displayName}</option>
+						))}
+					</select>
+					<label className="label">
+						<span></span>
+						<span className="label-text-alt">Required</span>
+					</label>
+				</div>
+				<div className="form-control w-full max-w-xs">
+					<label className="label">
+						<span className="label-text">Image</span>
+					</label>
+					<input type="file" name="image" accept=".jpg, .jpeg, .png" className="file-input file-input-bordered w-full max-w-xs"/>
+				</div>
+				<div className="form-control">
+					<span className="label-text">Primary Story?</span> 
+					<input type="checkbox" name="primaryStory" value="1" className="checkbox" />
+				</div>
+				<div className="form-control">
+					<span className="label-text">WIP</span> 
+					<input type="checkbox" name="wip" value="1" className="checkbox" />
+				</div>
+				<button type="submit" className="btn btn-outline btn-xs sm:btn-sm md:btn-md lg:btn-lg">Submit</button>
+				<div>
+					<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
+					{/* @ts-ignore */}
+					<input onClick={()=>document.getElementById("newRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
+					{chapters.map(({ title: chapterTitle }, i) => (
+						<div key={i}>
+							<label className="label">
+								<span className="label-text">Chapter Title</span>
+							</label>
+							<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className="input input-bordered w-full max-w-xs"/>
+							<Editor setData={(chapterContent: string) => handleChapterContent(chapterContent, i)}/>
+						</div>
 					))}
-				</select>
-				<label className="label">
-					<span></span>
-					<span className="label-text-alt">Required</span>
-				</label>
-			</div>
-			<div className="form-control w-full max-w-xs">
-				<label className="label">
-					<span className="label-text">Image</span>
-				</label>
-				<input type="file" name="image" accept=".jpg, .jpeg, .png" className="file-input file-input-bordered w-full max-w-xs"/>
-			</div>
-			<div className="form-control">
-				<span className="label-text">Primary Story?</span> 
-				<input type="checkbox" name="primaryStory" value="1" className="checkbox" />
-			</div>
-			<div className="form-control">
-				<span className="label-text">WIP</span> 
-				<input type="checkbox" name="wip" value="1" className="checkbox" />
-			</div>
-			<button type="submit" className="btn btn-outline btn-xs sm:btn-sm md:btn-md lg:btn-lg">Submit</button>
-			<div>
-				<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
-				<input onClick={handleRemoveChapter} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
-				{chapters.map(({ title: chapterTitle }, i) => (
-					<div key={i}>
-						<label className="label">
-							<span className="label-text">Chapter Title</span>
-						</label>
-						<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className="input input-bordered w-full max-w-xs"/>
-						<Editor setData={(chapterContent: string) => handleChapterContent(chapterContent, i)}/>
-					</div>
-				))}
-			</div>
-		</form>
+				</div>
+			</form>
+			<dialog id="newRemoveChapterModal" className="modal">
+				<div className="modal-box">
+					<h3 className="font-bold text-lg">Remove chapter</h3>
+					<p className="py-4">Are you sure you want to remove the last chapter? You will lose all content in that chapter.</p>
+					<form method="dialog">
+						<button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+						<button onClick={handleRemoveChapter} className="btn">Confirm</button>
+					</form>
+				</div>
+				<form method="dialog" className="modal-backdrop">
+					<button>close</button>
+				</form>
+			</dialog>
+		</div>
 	);
 }

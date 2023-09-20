@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 
-export default function Editor ({ setData }) {
+export default function Editor ({ className, setData }: { className?: string, setData: any }) {
 	const editorRef = useRef();
 	const [editorLoaded, setEditorLoaded] = useState(false);
 	const { CKEditor, ClassicEditor } = editorRef.current || {};
@@ -13,12 +13,12 @@ export default function Editor ({ setData }) {
 		editorRef.current = {
 			CKEditor: require("@ckeditor/ckeditor5-react").CKEditor,
 			ClassicEditor: require("@ckeditor/ckeditor5-build-classic")
-		}
-		setEditorLoaded(true)
+		};
+		setEditorLoaded(true);
 	}, []);
 
   	return editorLoaded ? (
-		<div className="text-black">
+		<div className={`${className} textarea text-black`}>
 			<CKEditor
 				editor={ClassicEditor}
 				data=""
