@@ -11,17 +11,16 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	const [postType, setPostType] = useState("");
 	const [path, setPath] = useState("");
 	const [title, setTitle] = useState("");
+	const [postResponse, setPostResponse] = useState("");
 	const [prevPost, setPrevPost] = useState({} as Post);
 	useEffect(() => {
-		const primaryStory = document.getElementById("editPrimaryStory");
+		const primaryStory = document.getElementById("editPrimaryStory")  as HTMLInputElement;
 		if (primaryStory) {
-			//@ts-ignore
 			primaryStory.checked = !!prevPost.primaryStory;
 		}
 
-		const wip = document.getElementById("editWIP");
+		const wip = document.getElementById("editWIP")  as HTMLInputElement;
 		if (wip) {
-			//@ts-ignore
 			wip.checked = !!prevPost.wip;
 		}
 
@@ -109,23 +108,25 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 
 		setPath("");
 		setTitle("");
+		setPostResponse("");
 		setPrevPost({} as Post);
-		const image = document.getElementById("editImage");
+		setChapters([]);
+		const image = document.getElementById("editImage") as HTMLInputElement;
 		if (image) {
 			image.className = image.className.replace(" input-success", "");
-			//@ts-ignore
-			image.value = null;
+			image.value = "";
 		}
-		setChapters([]);
-		const primaryStory = document.getElementById("editPrimaryStory");
+		const primaryStory = document.getElementById("editPrimaryStory")  as HTMLInputElement;
 		if (primaryStory) {
-			//@ts-ignore
 			primaryStory.checked = false;
 		}
-		const wip = document.getElementById("editWIP");
+		const wip = document.getElementById("editWIP")  as HTMLInputElement;
 		if (wip) {
-			//@ts-ignore
 			wip.checked = false;
+		}
+		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
+		if (editLoadingModal) {
+			editLoadingModal.checked = false;
 		}
 	};
 
@@ -136,11 +137,10 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		const postData = await postDataRes.json();
 		setTitle(postData.title);
 		setPrevPost(postData);
-		const image = document.getElementById("editImage");
+		const image = document.getElementById("editImage") as HTMLInputElement;
 		if (image) {
 			image.className = image.className.replace(" input-success", "");
-			//@ts-ignore
-			image.value = null;
+			image.value = "";
 		}
 	};
 
@@ -249,12 +249,17 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 
 	//onClick handler for delete button
 	const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
-		//TODO: show loading
-		const response = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/deletePost`, {
+		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
+		if (editLoadingModal) {
+			editLoadingModal.checked = true;
+		}
+		const res = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/deletePost`, {
 			method: "POST",
 			body: JSON.stringify({path: path})
 		}).then((res) => res.json());
-		//TODO: refresh UI
+		if (res.response === "success") {
+			setPostResponse(res.response);
+		}
 	};
 
 	//onSubmit handler
@@ -269,7 +274,10 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		
 		//TODO: return false if nothing has been changed
 
-		//TODO: show loading
+		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
+		if (editLoadingModal) {
+			editLoadingModal.checked = true;
+		}
 		let formData = new FormData(event.currentTarget);
 		//@ts-ignore
 		if (formData.get("image").size === 0) {
@@ -278,11 +286,14 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		formData.append("chapters", JSON.stringify(chapters));
 		formData.append("edit", "true");
 
-		const response = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/newEditPost`, {
+		const res = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/newEditPost`, {
 			method: "POST",
 			body: formData
 		}).then((res) => res.json());
-		//TODO: refresh UI
+		if (res.response === "success") {
+			setPostResponse(res.response);
+			//TODO: make list of posts update when new post has been added
+		}
 	};
 
 	return (
@@ -394,6 +405,27 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 					<button>close</button>
 				</form>
 			</dialog>
+			<input type="checkbox" id="editLoadingModal" className="modal-toggle" />
+			<div className="modal">
+				{!postResponse ?
+					<div className="modal-box p-0 w-min h-min bg-transparent">
+						<span className="loading loading-spinner loading-lg"></span>
+					</div>
+					:
+					<div className="modal-box">
+						{postResponse === "success" ?
+							<div>
+								<h3 className="font-bold text-lg">Success</h3>
+								<div className="modal-action">
+									<label htmlFor="editLoadingModal" onClick={() => window.location.href = window.location.href} className="btn">Close</label>
+								</div>
+							</div>
+							:
+							<div></div>
+						}
+					</div>
+				}
+			</div>
 		</div>
 	);
 }

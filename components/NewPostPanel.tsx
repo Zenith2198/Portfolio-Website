@@ -7,6 +7,7 @@ import type { PostType } from "@/types/types";
 import { getURL } from "@/lib/fetchers";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
+	const [postResponse, setPostResponse] = useState("");
 	const [chapters, setChapters] = useState([
 		{
 			title: "",
@@ -19,7 +20,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	if (postTypesResponse.isLoading || postTitlesResponse.isLoading) return <div>Loading...</div>;
   	if (postTypesResponse.error || postTitlesResponse.error) return <div>Error</div>;
 	const allPostTypes: Array<PostType> = postTypesResponse.data;
-	const allPostTitles: Array<{ title: string }> = postTitlesResponse.data;
+	let allPostTitles: Array<{ title: string }> = postTitlesResponse.data;
 
 	const handleTitle = (event: ChangeEvent<HTMLInputElement>) => {
 		const titleMatchArr = allPostTitles.filter((str) => event.target.value?.toLowerCase() === str.title.toLowerCase());
@@ -72,7 +73,10 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			return false;
 		}
 
-		//TODO: show loading
+		const newLoadingModal = document.getElementById("newLoadingModal") as HTMLInputElement;
+		if (newLoadingModal) {
+			newLoadingModal.checked = true;
+		}
 		let formData = new FormData(event.currentTarget);
 		//@ts-ignore
 		if (formData.get("image").size === 0) {
@@ -80,11 +84,15 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 		formData.append("chapters", JSON.stringify(chapters));
 
-		const response = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/newEditPost`, {
+		const res = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/newEditPost`, {
 			method: "POST",
 			body: formData
 		}).then((res) => res.json());
-		//TODO: refresh UI
+		if (res.response === "success") {
+			setPostResponse(res.response);
+			//@ts-ignore
+			allPostTitles.push({ title: formData.get("title") });
+		}
 	};
 
 	return (
@@ -159,6 +167,27 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 					<button>close</button>
 				</form>
 			</dialog>
+			<input type="checkbox" id="newLoadingModal" className="modal-toggle" />
+			<div className="modal">
+				{!postResponse ?
+					<div className="modal-box p-0 w-min h-min bg-transparent">
+						<span className="loading loading-spinner loading-lg"></span>
+					</div>
+					:
+					<div className="modal-box">
+						{postResponse === "success" ?
+							<div>
+								<h3 className="font-bold text-lg">Success</h3>
+								<div className="modal-action">
+									<label htmlFor="newLoadingModal" onClick={() => window.location.href = window.location.href} className="btn">Close</label>
+								</div>
+							</div>
+							:
+							<div></div>
+						}
+					</div>
+				}
+			</div>
 		</div>
 	);
 }
