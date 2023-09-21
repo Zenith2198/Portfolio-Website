@@ -2,6 +2,7 @@ import Link from "next/link";
 import SmallNav from "./SmallNav";
 import Nav from "./Nav";
 import { buildURLParams } from "@/lib/utils";
+import Image from "next/image";
 // import Search from "./Search";
 
 export default function Header() {
@@ -16,7 +17,7 @@ export default function Header() {
 					<Link className="normal-case text-xl" href={`${process.env.PUBLIC_URL_DEV}/`}>
 						<div className="avatar">
 							<div className="w-20 m-3">
-								<img src={`${process.env.PUBLIC_URL_DEV}/images/profile.png`} height={200} width={200}/>
+								<Image src={`${process.env.PUBLIC_URL_DEV}/images/profile.png`} alt="" height={200} width={200}/>
 							</div>
 						</div>
 					</Link>
