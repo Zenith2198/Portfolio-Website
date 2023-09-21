@@ -272,7 +272,10 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			return false;
 		}
 		
-		//TODO: return false if nothing has been changed
+		if (document.getElementsByClassName("input-success").length === 0) {
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			return false;
+		}
 
 		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
 		if (editLoadingModal) {
@@ -292,7 +295,6 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}).then((res) => res.json());
 		if (res.response === "success") {
 			setPostResponse(res.response);
-			//TODO: make list of posts update when new post has been added
 		}
 	};
 

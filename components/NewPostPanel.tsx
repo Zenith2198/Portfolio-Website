@@ -91,7 +91,6 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (res.response === "success") {
 			setPostResponse(res.response);
 			//@ts-ignore
-			allPostTitles.push({ title: formData.get("title") });
 		}
 	};
 
