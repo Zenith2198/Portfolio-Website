@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import Editor from "@/components/Editor";
 import type { ChangeEvent, FormEvent, MouseEvent } from "react";
 import type { PostType } from "@/types/types";
-import { getURL } from "@/lib/fetchers";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
 	const [postResponse, setPostResponse] = useState("");
@@ -15,8 +16,8 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 	]);
 	
-	const postTypesResponse = getURL("/api/posts/postTypes");
-	const postTitlesResponse = getURL("/api/posts/postTitles");
+	const postTypesResponse = useSWR("/api/posts/postTypes", fetcher);
+	const postTitlesResponse = useSWR("/api/posts/postTitles", fetcher);
 	if (postTypesResponse.isLoading || postTitlesResponse.isLoading) return <div>Loading...</div>;
   	if (postTypesResponse.error || postTitlesResponse.error) return <div>Error</div>;
 	const allPostTypes: Array<PostType> = postTypesResponse.data;

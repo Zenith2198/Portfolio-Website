@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import type { Post } from "@/types/types";
-import { getURL } from "@/lib/fetchers";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils";
 
 export default function Nav({ urlQuery }: { urlQuery: string }) {
-	const { data, isLoading, error } = getURL(`/api/posts${urlQuery}`);
+	const { data, isLoading, error } = useSWR(`/api/posts${urlQuery}`, fetcher);
 	if (isLoading) return <div>Loading...</div>;
   	if (error) return <div>Error</div>;
 

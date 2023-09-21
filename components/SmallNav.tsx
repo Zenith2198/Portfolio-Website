@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import type { Post } from "@/types/types";
-import { getURL } from "@/lib/fetchers";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils";
 // import Search from "./Search";
 
 export default function SmallNav({ urlQuery }: { urlQuery: string }) {
-	const { data, isLoading, error } = getURL(`/api/posts${urlQuery}`);
+	const { data, isLoading, error } = useSWR(`/api/posts${urlQuery}`, fetcher);
 	if (isLoading) return <div className="lg:hidden">Loading...</div>;
   	if (error) return <div className="lg:hidden">Error</div>;
 

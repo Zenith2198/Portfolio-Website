@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import type { FormEvent, ChangeEvent, MouseEvent } from "react";
 import type { PostType, Post, Chapter } from "@/types/types";
-import { getURL } from "@/lib/fetchers";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils";
 import Editor from "@/components/Editor";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
@@ -71,9 +72,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	}, [chapters[chapters.length-1]]);
 
 	//making GET requests
-	const postTypesResponse = getURL("/api/posts/postTypes");
-	const postTitlesResponse = getURL("/api/posts/postTitles");
-	const postsResponse = getURL("/api/posts?sort=-dateModified");
+	const postTypesResponse = useSWR("/api/posts/postTypes", fetcher);
+	const postTitlesResponse = useSWR("/api/posts/postTitles", fetcher);
+	const postsResponse = useSWR("/api/posts?sort=-dateModified", fetcher);
 	if (postTypesResponse.isLoading || postTitlesResponse.isLoading || postsResponse.isLoading) return <div>Loading...</div>;
   	if (postTypesResponse.error || postTitlesResponse.error || postsResponse.error) return <div>Error</div>;
 	const allPostTypes: Array<PostType> = postTypesResponse.data;

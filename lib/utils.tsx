@@ -2,6 +2,8 @@ import moment from "moment";
 import type { Post } from "../types/types";
 import bcrypt from 'bcrypt';
 
+export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export function fixDates(target: Array<Post>) {
 	target.forEach((item) => {
 		if (item.dateModified) {
