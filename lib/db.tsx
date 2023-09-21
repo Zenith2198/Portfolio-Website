@@ -48,7 +48,7 @@ export async function query({ queryStr, values = [] }: Query): Promise<Array<Tab
 	}
 }
 
-export async function transaction(callbacks: Array<(results?: Table) => Query>, errors: Array<() => void>) {
+export async function transaction(callbacks: Array<(results?: Table) => Query>, errors?: Array<() => void>) {
 	const dbPool = await getDBPool();
 	//@ts-ignore
 	const dbConnection = await dbPool.getConnection();
@@ -66,7 +66,9 @@ export async function transaction(callbacks: Array<(results?: Table) => Query>, 
 		dbConnection.release();
 	} catch (err) {
 		await dbConnection.query("ROLLBACK");
-		errors.forEach((f) => f());
+		if (errors) {
+			errors.forEach((f) => f());
+		}
 		dbConnection.release();
 		throw err;
 	}

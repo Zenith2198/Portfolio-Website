@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 
-export default function Editor ({ className, setData }: { className?: string, setData: any }) {
+export default function Editor ({ id, className, data="", setData }: { id?: string, className?: string, data?: string, setData: any }) {
 	const editorRef = useRef();
 	const [editorLoaded, setEditorLoaded] = useState(false);
 	const { CKEditor, ClassicEditor } = editorRef.current || {};
@@ -18,10 +18,10 @@ export default function Editor ({ className, setData }: { className?: string, se
 	}, []);
 
   	return editorLoaded ? (
-		<div className={`${className} textarea text-black`}>
+		<div id={id} className={`${className} textarea text-black`}>
 			<CKEditor
 				editor={ClassicEditor}
-				data=""
+				data={data}
 				onChange={(event, editor) => {
 					const data = editor.getData();
 					setData(data);

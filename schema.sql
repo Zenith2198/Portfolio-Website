@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS posts (
 	path VARCHAR(255) NOT NULL UNIQUE,
 	postType VARCHAR(255) NOT NULL,
 	primaryStory BOOLEAN UNIQUE,
-	image BLOB,
+	image VARCHAR(255),
 	wip BOOLEAN,
 	FOREIGN KEY (postType) REFERENCES postTypes(postType)
 );
@@ -24,10 +24,8 @@ CREATE TABLE IF NOT EXISTS chapters (
 	chapterNum INT NOT NULL,
 	title VARCHAR(255),
 	content TEXT NOT NULL,
-	dateModified INT NOT NULL, --unix time in seconds
-	datePosted INT NOT NULL, --unix time in seconds
 	PRIMARY KEY (postId, chapterNum),
-	FOREIGN KEY (postId) REFERENCES posts(postId)
+	FOREIGN KEY (postId) REFERENCES posts(postId) ON DELETE CASCADE
 );
 
 -- @block postTags table

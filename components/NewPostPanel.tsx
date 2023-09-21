@@ -72,7 +72,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			return false;
 		}
 
-		//@ts-ignore
+		//TODO: show loading
 		let formData = new FormData(event.currentTarget);
 		//@ts-ignore
 		if (formData.get("image").size === 0) {
@@ -80,26 +80,16 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 		formData.append("chapters", JSON.stringify(chapters));
 
-		const response = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin`, {
+		const response = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/newEditPost`, {
 			method: "POST",
 			body: formData
 		}).then((res) => res.json());
+		//TODO: refresh UI
 	};
 
 	return (
 		<div>
 			<form onSubmit={onSubmit} autoComplete="off" className={`${className}`}>
-				<div className="form-control w-full max-w-xs">
-					<label className="label">
-						<span className="label-text">Post Title</span>
-						<span id="newTitleError" className="label-text-alt hidden">Title already exists</span>
-					</label>
-					<input required name="title" onChange={handleTitle} type="text" placeholder="Enter post title" className="input input-bordered w-full max-w-xs"/>
-					<label className="label">
-						<span></span>
-						<span className="label-text-alt">Required</span>
-					</label>
-				</div>
 				<div className="form-control w-full max-w-xs">
 					<label className="label">
 						<span className="label-text">Post Type</span>
@@ -110,6 +100,17 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 							<option value={postType} key={postType}>{displayName}</option>
 						))}
 					</select>
+					<label className="label">
+						<span></span>
+						<span className="label-text-alt">Required</span>
+					</label>
+				</div>
+				<div className="form-control w-full max-w-xs">
+					<label className="label">
+						<span className="label-text">Post Title</span>
+						<span id="newTitleError" className="label-text-alt hidden">Title already exists</span>
+					</label>
+					<input required name="title" onChange={handleTitle} type="text" placeholder="Enter post title" className="input input-bordered w-full max-w-xs"/>
 					<label className="label">
 						<span></span>
 						<span className="label-text-alt">Required</span>
@@ -129,7 +130,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 					<span className="label-text">WIP</span> 
 					<input type="checkbox" name="wip" value="1" className="checkbox" />
 				</div>
-				<button type="submit" className="btn btn-outline btn-xs sm:btn-sm md:btn-md lg:btn-lg">Submit</button>
+				<button type="submit" className="btn btn-outline">Submit</button>
 				<div>
 					<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
 					{/* @ts-ignore */}

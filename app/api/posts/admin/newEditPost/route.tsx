@@ -1,13 +1,13 @@
-import { NextResponse } from 'next/server'
-import type { Post, Query, Table, Chapter } from "@/types/types"
+import { NextResponse } from 'next/server';
+import type { Post, Query, Table, Chapter } from "@/types/types";
 import { transaction } from '@/lib/db';
 
 export async function POST(request: Request) {
 	const formData = await request.formData();
-
 	//@ts-ignore
 	const chapters = JSON.parse(formData.get("chapters"));
 	formData.delete("chapters");
+
 	let post: Post = {
 		dateModified: Math.floor(Date.now() / 1000),
 		datePosted: Math.floor(Date.now() / 1000)
@@ -32,6 +32,25 @@ export async function POST(request: Request) {
 	// set up transaction query chain
 	let queries: Array<(results?: Table) => Query> = [];
 	let errors: Array<() => void> = [];
+	if (post.edit) {
+		delete post.edit;
+		delete post.posts;
+		queries.push(() => {
+			return {
+				queryStr: "SELECT datePosted FROM posts WHERE path=?",
+				values: [post.path]
+			}
+		});
+		queries.push((results) => {
+			if (results) {
+				post.datePosted = results[0].datePosted;
+			}
+			return {
+				queryStr: "DELETE FROM posts WHERE path=?;",
+				values: [post.path]
+			}
+		});
+	}
 	if (post.primaryStory) {
 		queries.push(() => {
 			return {
@@ -49,18 +68,17 @@ export async function POST(request: Request) {
 			values: [Object.keys(post), Object.values(post)]
 		};
 	});
-	errors.push(() => {
-		if (image) {
-			//TODO: remove image from AWS S3
-		}
-	});
+	if (image) {
+		//TODO: remove image from AWS S3
+		errors.push(() => {
+		
+		});
+	}
 	queries.push((results) => {
 		let insertValues: Array<string> = [];
 		chapters.forEach((chapter: Chapter, i: number) => {
 			chapter.chapterNum = i + 1;
 			chapter.postId = results?.insertId;
-			chapter.dateModified = Math.floor(Date.now() / 1000);
-			chapter.datePosted = Math.floor(Date.now() / 1000);
 
 			insertValues.push("(?)")
 		});
