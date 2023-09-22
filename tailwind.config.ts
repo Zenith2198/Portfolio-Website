@@ -10,5 +10,6 @@ const config: Config = {
 	plugins: [
 		require("daisyui")
 	],
+	purge: ['./components//*.{js,ts,jsx,tsx}', './pages//*.{js,ts,jsx,tsx}']
 }
 export default config;
