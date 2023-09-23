@@ -111,54 +111,59 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 						<span className="label-text-alt">Required</span>
 					</label>
 				</div>
-				<div className="form-control w-full max-w-xs">
-					<label className="label">
-						<span className="label-text">Post Title</span>
-						<span id="newTitleError" className="label-text-alt hidden">Title already exists</span>
-					</label>
-					<input required name="title" onChange={handleTitle} type="text" placeholder="Enter post title" className="input input-bordered w-full max-w-xs"/>
-					<label className="label">
-						<span></span>
-						<span className="label-text-alt">Required</span>
-					</label>
-				</div>
-				<div className="form-control w-full max-w-xs">
-					<label className="label">
-						<span className="label-text">Image</span>
-					</label>
-					<input type="file" name="image" accept=".jpg, .jpeg, .png" className="file-input file-input-bordered w-full max-w-xs"/>
-				</div>
-				<div className="form-control">
-					<span className="label-text">Primary Story?</span> 
-					<input type="checkbox" name="primaryStory" value="true" className="checkbox" />
-				</div>
-				<div className="form-control">
-					<span className="label-text">WIP</span> 
-					<input type="checkbox" name="wip" value="true" className="checkbox" />
-				</div>
-				<button type="submit" className="btn btn-outline">Submit</button>
-				<div>
-					{postTypeId === "blogs" ? <div></div> :
-						<div>
-							<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
-							{/* @ts-ignore */}
-							<input onClick={()=>document.getElementById("newRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
+				{postTypeId ? 
+					<div>
+						<div className="form-control w-full max-w-xs">
+							<label className="label">
+								<span className="label-text">Post Title</span>
+								<span id="newTitleError" className="label-text-alt hidden">Title already exists</span>
+							</label>
+							<input required name="title" onChange={handleTitle} type="text" placeholder="Enter post title" className="input input-bordered w-full max-w-xs"/>
+							<label className="label">
+								<span></span>
+								<span className="label-text-alt">Required</span>
+							</label>
 						</div>
-					}
-					{chapters.map(({ title: chapterTitle }, i) => (
-						<div key={i}>
+						<div className="form-control w-full max-w-xs">
+							<label className="label">
+								<span className="label-text">Image</span>
+							</label>
+							<input type="file" name="image" accept=".jpg, .jpeg, .png" className="file-input file-input-bordered w-full max-w-xs"/>
+						</div>
+						<div className="form-control">
+							<span className="label-text">Primary Story?</span> 
+							<input type="checkbox" name="primaryStory" value="true" className="checkbox" />
+						</div>
+						<div className="form-control">
+							<span className="label-text">WIP</span> 
+							<input type="checkbox" name="wip" value="true" className="checkbox" />
+						</div>
+						<button type="submit" className="btn btn-outline">Submit</button>
+						<div>
 							{postTypeId === "blogs" ? <div></div> :
 								<div>
-									<label className="label">
-										<span className="label-text">Chapter Title</span>
-									</label>
-									<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className="input input-bordered w-full max-w-xs"/>
+									<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
+									{/* @ts-ignore */}
+									<input onClick={()=>document.getElementById("newRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
 								</div>
 							}
-							<Editor setData={(chapterContent: string) => handleChapterContent(chapterContent, i)}/>
+							{chapters.map(({ title: chapterTitle }, i) => (
+								<div key={i}>
+									{postTypeId === "blogs" ? <div></div> :
+										<div>
+											<label className="label">
+												<span className="label-text">Chapter Title</span>
+											</label>
+											<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className="input input-bordered w-full max-w-xs"/>
+										</div>
+									}
+									<Editor setData={(chapterContent: string) => handleChapterContent(chapterContent, i)}/>
+								</div>
+							))}
 						</div>
-					))}
-				</div>
+					</div>
+				: <div></div>
+				}
 			</form>
 			<dialog id="newRemoveChapterModal" className="modal">
 				<div className="modal-box">

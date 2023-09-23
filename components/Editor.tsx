@@ -18,7 +18,7 @@ export default function Editor ({ id, className, data="", setData }: { id?: stri
 	}, []);
 
   	return editorLoaded ? (
-		<div id={id} className={`${className} textarea text-black`}>
+		<div id={id} className={`${className} text-black`}>
 			<CKEditor
 				editor={ClassicEditor}
 				data={data}

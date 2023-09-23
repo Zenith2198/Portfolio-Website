@@ -9,12 +9,36 @@ import { fetcher, isEmpty } from "@/lib/utils";
 import Editor from "@/components/Editor";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
-	//setting up useStates and useEffects
+	//setting up useStates
 	const [postTypeId, setPostTypeId] = useState("");
 	const [path, setPath] = useState("");
 	const [title, setTitle] = useState("");
+	const [editedFields, setEditedFields] = useState({
+		title: false,
+		image: false,
+		primaryStory: false,
+		wip: false,
+		chaptersContainer: {
+			edited: false,
+			chapters: [
+				{
+					edited: false,
+					title: false,
+					content: false
+				}
+			]
+		}
+	});
 	const [postResponse, setPostResponse] = useState("");
 	const [prevPost, setPrevPost] = useState({} as PostWithChapters);
+	const [chapters, setChapters] = useState([
+		{
+			title: "",
+			content: ""
+		}
+	]);
+
+	//setting up useEffects
 	useEffect(() => {
 		const primaryStory = document.getElementById("editPrimaryStory")  as HTMLInputElement;
 		if (primaryStory) {
@@ -28,49 +52,33 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 
 		setChapters([]);
 	}, [prevPost]);
-	const [chapters, setChapters] = useState([
-		{
-			title: "",
-			content: ""
-		}
-	]);
 	useEffect(() => {
 		if (chapters.length === 0 && prevPost.chapters && prevPost.chapters.length !== 0) {
-			setChapters(prevPost.chapters.map((chapter: Chapter) => {
-				return {
+			let tempChapters = [];
+			let chapters = [] as Array<{ edited: boolean, title: boolean, content: boolean }>;
+
+			for (const chapter of prevPost.chapters) {
+				tempChapters.push({
 					title: chapter.title ? chapter.title : "",
 					content: chapter.content ? chapter.content : ""
+				});
+
+				chapters.push({
+					edited: false,
+					title: false,
+					content: false
+				})
+			}
+			setChapters(tempChapters);
+			setEditedFields({
+				...editedFields,
+				chaptersContainer: {
+					edited: false,
+					chapters
 				}
-			}));
+			})
 		}
 	}, [chapters]);
-	useEffect(() => {
-		if (chapters.length !== 0) {
-			//set the chapters container border to green if there is a different number of chapters
-			const chaptersContainer = document.getElementById("editChaptersContainer");
-			if (prevPost.chapters && chapters.length !== prevPost.chapters.length) {
-				if (chaptersContainer && !chaptersContainer.className.includes(" input-success")) {
-					chaptersContainer.className += " input-success";
-				}
-			} else {
-				if (chaptersContainer) {
-					chaptersContainer.className = chaptersContainer.className.replace(" input-success", "");
-				}
-			}
-
-			//set the chapter border to green if it is a new chapter
-			const chapter = document.getElementById(`editChapter${chapters.length-1}`);
-			if (prevPost.chapters && chapters.length > prevPost.chapters.length) {
-				if (chapter && !chapter.className.includes(" input-success")) {
-					chapter.className += " input-success";
-				}
-			} else {
-				if (chapter) {
-					chapter.className = chapter.className.replace(" input-success", "");
-				}
-			}
-		}
-	}, [chapters[chapters.length-1]]);
 
 	//making GET requests
 	const postTypesResponse = useSWR("/api/posts/postTypes", fetcher);
@@ -105,7 +113,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	}
 
 	//onChange handlers
-	const handlePostType = (event: ChangeEvent<HTMLSelectElement>) => {
+	function handlePostType (event: ChangeEvent<HTMLSelectElement>) {
 		setPostTypeId(event.target.value);
 
 		setPath("");
@@ -113,11 +121,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		setPostResponse("");
 		setPrevPost({} as PostWithChapters);
 		setChapters([]);
-		const image = document.getElementById("editImage") as HTMLInputElement;
-		if (image) {
-			image.className = image.className.replace(" input-success", "");
-			image.value = "";
-		}
+
 		const primaryStory = document.getElementById("editPrimaryStory")  as HTMLInputElement;
 		if (primaryStory) {
 			primaryStory.checked = false;
@@ -130,9 +134,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (editLoadingModal) {
 			editLoadingModal.checked = false;
 		}
-	};
+	}
 
-	const handlePost = async (event: ChangeEvent<HTMLSelectElement>) => {
+	async function handlePost (event: ChangeEvent<HTMLSelectElement>) {
 		setPath(event.target.value);
 
 		const postDataRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/${event.target.value}?chapters=true`);
@@ -141,15 +145,18 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		setPrevPost(postData);
 		const image = document.getElementById("editImage") as HTMLInputElement;
 		if (image) {
-			image.className = image.className.replace(" input-success", "");
+			setEditedFields({
+				...editedFields,
+				image: false
+			});
 			image.value = "";
 		}
-	};
+	}
 
-	const handleTitle = (event: ChangeEvent<HTMLInputElement>) => {
+	function handleTitle (event: ChangeEvent<HTMLInputElement>) {
 		setTitle(event.target.value);
 
-		//set the title border to green if it has been changed, or red if it already exists
+		//set the title border to green if it has been edited, or red if it already exists
 		const titleMatchArr = allPostTitles.filter((str) => event.target.value?.toLowerCase() === str.title.toLowerCase());
 		const titleError = document.getElementById("editTitleError");
 		if (titleMatchArr.length !== 0 && event.target.value !== prevPost.title) {
@@ -159,7 +166,10 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 				}
 				event.target.className += " input-error";
 			}
-			event.target.className = event.target.className.replace(" input-success", "");
+			setEditedFields({
+				...editedFields,
+				title: false
+			});
 		} else {
 			if (titleError && !titleError.className.includes(" hidden")) {
 				titleError.className += " hidden";
@@ -167,39 +177,54 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			event.target.className = event.target.className.replace(" input-error", "");
 
 			if (event.target.value !== "" && event.target.value !== prevPost.title) {
-				if (!event.target.className.includes(" input-success")) {
-					event.target.className += " input-success";
-				}
+				setEditedFields({
+					...editedFields,
+					title: true
+				});
 			} else {
-				event.target.className = event.target.className.replace(" input-success", "");
+				setEditedFields({
+					...editedFields,
+					title: false
+				});
 			}
 		}
-	};
+	}
 
-	const handleImage = (event: ChangeEvent<HTMLInputElement>) => {
+	function handleImage (event: ChangeEvent<HTMLInputElement>) {
 		//set the image border to green if an image has been selected
-		event.target.className += " input-success";
-	};
+		setEditedFields({
+			...editedFields,
+			image: true
+		});
+	}
 
-	const handlePrimaryStory = (event: ChangeEvent<HTMLInputElement>) => {
-		//set the primary story border to green if it has been changed
+	function handlePrimaryStory (event: ChangeEvent<HTMLInputElement>) {
+		//set the primary story border to green if it has been edited
 		if (event.target.checked != !!prevPost.primaryStory) {
-			if (!event.target.className.includes(" checkbox-success")) {
-				event.target.className += " checkbox-success";
-			}
+			setEditedFields({
+				...editedFields,
+				primaryStory: true
+			});
 		} else {
-			event.target.className = event.target.className.replace(" checkbox-success", "");
+			setEditedFields({
+				...editedFields,
+				primaryStory: false
+			});
 		}
-	};
+	}
 
-	const handleWIP = (event: ChangeEvent<HTMLInputElement>) => {
-		//set the wip border to green if it has been changed
+	function handleWIP (event: ChangeEvent<HTMLInputElement>) {
+		//set the wip border to green if it has been edited
 		if (event.target.checked != !!prevPost.wip) {
-			if (!event.target.className.includes(" checkbox-success")) {
-				event.target.className += " checkbox-success";
-			}
+			setEditedFields({
+				...editedFields,
+				wip: true
+			});
 		} else {
-			event.target.className = event.target.className.replace(" checkbox-success", "");
+			setEditedFields({
+				...editedFields,
+				wip: false
+			});
 		}
 	};
 
@@ -208,6 +233,15 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		cs.pop();
 		setChapters(cs);
 
+		let tempChapters = [...editedFields.chaptersContainer.chapters];
+		tempChapters.pop();
+		setEditedFields({
+			...editedFields,
+			chaptersContainer: {
+				edited: tempChapters.length === prevPost.chapters.length ? false : true,
+				chapters: tempChapters
+			}
+		});
 	};
 	const handleAddChapter = async () => {
 		let cs = [...chapters];
@@ -216,41 +250,95 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			content: ""
 		});
 		setChapters(cs);
-	};
-	const handleChapterTitle = (event: ChangeEvent<HTMLInputElement>, i: number) => {
+
+		let tempChapters = [...editedFields.chaptersContainer.chapters];
+		const title = prevPost.chapters[tempChapters.length] && prevPost.chapters[tempChapters.length].title !== "";
+		const content = prevPost.chapters[tempChapters.length] && prevPost.chapters[tempChapters.length].content !== "";
+		tempChapters.push({
+			edited: title || content,
+			title,
+			content
+		});
+		setEditedFields({
+			...editedFields,
+			chaptersContainer: {
+				edited: tempChapters.length === prevPost.chapters.length ? false : true,
+				chapters: tempChapters
+			}
+		});
+	}
+	function handleChapterTitle (event: ChangeEvent<HTMLInputElement>, i: number) {
 		let cs = [...chapters];
 		cs[i].title = event.target.value;
 		setChapters(cs);
 
-		//set the chapter title border to green if it has been changed
+		//set the chapter title border to green if it has been edited
+		let tempChapters = [...editedFields.chaptersContainer.chapters];
 		if (prevPost.chapters[i] && event.target.value !== prevPost.chapters[i].title) {
-			if (!event.target.className.includes(" input-success")) {
-				event.target.className += " input-success";
+			tempChapters[i] = {
+				...tempChapters[i],
+				title: true
 			}
 		} else {
-			event.target.className = event.target.className.replace(" input-success", "");
+			tempChapters[i] = {
+				...tempChapters[i],
+				title: false
+			}
 		}
-	};
-	const handleChapterContent = (chapterContent: string, i: number) => {
+		setEditedFields({
+			...editedFields,
+			chaptersContainer: {
+				edited: editedFields.chaptersContainer.edited,
+				chapters: tempChapters
+			}
+		});
+	}
+	function handleChapterContent (chapterContent: string, i: number) {
 		let cs = [...chapters];
 		cs[i].content = chapterContent;
 		setChapters(cs);
 
-		//set the chapter content border to green if it has been changed
-		const chapterEditor = document.getElementById(`editChapterEditor${i}`);
+		//set the chapter content border to green if it has been edited
+		let tempChapters = [...editedFields.chaptersContainer.chapters];
 		if (prevPost.chapters[i] && chapterContent !== prevPost.chapters[i].content) {
-			if (chapterEditor && !chapterEditor.className.includes(" textarea-success")) {
-				chapterEditor.className += " textarea-success";
+			tempChapters[i] = {
+				...tempChapters[i],
+				content: true
 			}
 		} else {
-			if (chapterEditor) {
-				chapterEditor.className = chapterEditor.className.replace(" textarea-success", "");
+			tempChapters[i] = {
+				...tempChapters[i],
+				content: false
 			}
 		}
-	};
+		setEditedFields({
+			...editedFields,
+			chaptersContainer: {
+				edited: editedFields.chaptersContainer.edited,
+				chapters: tempChapters
+			}
+		});
+	}
+
+	//check if nothing has been edited
+	function isEdited(obj: Object = editedFields) {
+		let res = false;
+		Object.values(obj).forEach((v) => {
+			if (v === true || v.edited === true) {
+				res = true;
+			} else if (typeof v === "object") {
+				res = isEdited(v);
+			} else if (v.constructor === Array) {
+				v.forEach((o) => {
+					res = isEdited(o);
+				});
+			}
+		});
+		return res;
+	}
 
 	//onClick handler for delete button
-	const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
+	async function handleDelete (event: MouseEvent<HTMLButtonElement>) {
 		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
 		if (editLoadingModal) {
 			editLoadingModal.checked = true;
@@ -262,10 +350,10 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (res.response === "success") {
 			setPostResponse(res.response);
 		}
-	};
+	}
 
 	//onSubmit handler
-	const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+	async function onSubmit (event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		const titleError = document.getElementById("editTitleError");
@@ -274,7 +362,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			return false;
 		}
 		
-		if (document.getElementsByClassName("input-success").length === 0) {
+		if (isEdited()) {
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 			return false;
 		}
@@ -289,7 +377,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			formData.delete("image");
 		}
 		formData.append("chapters", JSON.stringify(chapters));
-		formData.append("edit", "true");
+		//TODO: only submit fields that are changed
 
 		const res = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/editPost`, {
 			method: "POST",
@@ -298,7 +386,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (res.response === "success") {
 			setPostResponse(res.response);
 		}
-	};
+	}
 
 	return (
 		<div>
@@ -318,7 +406,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 						<span className="label-text-alt">Required</span>
 					</label>
 				</div>
-				{postTypeId ? 
+				{postTypeId ?
 					<div className="form-control w-full max-w-xs">
 						<label className="label">
 							<span className="label-text">Posts</span>
@@ -343,34 +431,42 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 										<span className="label-text">Post Title</span>
 										<span id="editTitleError" className="label-text-alt hidden">Title already exists</span>
 									</label>
-									<input name="title" required onChange={handleTitle} value={title} type="text" placeholder="Enter post title" className="input input-bordered w-full max-w-xs"/>
+									<input name="title" required onChange={handleTitle} value={title} type="text" placeholder="Enter post title" className={`${editedFields.title ? "input-success" : ""} input input-bordered w-full max-w-xs`}/>
 								</div>
 								<div className="form-control w-full max-w-xs">
 									<label className="label">
 										<span className="label-text">Image</span>
 									</label>
-									<input id="editImage" onChange={handleImage} type="file" name="image" accept=".jpg, .jpeg, .png" className="file-input file-input-bordered w-full max-w-xs"/>
+									<input id="editImage" onChange={handleImage} type="file" name="image" accept=".jpg, .jpeg, .png" className={`${editedFields.image ? "input-success" : ""} file-input file-input-bordered w-full max-w-xs`}/>
 								</div>
 								<div className="form-control">
 									<span className="label-text">Primary Story?</span> 
-									<input id="editPrimaryStory" onChange={handlePrimaryStory} type="checkbox" name="primaryStory" value="true" className="checkbox" />
+									<input id="editPrimaryStory" onChange={handlePrimaryStory} type="checkbox" name="primaryStory" value="true" className={`${editedFields.primaryStory ? "checkbox-success" : ""} checkbox`} />
 								</div>
 								<div className="form-control">
 									<span className="label-text">WIP</span> 
-									<input id="editWIP" onChange={handleWIP} type="checkbox" name="wip" value="true" className="checkbox" />
+									<input id="editWIP" onChange={handleWIP} type="checkbox" name="wip" value="true" className={`${editedFields.wip ? "checkbox-success" : ""} checkbox`} />
 								</div>
 								<button type="submit" className="btn btn-outline">Submit</button>
-								<div id="editChaptersContainer" className="textarea">
-									<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
-									{/* @ts-ignore */}
-									<input onClick={()=>document.getElementById("editRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
+								<div id="editChaptersContainer" className={`${editedFields.chaptersContainer.edited ? "textarea-success" : ""} textarea`}>
+									{postTypeId === "blogs" ? <div></div> :
+										<div>
+											<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
+											{/* @ts-ignore */}
+											<input onClick={()=>document.getElementById("editRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
+										</div>
+									}
 									{chapters.map(({ title: chapterTitle }, i) => (
-										<div id={`editChapter${i}`} key={i} className="textarea">
-											<label className="label">
-												<span className="label-text">Chapter Title</span>
-											</label>
-											<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className="input input-bordered w-full max-w-xs"/>
-											<Editor id={`editChapterEditor${i}`} data={chapters[i].content} setData={(chapterContent: string) => handleChapterContent(chapterContent, i)}/>
+										<div id={`editChapter${i}`} key={i} className={`${editedFields.chaptersContainer.chapters[i].edited ? "input-success" : ""} textarea`}>
+											{postTypeId === "blogs" ? <div></div> :
+												<div>
+													<label className="label">
+														<span className="label-text">Chapter Title</span>
+													</label>
+													<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className={`${editedFields.chaptersContainer.chapters[i].title ? "input-success" : ""} input input-bordered w-full max-w-xs`}/>
+												</div>
+											}
+											<Editor id={`editChapterEditor${i}`} data={chapters[i].content} setData={(chapterContent: string) => handleChapterContent(chapterContent, i)} className={`${editedFields.chaptersContainer.chapters[i].content ? "textarea-success" : ""} textarea`}/>
 										</div>
 									))}
 								</div>
