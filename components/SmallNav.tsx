@@ -1,13 +1,13 @@
 "use client"
 
 import Link from "next/link";
-import type { Post } from "@/types/types";
+import type { Post } from "@prisma/client";
 import useSWR from "swr";
 import { fetcher } from "@/lib/utils";
 // import Search from "./Search";
 
 export default function SmallNav({ urlQuery }: { urlQuery: string }) {
-	const { data, isLoading, error } = useSWR(`/api/posts${urlQuery}`, fetcher);
+	const { data, isLoading, error } = useSWR(`/api/posts?${urlQuery}`, fetcher);
 	if (isLoading) return <div className="lg:hidden">Loading...</div>;
   	if (error) return <div className="lg:hidden">Error</div>;
 
@@ -16,7 +16,7 @@ export default function SmallNav({ urlQuery }: { urlQuery: string }) {
 	let blogs: Array<Post> = [];
 	// TODO: optimize to not use allPostData
 	data.forEach((post: Post) => {
-		switch(post.postType) {
+		switch(post.postTypeId) {
 			case "short-stories":
 				shortStories.push(post);
 				break;

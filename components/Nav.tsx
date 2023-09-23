@@ -1,12 +1,12 @@
 "use client"
 
 import Link from "next/link";
-import type { Post } from "@/types/types";
+import type { Post } from "@prisma/client";
 import useSWR from "swr";
 import { fetcher } from "@/lib/utils";
 
 export default function Nav({ urlQuery }: { urlQuery: string }) {
-	const { data, isLoading, error } = useSWR(`/api/posts${urlQuery}`, fetcher);
+	const { data, isLoading, error } = useSWR(`/api/posts?${urlQuery}`, fetcher);
 	if (isLoading) return <div>Loading...</div>;
   	if (error) return <div>Error</div>;
 
@@ -14,7 +14,7 @@ export default function Nav({ urlQuery }: { urlQuery: string }) {
 	let longStories: Array<Post> = [];
 	let blogs: Array<Post> = [];
 	data.forEach((post: Post) => {
-		switch(post.postType) {
+		switch(post.postTypeId) {
 			case "short-stories":
 				shortStories.push(post);
 				break;

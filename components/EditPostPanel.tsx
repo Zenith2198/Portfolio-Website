@@ -2,18 +2,19 @@
 
 import { useState, useEffect } from "react";
 import type { FormEvent, ChangeEvent, MouseEvent } from "react";
-import type { PostType, Post, Chapter } from "@/types/types";
+import type { PostType, Post, Chapter } from "@prisma/client";
+import type { PostWithChapters } from "@/types/types";
 import useSWR from "swr";
-import { fetcher } from "@/lib/utils";
+import { fetcher, isEmpty } from "@/lib/utils";
 import Editor from "@/components/Editor";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
 	//setting up useStates and useEffects
-	const [postType, setPostType] = useState("");
+	const [postTypeId, setPostTypeId] = useState("");
 	const [path, setPath] = useState("");
 	const [title, setTitle] = useState("");
 	const [postResponse, setPostResponse] = useState("");
-	const [prevPost, setPrevPost] = useState({} as Post);
+	const [prevPost, setPrevPost] = useState({} as PostWithChapters);
 	useEffect(() => {
 		const primaryStory = document.getElementById("editPrimaryStory")  as HTMLInputElement;
 		if (primaryStory) {
@@ -37,8 +38,8 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (chapters.length === 0 && prevPost.chapters && prevPost.chapters.length !== 0) {
 			setChapters(prevPost.chapters.map((chapter: Chapter) => {
 				return {
-					title: chapter.title,
-					content: chapter.content
+					title: chapter.title ? chapter.title : "",
+					content: chapter.content ? chapter.content : ""
 				}
 			}));
 		}
@@ -81,12 +82,12 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	const allPostTitles: Array<{ title: string }> = postTitlesResponse.data;
 	const allPosts: Array<Post> = postsResponse.data;
 	
-	//assembling object to hold all posts sorted by postType
+	//assembling object to hold all posts sorted by postTypeId
 	let shortStories: Array<Post> = [];
 	let longStories: Array<Post> = [];
 	let blogs: Array<Post> = [];
 	allPosts.forEach((post: Post) => {
-		switch(post.postType) {
+		switch(post.postTypeId) {
 			case "short-stories":
 				shortStories.push(post);
 				break;
@@ -105,12 +106,12 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 
 	//onChange handlers
 	const handlePostType = (event: ChangeEvent<HTMLSelectElement>) => {
-		setPostType(event.target.value);
+		setPostTypeId(event.target.value);
 
 		setPath("");
 		setTitle("");
 		setPostResponse("");
-		setPrevPost({} as Post);
+		setPrevPost({} as PostWithChapters);
 		setChapters([]);
 		const image = document.getElementById("editImage") as HTMLInputElement;
 		if (image) {
@@ -290,7 +291,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		formData.append("chapters", JSON.stringify(chapters));
 		formData.append("edit", "true");
 
-		const res = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/newEditPost`, {
+		const res = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/editPost`, {
 			method: "POST",
 			body: formData
 		}).then((res) => res.json());
@@ -306,10 +307,10 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 					<label className="label">
 						<span className="label-text">Post Type</span>
 					</label>
-					<select name="postType" value={postType} onChange={handlePostType} required className="select select-bordered w-full max-w-xs">
+					<select name="postTypeId" value={postTypeId} onChange={handlePostType} required className="select select-bordered w-full max-w-xs">
 						<option value="" disabled>Select post type</option>
-						{allPostTypes.map(({ postType, displayName }) => (
-							<option value={postType} key={postType}>{displayName}</option>
+						{allPostTypes.map(({ postTypeId, displayName }) => (
+							<option value={postTypeId} key={postTypeId}>{displayName}</option>
 						))}
 					</select>
 					<label className="label">
@@ -317,7 +318,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 						<span className="label-text-alt">Required</span>
 					</label>
 				</div>
-				{postType ? 
+				{postTypeId ? 
 					<div className="form-control w-full max-w-xs">
 						<label className="label">
 							<span className="label-text">Posts</span>
@@ -325,7 +326,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 						<select name="posts" value={path} onChange={handlePost} required className="select select-bordered w-full max-w-xs">
 							<option value="" disabled>Select post</option>
 							{/* @ts-ignore */}
-							{allPostsObj[postType].map(({ title, path }) => (
+							{allPostsObj[postTypeId].map(({ title, path }) => (
 								<option value={path} key={path}>{title}</option>
 							))}
 						</select>
@@ -333,7 +334,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 							<span></span>
 							<span className="label-text-alt">Required</span>
 						</label>
-						{Object.keys(prevPost).length !== 0 ? 
+						{!isEmpty(prevPost) ? 
 							<div>
 								{/* @ts-ignore */}
 								<input onClick={()=>document.getElementById("editDeleteModal").showModal()} type="button" value="Delete" className="btn btn-outline btn-error"/>
@@ -352,11 +353,11 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 								</div>
 								<div className="form-control">
 									<span className="label-text">Primary Story?</span> 
-									<input id="editPrimaryStory" onChange={handlePrimaryStory} type="checkbox" name="primaryStory" value="1" className="checkbox" />
+									<input id="editPrimaryStory" onChange={handlePrimaryStory} type="checkbox" name="primaryStory" value="true" className="checkbox" />
 								</div>
 								<div className="form-control">
 									<span className="label-text">WIP</span> 
-									<input id="editWIP" onChange={handleWIP} type="checkbox" name="wip" value="1" className="checkbox" />
+									<input id="editWIP" onChange={handleWIP} type="checkbox" name="wip" value="true" className="checkbox" />
 								</div>
 								<button type="submit" className="btn btn-outline">Submit</button>
 								<div id="editChaptersContainer" className="textarea">

@@ -4,11 +4,7 @@ import { prisma } from '@/lib/db';
 export async function POST(request: Request) {
 	const postData = await request.json();
 
-	await prisma.post.delete({
-		where: {
-			path: postData.path
-		}
-	});
+	//TODO: make edit page smartly update only the changed fields
 
 	return NextResponse.json({ response: "success" });
 }

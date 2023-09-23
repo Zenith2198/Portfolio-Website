@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Post {
+	postId Int @id @default(autoincrement())
+	title String @unique
+	path String @unique
+	dateModified Int ///unix time in seconds
+	datePosted Int ///unix time in seconds
+	postTypeId String
+	postType PostType @relation(fields: [postTypeId], references: [postTypeId])
+	@@index([postTypeId])
+	imageLink String?
+	primaryStory Boolean? @unique
+	wip Boolean?
+	chapters Chapter[]
+}
+
+model PostType {
+	postTypeId String @id
+	displayName String @unique
+	posts Post[]
+}
+
+model Chapter {
+	postId Int
+	post Post @relation(fields: [postId], references: [postId], onDelete: Cascade)
+	@@index([postId])
+	chapterNum Int
+	title String?
+	content String?
+	@@id([postId, chapterNum])
+}
+
+model User {
+	userId Int @id @default(autoincrement())
+	name String @unique
+	passwordHash String
+	roleId String
+	role Role @relation(fields: [roleId], references: [roleId])
+	@@index([roleId])
+}
+
+model Role {
+	roleId String @id
+	users User[]
+}

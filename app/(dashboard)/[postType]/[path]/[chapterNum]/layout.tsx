@@ -1,4 +1,4 @@
-import type { Chapter } from "@/types/types";
+import type { Chapter } from "@prisma/client";
 import { buildURLParams } from "@/lib/utils";
 
 export default async function PostLayout({ children }: { children: React.ReactNode }) {
@@ -12,8 +12,8 @@ export default async function PostLayout({ children }: { children: React.ReactNo
 export async function generateStaticParams({ params }: { params: { path: string } }) {
 	let allChapters = [];
 
-	const urlQuery = buildURLParams({ chapters: true });
-	const postDataRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/${params.path}${urlQuery}`);
+	const urlQuery = buildURLParams({ fields: ["chapters"] });
+	const postDataRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/${params.path}?${urlQuery}`);
 	const postData = await postDataRes.json();
 
 	if (postData.chapters.length === 0) {

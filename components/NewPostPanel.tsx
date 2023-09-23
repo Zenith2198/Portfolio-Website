@@ -2,13 +2,14 @@
 
 import React, { useState } from 'react';
 import Editor from "@/components/Editor";
-import type { ChangeEvent, FormEvent, MouseEvent } from "react";
-import type { PostType } from "@/types/types";
+import type { ChangeEvent, FormEvent } from "react";
+import type { PostType } from "@prisma/client";
 import useSWR from "swr";
 import { fetcher } from "@/lib/utils";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
 	const [postResponse, setPostResponse] = useState("");
+	const [postTypeId, setPostType] = useState("");
 	const [chapters, setChapters] = useState([
 		{
 			title: "",
@@ -85,14 +86,11 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 		formData.append("chapters", JSON.stringify(chapters));
 
-		const res = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/newEditPost`, {
+		const res = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/newPost`, {
 			method: "POST",
 			body: formData
 		}).then((res) => res.json());
-		if (res.response === "success") {
-			setPostResponse(res.response);
-			//@ts-ignore
-		}
+		setPostResponse(res.response);
 	};
 
 	return (
@@ -102,10 +100,10 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 					<label className="label">
 						<span className="label-text">Post Type</span>
 					</label>
-					<select name="postType" required defaultValue="" className="select select-bordered w-full max-w-xs">
+					<select name="postTypeId" required value={postTypeId} onChange={(e) => setPostType(e.target.value)} className="select select-bordered w-full max-w-xs">
 						<option value="" disabled>Select post type</option>
-						{allPostTypes.map(({ postType, displayName }) => (
-							<option value={postType} key={postType}>{displayName}</option>
+						{allPostTypes.map(({ postTypeId, displayName }) => (
+							<option value={postTypeId} key={postTypeId}>{displayName}</option>
 						))}
 					</select>
 					<label className="label">
@@ -132,23 +130,31 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 				</div>
 				<div className="form-control">
 					<span className="label-text">Primary Story?</span> 
-					<input type="checkbox" name="primaryStory" value="1" className="checkbox" />
+					<input type="checkbox" name="primaryStory" value="true" className="checkbox" />
 				</div>
 				<div className="form-control">
 					<span className="label-text">WIP</span> 
-					<input type="checkbox" name="wip" value="1" className="checkbox" />
+					<input type="checkbox" name="wip" value="true" className="checkbox" />
 				</div>
 				<button type="submit" className="btn btn-outline">Submit</button>
 				<div>
-					<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
-					{/* @ts-ignore */}
-					<input onClick={()=>document.getElementById("newRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
+					{postTypeId === "blogs" ? <div></div> :
+						<div>
+							<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
+							{/* @ts-ignore */}
+							<input onClick={()=>document.getElementById("newRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
+						</div>
+					}
 					{chapters.map(({ title: chapterTitle }, i) => (
 						<div key={i}>
-							<label className="label">
-								<span className="label-text">Chapter Title</span>
-							</label>
-							<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className="input input-bordered w-full max-w-xs"/>
+							{postTypeId === "blogs" ? <div></div> :
+								<div>
+									<label className="label">
+										<span className="label-text">Chapter Title</span>
+									</label>
+									<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className="input input-bordered w-full max-w-xs"/>
+								</div>
+							}
 							<Editor setData={(chapterContent: string) => handleChapterContent(chapterContent, i)}/>
 						</div>
 					))}
@@ -183,7 +189,12 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 								</div>
 							</div>
 							:
-							<div></div>
+							<div>
+								<h3 className="font-bold text-lg">Error</h3>
+								<div className="modal-action">
+									<label htmlFor="newLoadingModal" className="btn">Close</label>
+								</div>
+							</div>
 						}
 					</div>
 				}

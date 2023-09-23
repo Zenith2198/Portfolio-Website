@@ -15,9 +15,9 @@ export default function Header() {
 				<div className="navbar-start">
 					<SmallNav urlQuery={urlQuery}/>
 					<Link className="normal-case text-xl" href={`${process.env.PUBLIC_URL_DEV}/`}>
-						<div className="avatar">
-							<div className="w-20 m-3">
-								<Image src={`${process.env.PUBLIC_URL_DEV}/images/profile.png`} alt="" height={200} width={200}/>
+						<div className="avatar m-3">
+							<div className="w-20">
+								<Image src={`${process.env.PUBLIC_URL_DEV}/images/profile.png`} alt="" fill={true}/>
 							</div>
 						</div>
 					</Link>

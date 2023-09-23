@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
-import { query } from '@/lib/db';
-import { buildQuery, processURL } from '@/lib/utils';
+import { prisma } from '@/lib/db';
+import type { Prisma } from "@prisma/client";
+import { processGETUrl } from '@/lib/utils';
 
 export async function GET(request: Request) {
 	const url = new URL(request.url);
-	const processedURL = processURL(url);
-	const queryObj = buildQuery("postTypes", processedURL);
+	const findMany = processGETUrl(url);
 
-	const response = await query(queryObj);
+	let response = await prisma.postType.findMany(findMany as Prisma.PostTypeFindManyArgs);
+
 	return NextResponse.json(response);
 }

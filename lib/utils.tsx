@@ -1,33 +1,15 @@
 import moment from "moment";
-import type { Post } from "../types/types";
-import bcrypt from 'bcrypt';
+import type { Post } from "@prisma/client";
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export function fixDates(target: Array<Post>) {
-	target.forEach((item) => {
-		if (item.dateModified) {
-			item.dateModified = moment(item.dateModified as number * 1000).format("M.D.YYYY");
-		}
-		if (item.datePosted) {
-			item.datePosted = moment(item.datePosted as number * 1000).format("M.D.YYYY");
-		}
-	});
-}
-
-export async function hashPass(unHashPass: string) {
-	return bcrypt.hash(unHashPass, 10).then(function (hash: string) {
-		return hash;
-	});
-}
-
-export async function checkPass(unHashPass: string, hashPass: string) {
-	return bcrypt.compare(unHashPass, hashPass).then((result: boolean) => {
-		return result;
-	});
+export function fixDate(unixTimestamp: number) {
+	return moment(unixTimestamp * 1000).format("M.D.YYYY");
 }
 
 export function smartTrim(str: string, len: number) {
+	return str;
+	//TODO: make it trim HTML neatly
 	if (!str) {
 		return "";
 	}
@@ -36,84 +18,23 @@ export function smartTrim(str: string, len: number) {
 	return trimmedString;
 }
 
-export function processURL(url: URL) {
-	const fields = url.searchParams.getAll("fields[]");
-	const filter = url.searchParams.getAll("filter[]");
-	const sort = url.searchParams.get("sort")?.split(",");
-	const chapters = url.searchParams.get("chapters");
-
-	return { fields, filter, sort, chapters };
+export function isEmpty(obj: Object) {
+	for (const x in obj) { if (obj.hasOwnProperty(x))  return false; }
+   return true;
 }
 
-export function buildQuery(table: string, { fields, filter, sort }: {
-	fields?: Array<string>,
-	filter?: Array<string>,
-	sort?: Array<string>
-}) {
-	let queryStr = "SELECT ";
-	let values = [];
-
-	if (fields?.length) {
-		queryStr += "??";
-		values.push(fields);
-	} else {
-		queryStr += "*";
-	}
-
-	queryStr += " FROM " + table;
-
-	if (filter?.length) {
-		queryStr += " WHERE ";
-		queryStr += filter.map((q) => {
-			const qArr = q.split(",");
-			values.push({
-				[qArr[0]]: qArr[1]
-			});
-			return "?";
-		}).join(" AND ");
-	}
-
-	if (sort?.length) {
-		queryStr += " ORDER BY ";
-		queryStr += sort.map((q) => {
-			const qArr = q.split(":");
-
-			let order = "ASC";
-			let sortQ = qArr[0];
-			if (sortQ.charAt(0) === "-") {
-				order = "DESC";
-				sortQ = qArr[0].substring(1);
-			}
-
-			values.push(sortQ);
-			let qStr = `?? ${order}`;
-
-			if (qArr[1]) {
-				values.push(Number(qArr[1]));
-				qStr += " LIMIT ?";
-			}
-
-			return qStr;
-		}).join(", ");
-	}
-
-	return {
-		queryStr,
-		values
-	}
-}
-
-export function buildURLParams({ fields, filter, sort, chapters }: {
+export function buildURLParams({ fields, filter, sort, take, chapters }: {
 	fields?: Array<string>,
 	filter?: Array<{ filterField: string, filterValue: string }>,
-	sort?: Array<{ sortField: string, desc?: boolean, limit?: number }>
+	sort?: Array<{ sortField: string, desc?: boolean }>
+	take?: Number,
 	chapters?: boolean
 }) {
 	let urlParamsArr = [];
 
 	if (fields?.length) {
 		urlParamsArr.push(fields.map((field) => {
-			return `fields[]=${field}`;
+			return `field[]=${field}`;
 		}).join("&"));
 	}
 
@@ -124,24 +45,156 @@ export function buildURLParams({ fields, filter, sort, chapters }: {
 	}
 
 	if (sort?.length) {
-		let sortParams = "sort=";
-		sortParams += sort.map(({ sortField, desc, limit }) => {
-			let temp = "";
-			if (desc) {
-				temp += "-";
-			}
-			temp += sortField;
-			if (limit) {
-				temp += `:${limit}`;
-			}
-			return temp;
-		}).join(",");
-		urlParamsArr.push(sortParams);
+		urlParamsArr.push(sort.map(({ sortField, desc }) => {
+			return `sort[]=${desc ? "-" : ""}${sortField}`;
+		}).join("&"));
+	}
+
+	if (take) {
+		urlParamsArr.push(`take=${take}`);
 	}
 
 	if (chapters) {
 		urlParamsArr.push("chapters=true");
 	}
 
-	return "?" + urlParamsArr.join("&");
+	return urlParamsArr.join("&");
 }
+
+export function processGETUrl(url: URL) {
+	let select = url.searchParams.getAll("field[]")
+		.reduce(
+			(obj, f) => Object.assign(obj, { [f]: true }), {}
+		);
+
+	const where = url.searchParams.getAll("filter[]")
+		.reduce(
+			(obj, f) => {
+				const fArr = f.split(",");
+
+				let boolVal = null;
+				if (fArr[1] === "true") {
+					boolVal = true;
+				} else if (fArr[1] === "false") {
+					boolVal = false;
+				}
+
+				return Object.assign(obj, { [fArr[0]]: boolVal === null ? fArr[1] : boolVal });
+			}, {}
+		);
+
+	const orderBy = url.searchParams.getAll("sort[]")
+		.reduce(
+			(obj, s) => {
+				let sTemp = s;
+				let order = "asc";
+				if (s.charAt(0) === "-") {
+					order = "desc";
+					sTemp = s.slice(1);
+				}
+				return Object.assign(obj, { [sTemp]: order });
+			}, {}
+		);
+
+	const urlChapters = url.searchParams.get("chapters");
+	let include = {}
+	if (urlChapters && urlChapters === "true") {
+		if (isEmpty(select)) {
+			include = {
+				chapters: {
+					orderBy: {
+						chapterNum: "asc"
+					}
+				}
+			}
+		} else {
+			select = {
+				...select,
+				chapters: {
+					orderBy: {
+						chapterNum: "asc"
+					}
+				}
+			}
+		}
+	}
+
+	const take = Number(url.searchParams.get("take"));
+
+	let queryObj = {} as {select?: Object, where?: Object, orderBy?: Object, take?: number, include?: Object};
+	if (!isEmpty(select)) {
+		queryObj.select = select;
+	}
+	if (!isEmpty(where)) {
+		queryObj.where = where;
+	}
+	if (!isEmpty(orderBy)) {
+		queryObj.orderBy = orderBy;
+	}
+	if (take) {
+		queryObj.take = take;
+	}
+	if (!isEmpty(include)) {
+		queryObj.include = include;
+	}
+
+	return queryObj;
+}
+
+// export function buildQuery(table: string, { fields, filter, sort }: {
+// 	fields?: Array<string>,
+// 	filter?: Array<string>,
+// 	sort?: Array<string>
+// }) {
+// 	let queryStr = "SELECT ";
+// 	let values = [];
+
+// 	if (fields?.length) {
+// 		queryStr += "??";
+// 		values.push(fields);
+// 	} else {
+// 		queryStr += "*";
+// 	}
+
+// 	queryStr += " FROM " + table;
+
+// 	if (filter?.length) {
+// 		queryStr += " WHERE ";
+// 		queryStr += filter.map((q) => {
+// 			const qArr = q.split(",");
+// 			values.push({
+// 				[qArr[0]]: qArr[1]
+// 			});
+// 			return "?";
+// 		}).join(" AND ");
+// 	}
+
+// 	if (sort?.length) {
+// 		queryStr += " ORDER BY ";
+// 		queryStr += sort.map((q) => {
+// 			const qArr = q.split(":");
+
+// 			let order = "ASC";
+// 			let sortQ = qArr[0];
+// 			if (sortQ.charAt(0) === "-") {
+// 				order = "DESC";
+// 				sortQ = qArr[0].substring(1);
+// 			}
+
+// 			values.push(sortQ);
+// 			let qStr = `?? ${order}`;
+
+// 			if (qArr[1]) {
+// 				values.push(Number(qArr[1]));
+// 				qStr += " LIMIT ?";
+// 			}
+
+// 			return qStr;
+// 		}).join(", ");
+// 	}
+
+// 	return {
+// 		queryStr,
+// 		values
+// 	}
+// }
