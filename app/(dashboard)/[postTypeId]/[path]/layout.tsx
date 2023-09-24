@@ -1,4 +1,4 @@
-import { getBaseUrl, fixDate } from "@/lib/utils";
+import { fixDate } from "@/lib/utils";
 import { prisma } from "@/lib/db";
 import Image from "next/image";
 

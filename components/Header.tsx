@@ -22,7 +22,7 @@ export default async function Header() {
 				<button id="skipNav" className="w-0 h-0"></button>
 				<div className="navbar-start">
 					<SmallNav posts={posts}/>
-					<Link className="normal-case text-xl" href={`${getBaseUrl()}/`}>
+					<Link className="normal-case text-xl" href={`${getBaseUrl()}`}>
 						<div className="avatar m-3">
 							<div className="w-20">
 								<Image src={`/images/profile.png`} alt="" fill={true}/>
@@ -38,7 +38,7 @@ export default async function Header() {
 				</div>
 				<div className="navbar-end">
 					<Link href={`${getBaseUrl()}/admin`}>Admin</Link>
-					<Link href={`${getBaseUrl()}/api/auth/signout?callbackUrl=/`}>Sign Out</Link>
+					<Link href={`${getBaseUrl()}/api/auth/signout?callbackUrl=${getBaseUrl()}`}>Sign Out</Link>
 				</div>
 			</div>
 		</header>

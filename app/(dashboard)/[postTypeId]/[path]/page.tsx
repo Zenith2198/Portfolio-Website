@@ -8,7 +8,6 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 	const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${params.path}?${urlQuery}`);
 	if (!postDataRes.ok) return <div>Error</div>;
 	const postData = await postDataRes.json();
-	console.log(postData)
 
 	if (postData.chapters.length === 0) {
 		return (
