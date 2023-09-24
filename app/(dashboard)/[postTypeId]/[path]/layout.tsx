@@ -1,4 +1,5 @@
-import { getBaseUrl, fixDate, buildURLParams } from "@/lib/utils";
+import { getBaseUrl, fixDate } from "@/lib/utils";
+import { prisma } from "@/lib/db";
 import Image from "next/image";
 
 export default async function PostLayout({ children, params }: { children: React.ReactNode, params: { path: string, chapterNum: string } }) {
@@ -29,29 +30,44 @@ export default async function PostLayout({ children, params }: { children: React
 	);
 }
 
-export async function generateStaticParams({ params }: { params: { postType: string } }) {
+export async function generateStaticParams({ params }: { params: { postTypeId: string } }) {
 	let allPosts = [];
 
-	const urlQuery = buildURLParams({ fields: ["path"] });
-	const allPathsRes = await fetch(`${getBaseUrl()}/api/posts/postTypes/${params.postType}?${urlQuery}`);
-	if (!allPathsRes.ok) return [];
-	const allPaths = await allPathsRes.json();
+	const allPaths = await prisma.postType.findUnique({
+		where: {
+			postTypeId: params.postTypeId
+		},
+		select: {
+			posts: {
+				select: {
+					path: true
+				}
+			}
+		}
+	});
 
-	for (const { path } of allPaths) {
-		allPosts.push({
-			path
-		});
+	if (allPaths) {
+		for (const { path } of allPaths.posts) {
+			allPosts.push({
+				path
+			});
+		}
 	}
 
 	return allPosts;
 }
 
 export async function generateMetadata({ params }: { params: { path: string } }) {
-	const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${params.path}`);
-	if (!postDataRes.ok) return { title: "Error" };
-	const postData = await postDataRes.json();
+	const post = await prisma.post.findUnique({
+		where: {
+			path: params.path
+		},
+		select: {
+			title: true
+		}
+	});
 
 	return {
-		title: postData.title
+		title: post?.title
 	};
 }

@@ -17,7 +17,7 @@ export default function Header() {
 					<Link className="normal-case text-xl" href={`${getBaseUrl()}/`}>
 						<div className="avatar m-3">
 							<div className="w-20">
-								<Image src={`images/profile.png`} alt="" fill={true}/>
+								<Image src={`/images/profile.png`} alt="" fill={true}/>
 							</div>
 						</div>
 					</Link>

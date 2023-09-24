@@ -57,7 +57,7 @@ export async function POST(request: Request) {
 
 			if (image) {
 				//TODO: upload image to AWS S3 and add URL to post.image
-				post.imageLink = `${getBaseUrl()}/images/bonebreaker.png`;
+				post.imageLink = `/images/bonebreaker.png`;
 			}
 
 			const { postId } = await tx.post.update({

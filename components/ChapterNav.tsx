@@ -9,7 +9,7 @@ export default async function ChapterNav({ className, path, chapterNum }: { clas
 	const postData = await postDataRes.json();
 
 	const chaptersLen = postData.chapters.length;
-	const currURL = `${getBaseUrl()}/${postData.postType}/${path}`;
+	const currURL = `${getBaseUrl()}/${postData.postTypeId}/${path}`;
 	const currChapter = Number(chapterNum);
 
 	let chapterOptions = [];
