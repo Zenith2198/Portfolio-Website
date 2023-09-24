@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export default withAuth(
 	function middleware(request: NextRequestWithAuth) {
 		if ((request.nextUrl.pathname.startsWith("/admin") || request.nextUrl.pathname.startsWith("/api/posts/admin")) && request.nextauth.token?.roleId !== "admin") {
-			return NextResponse.rewrite(new URL(`${process.env.PUBLIC_URL_DEV}/denied`, request.url));
+			return NextResponse.rewrite(new URL(`${process.env.NEXT_PUBLIC_URL}/denied`, request.url));
 		}
 	}
 );

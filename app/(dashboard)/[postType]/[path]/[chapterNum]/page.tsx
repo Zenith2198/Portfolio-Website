@@ -5,7 +5,7 @@ export const dynamicParams = false;
 
 export default async function Chapter({ params }: { params: { path: string, chapterNum: string } }) {
 	const urlQuery = buildURLParams({ chapters: true  });
-	const postDataRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/${params.path}?${urlQuery}`);
+	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}?${urlQuery}`);
 	const postData = await postDataRes.json();
 
 	return (

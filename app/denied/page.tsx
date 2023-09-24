@@ -8,8 +8,8 @@ export default function Denied() {
 				<p className="text-3xl max-w-2xl text-center">You are logged in, but you do not have the
 					required access level to view this page.
 				</p>
-				<Link href={`${process.env.PUBLIC_URL_DEV}/api/auth/signout?callbackUrl=/`}>Sign Out</Link>
-				<Link href={`${process.env.PUBLIC_URL_DEV}/`} className="text-3xl underline">Return to Home Page</Link>
+				<Link href={`${process.env.NEXT_PUBLIC_URL}/api/auth/signout?callbackUrl=/`}>Sign Out</Link>
+				<Link href={`${process.env.NEXT_PUBLIC_URL}/`} className="text-3xl underline">Return to Home Page</Link>
 			</div>
         </section>
     )

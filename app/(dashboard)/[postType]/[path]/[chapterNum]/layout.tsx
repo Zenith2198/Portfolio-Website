@@ -13,7 +13,7 @@ export async function generateStaticParams({ params }: { params: { path: string 
 	let allChapters = [];
 
 	const urlQuery = buildURLParams({ fields: ["chapters"] });
-	const postDataRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/${params.path}?${urlQuery}`);
+	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}?${urlQuery}`);
 	const postData = await postDataRes.json();
 
 	if (postData.chapters.length === 0) {

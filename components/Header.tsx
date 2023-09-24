@@ -14,10 +14,10 @@ export default function Header() {
 				<button id="skipNav" className="w-0 h-0"></button>
 				<div className="navbar-start">
 					<SmallNav urlQuery={urlQuery}/>
-					<Link className="normal-case text-xl" href={`${process.env.PUBLIC_URL_DEV}/`}>
+					<Link className="normal-case text-xl" href={`${process.env.NEXT_PUBLIC_URL}/`}>
 						<div className="avatar m-3">
 							<div className="w-20">
-								<Image src={`${process.env.PUBLIC_URL_DEV}/images/profile.png`} alt="" fill={true}/>
+								<Image src={`${process.env.NEXT_PUBLIC_URL}/images/profile.png`} alt="" fill={true}/>
 							</div>
 						</div>
 					</Link>
@@ -29,8 +29,8 @@ export default function Header() {
 					<Nav urlQuery={urlQuery}/>
 				</div>
 				<div className="navbar-end">
-					<Link href={`${process.env.PUBLIC_URL_DEV}/admin`}>Admin</Link>
-					<Link href={`${process.env.PUBLIC_URL_DEV}/api/auth/signout?callbackUrl=/`}>Sign Out</Link>
+					<Link href={`${process.env.NEXT_PUBLIC_URL}/admin`}>Admin</Link>
+					<Link href={`${process.env.NEXT_PUBLIC_URL}/api/auth/signout?callbackUrl=/`}>Sign Out</Link>
 				</div>
 			</div>
 		</header>

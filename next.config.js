@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	env: {
-		PUBLIC_URL_DEV: process.env.PUBLIC_URL_DEV
+		NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL
 	},
 	webpack: (config) => {
 		config.externals = [...config.externals, 'bcrypt'];

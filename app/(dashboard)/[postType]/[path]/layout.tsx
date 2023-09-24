@@ -2,7 +2,7 @@ import { fixDate, buildURLParams } from "@/lib/utils";
 import Image from "next/image";
 
 export default async function PostLayout({ children, params }: { children: React.ReactNode, params: { path: string, chapterNum: string } }) {
-	const postDataRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/${params.path}`);
+	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}`);
 	const postData = await postDataRes.json();
 
 	return (
@@ -32,7 +32,7 @@ export async function generateStaticParams({ params }: { params: { postType: str
 	let allPosts = [];
 
 	const urlQuery = buildURLParams({ fields: ["path"] });
-	const allPathsRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/postTypes/${params.postType}?${urlQuery}`);
+	const allPathsRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes/${params.postType}?${urlQuery}`);
 	const allPaths = await allPathsRes.json();
 
 	for (const { path } of allPaths) {
@@ -45,7 +45,7 @@ export async function generateStaticParams({ params }: { params: { postType: str
 }
 
 export async function generateMetadata({ params }: { params: { path: string } }) {
-	const postDataRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/${params.path}`);
+	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}`);
 	const postData = await postDataRes.json();
 
 	return {

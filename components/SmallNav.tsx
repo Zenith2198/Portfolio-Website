@@ -7,7 +7,7 @@ import { fetcher } from "@/lib/utils";
 // import Search from "./Search";
 
 export default function SmallNav({ urlQuery }: { urlQuery: string }) {
-	const { data, isLoading, error } = useSWR(`${process.env.PUBLIC_URL_DEV}/api/posts?${urlQuery}`, fetcher);
+	const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_URL}/api/posts?${urlQuery}`, fetcher);
 	if (isLoading) return <div className="lg:hidden">Loading...</div>;
   	if (error) return <div className="lg:hidden">Error</div>;
 
@@ -36,31 +36,31 @@ export default function SmallNav({ urlQuery }: { urlQuery: string }) {
 			<ul className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-300 rounded-box">
 				{/* <Search/> */}
 				<li key="longWorks">
-					<Link href={`${process.env.PUBLIC_URL_DEV}/long-stories`} className="break-words">Long Works</Link>
+					<Link href={`${process.env.NEXT_PUBLIC_URL}/long-stories`} className="break-words">Long Works</Link>
 					<ul className="p-2">
 						{longStories.map(({ title, path }, i) => (
 							<li key={i}>
-								<Link href={`${process.env.PUBLIC_URL_DEV}/long-stories/${path}`} className="break-words">{title}</Link>
+								<Link href={`${process.env.NEXT_PUBLIC_URL}/long-stories/${path}`} className="break-words">{title}</Link>
 							</li>
 						))}
 					</ul>
 				</li>
 				<li key="shortWorks">
-					<Link href={`${process.env.PUBLIC_URL_DEV}/short-stories`} className="break-words">Short Works</Link>
+					<Link href={`${process.env.NEXT_PUBLIC_URL}/short-stories`} className="break-words">Short Works</Link>
 					<ul className="p-2">
 						{shortStories.map(({ title, path }, i) => (
 							<li key={i}>
-								<Link href={`${process.env.PUBLIC_URL_DEV}/short-stories/${path}`} className="break-words">{title}</Link>
+								<Link href={`${process.env.NEXT_PUBLIC_URL}/short-stories/${path}`} className="break-words">{title}</Link>
 							</li>
 						))}
 					</ul>
 				</li>
 				<li key="blogs">
-					<Link href={`${process.env.PUBLIC_URL_DEV}/blogs`} className="break-words">Blogs</Link>
+					<Link href={`${process.env.NEXT_PUBLIC_URL}/blogs`} className="break-words">Blogs</Link>
 					<ul className="p-2">
 						{blogs.map(({ title, path }, i) => (
 							<li key={i}>
-								<Link href={`${process.env.PUBLIC_URL_DEV}/blogs/${path}`} className="break-words">{title}</Link>
+								<Link href={`${process.env.NEXT_PUBLIC_URL}/blogs/${path}`} className="break-words">{title}</Link>
 							</li>
 						))}
 					</ul>

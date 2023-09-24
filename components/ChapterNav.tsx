@@ -4,11 +4,11 @@ import ChapterDropdown from "@/components/ChapterDropdown";
 
 export default async function ChapterNav({ className, path, chapterNum }: { className?: string, path: string, chapterNum: string}) {
 	const urlQuery = buildURLParams({ chapters: true  });
-	const postDataRes = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/${path}?${urlQuery}`);
+	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${path}?${urlQuery}`);
 	const postData = await postDataRes.json();
 
 	const chaptersLen = postData.chapters.length;
-	const currURL = `${process.env.PUBLIC_URL_DEV}/${postData.postType}/${path}`;
+	const currURL = `${process.env.NEXT_PUBLIC_URL}/${postData.postType}/${path}`;
 	const currChapter = Number(chapterNum);
 
 	let chapterOptions = [];

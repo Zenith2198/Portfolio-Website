@@ -6,8 +6,8 @@ export default async function Admin() {
 	const session = await getServerSession(authOptions);
 
     if (!session) {
-        redirect(`${process.env.PUBLIC_URL_DEV}/api/auth/signin?callbackUrl=/admin`);
+        redirect(`${process.env.NEXT_PUBLIC_URL}/api/auth/signin?callbackUrl=/admin`);
     }
 
-	redirect(`${process.env.PUBLIC_URL_DEV}/admin/newPost`);
+	redirect(`${process.env.NEXT_PUBLIC_URL}/admin/newPost`);
 }
