@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import type { ChangeEvent } from "react";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Admin Page",
+	description: "",
+}
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
 	const router = useRouter();
@@ -24,10 +30,4 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 			</div>
         </div>
     );
-}
-
-export async function generateMetadata() {
-	return {
-		title: "Admin Page"
-	};
 }

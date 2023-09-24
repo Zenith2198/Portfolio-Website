@@ -7,10 +7,12 @@ export async function GET(request: Request) {
 	const url = new URL(request.url);
 	let findMany = processGETUrl(url);
 
-	findMany.select = {
-		...findMany.select,
-		title: true
-	};
+	if (findMany.select) {
+		findMany.select = {
+			...findMany.select,
+			title: true
+		};
+	}
 
 	const response = await prisma.post.findMany(findMany as Prisma.PostFindManyArgs);
 
