@@ -1,4 +1,5 @@
-import Link from "next/link"
+import Link from "next/link";
+import { getBaseUrl } from "@/lib/utils";
 
 export default function Denied() {
     return (
