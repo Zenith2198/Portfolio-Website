@@ -1,3 +1,5 @@
+"use client"
+
 import { getBaseUrl, buildURLParams } from "@/lib/utils";
 import Link from "next/link";
 import type { Post } from "@prisma/client";
@@ -9,6 +11,7 @@ export default async function PostTypeId({ params }: { params: { postTypeId: str
 	const allPostsOfTypeRes = await fetch(`${getBaseUrl()}/api/posts/postTypes/${params.postTypeId}?${urlQuery}`); 
 	if (!allPostsOfTypeRes.ok) return <div>Error</div>;
 	const allPostsOfType: Array<Post> = await allPostsOfTypeRes.json();
+	console.log(allPostsOfType)
 
 	return (
 		<div>
