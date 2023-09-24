@@ -9,30 +9,30 @@ export default function PostLayout({ children }: { children: React.ReactNode }) 
 	);
 }
 
-// export async function generateStaticParams({ params }: { params: { path: string } }) {
-// 	let allChapters = [];
+export async function generateStaticParams({ params }: { params: { path: string } }) {
+	let allChapters = [];
 
-// 	const urlQuery = buildURLParams({ fields: ["chapters"] });
-// 	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}?${urlQuery}`);
-// 	const postData = await postDataRes.json();
+	const urlQuery = buildURLParams({ fields: ["chapters"] });
+	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}?${urlQuery}`);
+	const postData = await postDataRes.json();
 
-// 	if (postData.chapters.length === 0) {
-// 		allChapters.push({
-// 			chapterNum: "0"
-// 		});
-// 	} else {
-// 		postData.chapters.forEach((chapter: Chapter) => {
-// 			allChapters.push({
-// 				chapterNum: chapter.chapterNum.toString()
-// 			});
-// 		});
-// 	}
+	if (postData.chapters.length === 0) {
+		allChapters.push({
+			chapterNum: "0"
+		});
+	} else {
+		postData.chapters.forEach((chapter: Chapter) => {
+			allChapters.push({
+				chapterNum: chapter.chapterNum.toString()
+			});
+		});
+	}
 
-// 	return allChapters;
-// }
+	return allChapters;
+}
 
-// export async function generateMetadata({ params }: { params: { chapterNum: string } }) {
-// 	return {
-// 		title: params.chapterNum
-// 	};
-// }
+export async function generateMetadata({ params }: { params: { chapterNum: string } }) {
+	return {
+		title: params.chapterNum
+	};
+}

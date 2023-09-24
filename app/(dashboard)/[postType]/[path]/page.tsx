@@ -13,7 +13,7 @@ export default async function Post({ params }: { params: { postType: string, pat
 			<div className="card bg-base-100 shadow-xl text-9xl p-16 text-center">There is nothing here yet!</div>
 		);
     } else if (postData.chapters.length > 1) {
-        redirect(`${process.env.NEXT_PUBLIC_URL}/${params.postType}/${params.path}/${postData.chapters[0].chapterNum}`);
+        // redirect(`${process.env.NEXT_PUBLIC_URL}/${params.postType}/${params.path}/${postData.chapters[0].chapterNum}`);
     }
 
 	return (
