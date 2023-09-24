@@ -1,5 +1,5 @@
 import type { Chapter } from "@prisma/client";
-import { buildURLParams } from "@/lib/utils";
+import { getBaseUrl, buildURLParams } from "@/lib/utils";
 
 export default function PostLayout({ children }: { children: React.ReactNode }) {
 	return (
@@ -13,7 +13,7 @@ export async function generateStaticParams({ params }: { params: { path: string 
 	let allChapters = [];
 
 	const urlQuery = buildURLParams({ fields: ["chapters"] });
-	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}?${urlQuery}`);
+	const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${params.path}?${urlQuery}`);
 	if (!postDataRes.ok) return [];
 	const postData = await postDataRes.json();
 

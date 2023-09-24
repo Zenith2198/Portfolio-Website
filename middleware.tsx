@@ -1,10 +1,11 @@
 import { withAuth, NextRequestWithAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { getBaseUrl } from "@/lib/utils";
 
 export default withAuth(
 	function middleware(request: NextRequestWithAuth) {
 		if ((request.nextUrl.pathname.startsWith("/admin") || request.nextUrl.pathname.startsWith("/api/posts/admin")) && request.nextauth.token?.roleId !== "admin") {
-			return NextResponse.rewrite(new URL(`${process.env.NEXT_PUBLIC_URL}/denied`, request.url));
+			return NextResponse.rewrite(new URL(`${getBaseUrl()}/denied`, request.url));
 		}
 	}
 );

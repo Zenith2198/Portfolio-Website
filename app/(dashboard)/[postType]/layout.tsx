@@ -1,3 +1,5 @@
+import { getBaseUrl } from "@/lib/utils";
+
 export default function PostLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className="flex flex-1">
@@ -7,7 +9,7 @@ export default function PostLayout({ children }: { children: React.ReactNode }) 
 }
 
 export async function generateStaticParams() {
-	const allPostTypesRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes`);
+	const allPostTypesRes = await fetch(`${getBaseUrl()}/api/posts/postTypes`);
 	if (!allPostTypesRes.ok) return [];
 	const allPostTypes = await allPostTypesRes.json();
 
@@ -15,7 +17,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: { postType: string } }) {
-	const allPostTypesRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes`);
+	const allPostTypesRes = await fetch(`${getBaseUrl()}/api/posts/postTypes`);
 	if (!allPostTypesRes.ok) return { title: "Error" };
 	const allPostTypes = await allPostTypesRes.json();
 	let title = allPostTypes.find((type: { postTypeId:string }) => type.postTypeId === params.postType);

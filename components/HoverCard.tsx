@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { fixDate, smartTrim } from "@/lib/utils";
+import { getBaseUrl, fixDate, smartTrim } from "@/lib/utils";
 import type { PostWithChapters } from "@/types/types"
 
 export default function HoverCard({ posts, contentLen = 500 }: { posts: Array<PostWithChapters>, contentLen?: number }) {
 	return (
 		<div className="card w-96 bg-neutral text-primary-content max-w-full items-stretch overflow-hidden">
 			{posts.map((post, i) => (
-				<Link href={`${process.env.NEXT_PUBLIC_URL}/${post.postTypeId}/${post.path}`} key={i} className="card-body p-0 relative border-base-300 [&:not(:first-child)]:border-t [&:not(:last-child)]:border-b h-full group">
+				<Link href={`${getBaseUrl()}/${post.postTypeId}/${post.path}`} key={i} className="card-body p-0 relative border-base-300 [&:not(:first-child)]:border-t [&:not(:last-child)]:border-b h-full group">
 					<div className="h-full flex flex-col">
 						<div className="card-body pb-5 transition duration-300 ease-in-out group-hover:opacity-0">
 							<h2 className="card-title flex justify-center">{post.title}</h2>

@@ -1,8 +1,8 @@
-import { fixDate, buildURLParams } from "@/lib/utils";
+import { getBaseUrl, fixDate, buildURLParams } from "@/lib/utils";
 import Image from "next/image";
 
 export default async function PostLayout({ children, params }: { children: React.ReactNode, params: { path: string, chapterNum: string } }) {
-	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}`);
+	const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${params.path}`);
 	if (!postDataRes.ok) return <div>Error</div>;
 	const postData = await postDataRes.json();
 
@@ -33,7 +33,7 @@ export async function generateStaticParams({ params }: { params: { postType: str
 	let allPosts = [];
 
 	const urlQuery = buildURLParams({ fields: ["path"] });
-	const allPathsRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes/${params.postType}?${urlQuery}`);
+	const allPathsRes = await fetch(`${getBaseUrl()}/api/posts/postTypes/${params.postType}?${urlQuery}`);
 	if (!allPathsRes.ok) return [];
 	const allPaths = await allPathsRes.json();
 
@@ -47,7 +47,7 @@ export async function generateStaticParams({ params }: { params: { postType: str
 }
 
 export async function generateMetadata({ params }: { params: { path: string } }) {
-	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}`);
+	const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${params.path}`);
 	if (!postDataRes.ok) return { title: "Error" };
 	const postData = await postDataRes.json();
 

@@ -1,15 +1,15 @@
-import { buildURLParams } from "@/lib/utils";
+import { getBaseUrl, buildURLParams } from "@/lib/utils";
 import Link from "next/link";
 import ChapterDropdown from "@/components/ChapterDropdown";
 
 export default async function ChapterNav({ className, path, chapterNum }: { className?: string, path: string, chapterNum: string}) {
 	const urlQuery = buildURLParams({ chapters: true  });
-	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${path}?${urlQuery}`);
+	const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${path}?${urlQuery}`);
 	if (!postDataRes.ok) return <div>Error</div>;
 	const postData = await postDataRes.json();
 
 	const chaptersLen = postData.chapters.length;
-	const currURL = `${process.env.NEXT_PUBLIC_URL}/${postData.postType}/${path}`;
+	const currURL = `${getBaseUrl()}/${postData.postType}/${path}`;
 	const currChapter = Number(chapterNum);
 
 	let chapterOptions = [];

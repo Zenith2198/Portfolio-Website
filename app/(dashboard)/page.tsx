@@ -1,14 +1,15 @@
 import { buildURLParams } from "@/lib/utils";
 import type { PostWithChapters } from "@/types/types";
 import HoverCard from "@/components/HoverCard";
+import { getBaseUrl } from "@/lib/utils";
 
 export default async function Dashboard() {
 	const primaryStoryQuery = buildURLParams({ filter: [{ filterField: "primaryStory", filterValue: "true" }], chapters: true });
-	const primaryStoryRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts?${primaryStoryQuery}`); 
+	const primaryStoryRes = await fetch(`${getBaseUrl()}/api/posts?${primaryStoryQuery}`); 
 	const recentShortStoryQuery = buildURLParams({ sort: [{ sortField: "dateModified", desc: true }], take: 1, chapters: true });
-	const recentShortStoryRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes/short-stories?${recentShortStoryQuery}`); 
+	const recentShortStoryRes = await fetch(`${getBaseUrl()}/api/posts/postTypes/short-stories?${recentShortStoryQuery}`); 
 	const recentBlogsQuery = buildURLParams({ sort: [{ sortField: "dateModified", desc: true }], take: 4, chapters: true });
-	const recentBlogsRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes/blogs?${recentBlogsQuery}`);
+	const recentBlogsRes = await fetch(`${getBaseUrl()}/api/posts/postTypes/blogs?${recentBlogsQuery}`);
 
 	if (!primaryStoryRes.ok || !recentShortStoryRes.ok || !recentBlogsRes.ok) return <div>Error</div>;
 

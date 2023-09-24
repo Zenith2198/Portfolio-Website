@@ -3,6 +3,14 @@ import type { Post } from "@prisma/client";
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+export function getBaseUrl() {
+	if (process.env.NEXT_PUBLIC_VERCEL_ENV === "production")
+		return "https://your-production.url";
+	if (process.env.NEXT_PUBLIC_VERCEL_ENV === "preview")
+		return `https://${window.location.origin}`;
+	return "http://localhost:3000";
+}
+
 export function fixDate(unixTimestamp: number) {
 	return moment(unixTimestamp * 1000).format("M.D.YYYY");
 }

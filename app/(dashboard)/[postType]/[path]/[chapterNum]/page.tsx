@@ -1,11 +1,11 @@
-import { buildURLParams } from "@/lib/utils";
+import { getBaseUrl, buildURLParams } from "@/lib/utils";
 import ChapterNav from "@/components/ChapterNav";
 
 export const dynamicParams = false;
 
 export default async function Chapter({ params }: { params: { path: string, chapterNum: string } }) {
 	const urlQuery = buildURLParams({ chapters: true  });
-	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}?${urlQuery}`);
+	const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${params.path}?${urlQuery}`);
 	if (!postDataRes.ok) return <div>Error</div>;
 	const postData = await postDataRes.json();
 

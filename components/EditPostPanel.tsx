@@ -5,7 +5,7 @@ import type { FormEvent, ChangeEvent, MouseEvent } from "react";
 import type { PostType, Post, Chapter } from "@prisma/client";
 import type { PostWithChapters } from "@/types/types";
 import useSWR from "swr";
-import { fetcher, isEmpty } from "@/lib/utils";
+import { getBaseUrl, fetcher, isEmpty } from "@/lib/utils";
 import Editor from "@/components/Editor";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
@@ -76,9 +76,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	}, [editedChapters]);
 
 	//making GET requests
-	const postTypesResponse = useSWR(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes`, fetcher);
-	const postTitlesResponse = useSWR(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTitles`, fetcher);
-	const postsResponse = useSWR(`${process.env.NEXT_PUBLIC_URL}/api/posts?sort=-dateModified`, fetcher);
+	const postTypesResponse = useSWR(`${getBaseUrl()}/api/posts/postTypes`, fetcher);
+	const postTitlesResponse = useSWR(`${getBaseUrl()}/api/posts/postTitles`, fetcher);
+	const postsResponse = useSWR(`${getBaseUrl()}/api/posts?sort=-dateModified`, fetcher);
 	if (postTypesResponse.isLoading || postTitlesResponse.isLoading || postsResponse.isLoading) return <div>Loading...</div>;
   	if (postTypesResponse.error || postTitlesResponse.error || postsResponse.error) return <div>Error</div>;
 	const allPostTypes: Array<PostType> = postTypesResponse.data;
@@ -125,7 +125,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	async function handlePost (event: ChangeEvent<HTMLSelectElement>) {
 		setPath(event.target.value);
 
-		const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${event.target.value}?chapters=true`);
+		const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${event.target.value}?chapters=true`);
 		const postData = await postDataRes.json();
 		setTitle(postData.title);
 		setPrevPost(postData);
@@ -370,7 +370,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (editLoadingModal) {
 			editLoadingModal.checked = true;
 		}
-		const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/admin/deletePost`, {
+		const res = await fetch(`${getBaseUrl()}/api/posts/admin/deletePost`, {
 			method: "POST",
 			body: JSON.stringify({path: path})
 		}).then((res) => res.json());
@@ -399,7 +399,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			editLoadingModal.checked = true;
 		}
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/admin/editPost`, {
+		const res = await fetch(`${getBaseUrl()}/api/posts/admin/editPost`, {
 			method: "POST",
 			body: getEditedForm()
 		}).then((res) => res.json());

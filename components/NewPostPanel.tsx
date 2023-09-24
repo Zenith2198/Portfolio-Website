@@ -5,7 +5,7 @@ import Editor from "@/components/Editor";
 import type { ChangeEvent, FormEvent } from "react";
 import type { PostType } from "@prisma/client";
 import useSWR from "swr";
-import { fetcher } from "@/lib/utils";
+import { fetcher, getBaseUrl } from "@/lib/utils";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
 	const [postResponse, setPostResponse] = useState("");
@@ -17,8 +17,8 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 	]);
 	
-	const postTypesResponse = useSWR(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes`, fetcher);
-	const postTitlesResponse = useSWR(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTitles`, fetcher);
+	const postTypesResponse = useSWR(`${getBaseUrl()}/api/posts/postTypes`, fetcher);
+	const postTitlesResponse = useSWR(`${getBaseUrl()}/api/posts/postTitles`, fetcher);
 	if (postTypesResponse.isLoading || postTitlesResponse.isLoading) return <div>Loading...</div>;
   	if (postTypesResponse.error || postTitlesResponse.error) return <div>Error</div>;
 	const allPostTypes: Array<PostType> = postTypesResponse.data;
@@ -86,7 +86,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 		formData.append("chapters", JSON.stringify(chapters));
 
-		const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/admin/newPost`, {
+		const res = await fetch(`${getBaseUrl()}/api/posts/admin/newPost`, {
 			method: "POST",
 			body: formData
 		}).then((res) => res.json());

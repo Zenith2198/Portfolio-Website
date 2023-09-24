@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { Prisma } from "@prisma/client";
 import type { Post } from "@prisma/client";
+import { getBaseUrl } from "@/lib/utils";
 
 export async function POST(request: Request) {
 	const formData = await request.formData();
@@ -56,7 +57,7 @@ export async function POST(request: Request) {
 
 			if (image) {
 				//TODO: upload image to AWS S3 and add URL to post.image
-				post.imageLink = `${process.env.NEXT_PUBLIC_URL}/images/bonebreaker.png`;
+				post.imageLink = `${getBaseUrl()}/images/bonebreaker.png`;
 			}
 
 			const { postId } = await tx.post.update({

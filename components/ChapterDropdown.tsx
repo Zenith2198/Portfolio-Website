@@ -1,11 +1,11 @@
 "use client"
 
 import useSWR from "swr";
-import { fetcher } from "@/lib/utils";
+import { fetcher, getBaseUrl } from "@/lib/utils";
 import Link from "next/link";
 
 export default function ChapterDropdown({ className, path, chapterNum, urlQuery }: { className?: string, path: string, chapterNum: string, urlQuery: string}) {
-	const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_URL}/api/posts/${path}?${urlQuery}`, fetcher);
+	const { data, isLoading, error } = useSWR(`${getBaseUrl()}/api/posts/${path}?${urlQuery}`, fetcher);
 	if (isLoading) return <div>Loading...</div>;
   	if (error) return <div>Error</div>;
 
@@ -28,7 +28,7 @@ export default function ChapterDropdown({ className, path, chapterNum, urlQuery 
 				{/* @ts-ignore */}
 				{data.chapters.map((chapter, i) => (
 					<li onClick={unfocus} key={i}>
-						<Link className={`${i+1 == chapterNum ? "btn-disabled btn-active" : ""}`} href={`${process.env.NEXT_PUBLIC_URL}/${data.postTypeId}/${path}/${i+1}`}>Chapter {i+1}</Link>
+						<Link className={`${i+1 == chapterNum ? "btn-disabled btn-active" : ""}`} href={`${getBaseUrl()}/${data.postTypeId}/${path}/${i+1}`}>Chapter {i+1}</Link>
 					</li>
 				))}
 			</ul>
