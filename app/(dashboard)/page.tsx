@@ -11,7 +11,7 @@ export default async function Dashboard() {
 	const recentBlogsQuery = buildURLParams({ sort: [{ sortField: "dateModified", desc: true }], take: 4, chapters: true });
 	const recentBlogsRes = await fetch(`${getBaseUrl()}/api/posts/postTypes/blogs?${recentBlogsQuery}`);
 
-	if (!primaryStoryRes.ok || !recentShortStoryRes.ok || !recentBlogsRes.ok) return <div>hi: {process.env.NEXT_PUBLIC_VERCEL_URL} is your env variable</div>;
+	if (!primaryStoryRes.ok || !recentShortStoryRes.ok || !recentBlogsRes.ok) return <div>Error</div>;
 
 	const primaryStoryArr: Array<PostWithChapters> = await primaryStoryRes.json();
 	const recentShortStoryArr: Array<PostWithChapters> = await recentShortStoryRes.json();
