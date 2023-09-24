@@ -2,15 +2,13 @@
 
 import Link from "next/link";
 import type { Post } from "@prisma/client";
-import useSWR from "swr";
-import { getBaseUrl, fetcher } from "@/lib/utils";
+import { getBaseUrl } from "@/lib/utils";
 // import Search from "./Search";
 
 export default function SmallNav({ posts }: { posts: Post[] }) {
 	let shortStories: Array<Post> = [];
 	let longStories: Array<Post> = [];
 	let blogs: Array<Post> = [];
-	// TODO: optimize to not use allPostData
 	posts.forEach((post: Post) => {
 		switch(post.postTypeId) {
 			case "short-stories":
