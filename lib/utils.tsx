@@ -1,10 +1,11 @@
-import moment from "moment";
+// import moment from "moment";
 import type { Post } from "@prisma/client";
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function fixDate(unixTimestamp: number) {
-	return moment(unixTimestamp * 1000).format("M.D.YYYY");
+	return ("M.D.YYYY")
+	// return moment(unixTimestamp * 1000).format("M.D.YYYY");
 }
 
 export function smartTrim(str: string, len: number) {
