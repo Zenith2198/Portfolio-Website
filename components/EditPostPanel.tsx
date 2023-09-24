@@ -5,7 +5,7 @@ import type { FormEvent, ChangeEvent, MouseEvent } from "react";
 import type { PostType, Post, Chapter } from "@prisma/client";
 import type { PostWithChapters } from "@/types/types";
 import useSWR from "swr";
-import { fetcher, isEmpty } from "@/lib/utils2";
+import { fetcher, isEmpty } from "@/lib/utils";
 import Editor from "@/components/Editor";
 
 export default function AdminPanel({ className="" }: { className?: string }) {

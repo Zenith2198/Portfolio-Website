@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SmallNav from "./SmallNav";
 import Nav from "./Nav";
-import { buildURLParams } from "@/lib/utils2";
+import { buildURLParams } from "@/lib/utils";
 import Image from "next/image";
 // import Search from "./Search";
 

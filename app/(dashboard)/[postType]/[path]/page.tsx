@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
-import { buildURLParams } from "@/lib/utils2";
+import { buildURLParams } from "@/lib/utils";
 
 export const dynamicParams = false;
 
 export default async function Post({ params }: { params: { postType: string, path: string } }) {
 	const urlQuery = buildURLParams({ chapters: true });
 	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}?${urlQuery}`);
+	if (!postDataRes.ok) return <div>Error</div>;
 	const postData = await postDataRes.json();
 
 	if (postData.chapters.length === 0) {

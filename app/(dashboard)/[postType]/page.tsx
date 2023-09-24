@@ -1,4 +1,4 @@
-import { buildURLParams } from "@/lib/utils2";
+import { buildURLParams } from "@/lib/utils";
 import Link from "next/link";
 import type { Post } from "@prisma/client";
 
@@ -7,6 +7,7 @@ export const dynamicParams = false;
 export default async function PostType({ params }: { params: { postType: string } }) {
 	const urlQuery = buildURLParams({ sort: [{ sortField: "dateModified", desc: true }] });
 	const allPostsOfTypeRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes/${params.postType}?${urlQuery}`); 
+	if (!allPostsOfTypeRes.ok) return <div>Error</div>;
 	const allPostsOfType: Array<Post> = await allPostsOfTypeRes.json();
 
 	return (

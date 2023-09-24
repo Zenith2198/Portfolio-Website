@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fixDate, smartTrim } from "@/lib/utils2";
+import { fixDate, smartTrim } from "@/lib/utils";
 import type { PostWithChapters } from "@/types/types"
 
 export default function HoverCard({ posts, contentLen = 500 }: { posts: Array<PostWithChapters>, contentLen?: number }) {
