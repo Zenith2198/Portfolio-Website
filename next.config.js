@@ -8,7 +8,7 @@ const nextConfig = {
 		return config;
 	},
 	images: {
-		domains: ["localhost", "https://portfolio-website-navy-three.vercel.app"]
+		domains: ["localhost"]
 	}
 };
 
