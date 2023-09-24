@@ -1,4 +1,4 @@
-export default async function PostLayout({ children }: { children: React.ReactNode }) {
+export default function PostLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className="flex flex-1">
 			{children}

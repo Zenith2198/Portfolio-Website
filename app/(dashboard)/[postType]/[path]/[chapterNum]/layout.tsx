@@ -1,7 +1,7 @@
 import type { Chapter } from "@prisma/client";
 import { buildURLParams } from "@/lib/utils";
 
-export default async function PostLayout({ children }: { children: React.ReactNode }) {
+export default function PostLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div>
 			{children}

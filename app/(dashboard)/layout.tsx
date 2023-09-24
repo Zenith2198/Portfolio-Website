@@ -2,7 +2,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Image from "next/image";
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className="flex flex-col min-h-screen">
 			<Image src={`${process.env.PUBLIC_URL_DEV}/images/bg.jpg`} alt="" fill={true} className="fixed z-0 object-cover min-h-full max-w-full"/>
@@ -13,4 +13,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
 			<Footer/>
 		</div>
 	);
+}
+
+export async function generateMetadata() {
+	return {
+		title: "Paig's Bog"
+	};
 }

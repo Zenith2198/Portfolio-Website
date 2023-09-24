@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { Prisma } from "@prisma/client";
 import type { Post, Chapter } from "@prisma/client";
-import type { PostWithChapters } from "@/types/types";
 
 export async function POST(request: Request) {
 	const formData = await request.formData();

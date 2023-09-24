@@ -1,12 +1,6 @@
-import type { Metadata } from "next";
 import { buildURLParams } from "@/lib/utils";
 import type { PostWithChapters } from "@/types/types";
 import HoverCard from "@/components/HoverCard";
-
-export let metadata: Metadata = {
-	title: "Paig's Bog",
-	description: "",
-}
 
 export default async function Dashboard() {
 	const primaryStoryQuery = buildURLParams({ filter: [{ filterField: "primaryStory", filterValue: "true" }], chapters: true });

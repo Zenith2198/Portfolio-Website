@@ -13,30 +13,28 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	const [postTypeId, setPostTypeId] = useState("");
 	const [path, setPath] = useState("");
 	const [title, setTitle] = useState("");
-	const [editedFields, setEditedFields] = useState({
-		title: false,
-		image: false,
-		primaryStory: false,
-		wip: false,
-		chaptersContainer: {
-			edited: false,
-			chapters: [
-				{
-					edited: false,
-					title: false,
-					content: false
-				}
-			]
-		}
-	});
-	const [postResponse, setPostResponse] = useState("");
-	const [prevPost, setPrevPost] = useState({} as PostWithChapters);
 	const [chapters, setChapters] = useState([
 		{
 			title: "",
 			content: ""
 		}
 	]);
+	const [editedFields, setEditedFields] = useState({
+		title: false,
+		image: false,
+		primaryStory: false,
+		wip: false
+	});
+	const [chaptersIsEdited, setChaptersIsEdited] = useState(false);
+	const [editedChapters, setEditedChapters] = useState([
+		{
+			edited: false,
+			title: false,
+			content: false
+		}
+	]);
+	const [postResponse, setPostResponse] = useState("");
+	const [prevPost, setPrevPost] = useState({} as PostWithChapters);
 
 	//setting up useEffects
 	useEffect(() => {
@@ -70,15 +68,12 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 				})
 			}
 			setChapters(tempChapters);
-			setEditedFields({
-				...editedFields,
-				chaptersContainer: {
-					edited: false,
-					chapters
-				}
-			})
+			setEditedChapters(chapters);
 		}
 	}, [chapters]);
+	useEffect(() => {
+		setChaptersIsEdited((prevPost.chapters && editedChapters.length !== prevPost.chapters.length) || isEdited(editedChapters));
+	}, [editedChapters]);
 
 	//making GET requests
 	const postTypesResponse = useSWR("/api/posts/postTypes", fetcher);
@@ -120,16 +115,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		setTitle("");
 		setPostResponse("");
 		setPrevPost({} as PostWithChapters);
-		setChapters([]);
 
-		const primaryStory = document.getElementById("editPrimaryStory")  as HTMLInputElement;
-		if (primaryStory) {
-			primaryStory.checked = false;
-		}
-		const wip = document.getElementById("editWIP")  as HTMLInputElement;
-		if (wip) {
-			wip.checked = false;
-		}
 		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
 		if (editLoadingModal) {
 			editLoadingModal.checked = false;
@@ -143,12 +129,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		const postData = await postDataRes.json();
 		setTitle(postData.title);
 		setPrevPost(postData);
+
 		const image = document.getElementById("editImage") as HTMLInputElement;
 		if (image) {
-			setEditedFields({
-				...editedFields,
-				image: false
-			});
 			image.value = "";
 		}
 	}
@@ -191,6 +174,8 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	}
 
 	function handleImage (event: ChangeEvent<HTMLInputElement>) {
+		if (event.target.files) {
+		}
 		//set the image border to green if an image has been selected
 		setEditedFields({
 			...editedFields,
@@ -233,15 +218,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		cs.pop();
 		setChapters(cs);
 
-		let tempChapters = [...editedFields.chaptersContainer.chapters];
+		let tempChapters = [...editedChapters];
 		tempChapters.pop();
-		setEditedFields({
-			...editedFields,
-			chaptersContainer: {
-				edited: tempChapters.length === prevPost.chapters.length ? false : true,
-				chapters: tempChapters
-			}
-		});
+		setEditedChapters(tempChapters);
 	};
 	const handleAddChapter = async () => {
 		let cs = [...chapters];
@@ -251,21 +230,15 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		});
 		setChapters(cs);
 
-		let tempChapters = [...editedFields.chaptersContainer.chapters];
-		const title = prevPost.chapters[tempChapters.length] && prevPost.chapters[tempChapters.length].title !== "";
-		const content = prevPost.chapters[tempChapters.length] && prevPost.chapters[tempChapters.length].content !== "";
+		let tempChapters = [...editedChapters];
+		const title = !!(prevPost.chapters[tempChapters.length] && prevPost.chapters[tempChapters.length].title !== "");
+		const content = !!(prevPost.chapters[tempChapters.length] && prevPost.chapters[tempChapters.length].content !== "");
 		tempChapters.push({
-			edited: title || content,
+			edited: !prevPost.chapters[tempChapters.length] || title || content,
 			title,
 			content
 		});
-		setEditedFields({
-			...editedFields,
-			chaptersContainer: {
-				edited: tempChapters.length === prevPost.chapters.length ? false : true,
-				chapters: tempChapters
-			}
-		});
+		setEditedChapters(tempChapters);
 	}
 	function handleChapterTitle (event: ChangeEvent<HTMLInputElement>, i: number) {
 		let cs = [...chapters];
@@ -273,25 +246,21 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		setChapters(cs);
 
 		//set the chapter title border to green if it has been edited
-		let tempChapters = [...editedFields.chaptersContainer.chapters];
+		let tempChapters = [...editedChapters];
 		if (prevPost.chapters[i] && event.target.value !== prevPost.chapters[i].title) {
 			tempChapters[i] = {
-				...tempChapters[i],
-				title: true
+				edited: true,
+				title: true,
+				content: tempChapters[i].content
 			}
 		} else {
 			tempChapters[i] = {
-				...tempChapters[i],
-				title: false
+				edited: !(prevPost.chapters[i]) || tempChapters[i].content,
+				title: false,
+				content: tempChapters[i].content,
 			}
 		}
-		setEditedFields({
-			...editedFields,
-			chaptersContainer: {
-				edited: editedFields.chaptersContainer.edited,
-				chapters: tempChapters
-			}
-		});
+		setEditedChapters(tempChapters);
 	}
 	function handleChapterContent (chapterContent: string, i: number) {
 		let cs = [...chapters];
@@ -299,46 +268,104 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		setChapters(cs);
 
 		//set the chapter content border to green if it has been edited
-		let tempChapters = [...editedFields.chaptersContainer.chapters];
+		let tempChapters = [...editedChapters];
 		if (prevPost.chapters[i] && chapterContent !== prevPost.chapters[i].content) {
 			tempChapters[i] = {
-				...tempChapters[i],
+				edited: true,
+				title: tempChapters[i].title,
 				content: true
 			}
 		} else {
 			tempChapters[i] = {
-				...tempChapters[i],
+				edited: !(prevPost.chapters[i]) || tempChapters[i].title,
+				title: tempChapters[i].title,
 				content: false
 			}
 		}
-		setEditedFields({
-			...editedFields,
-			chaptersContainer: {
-				edited: editedFields.chaptersContainer.edited,
-				chapters: tempChapters
-			}
-		});
+		setEditedChapters(tempChapters);
 	}
 
 	//check if nothing has been edited
-	function isEdited(obj: Object = editedFields) {
-		let res = false;
-		Object.values(obj).forEach((v) => {
+	function isEdited(obj: Object) {
+		for (const v of Object.values(obj)) {
 			if (v === true || v.edited === true) {
-				res = true;
+				return true;
 			} else if (typeof v === "object") {
-				res = isEdited(v);
+				if (isEdited(v)) {
+					return true;
+				}
 			} else if (v.constructor === Array) {
-				v.forEach((o) => {
-					res = isEdited(o);
-				});
+				for (const o of v) {
+					if (isEdited(o)) {
+						return true;
+					}
+				}
 			}
-		});
-		return res;
+		}
+		return false;
+	}
+
+	function getEditedForm() {
+		let formData = new FormData();
+		formData.append("oldTitle", prevPost.title);
+
+		if (editedFields.title) {
+			formData.append("title", title);
+		}
+		if (editedFields.image) {
+			const image = document.getElementById("editImage") as HTMLInputElement;
+			if (image.files) {
+				formData.append("image", image.files[0])
+			}
+		}
+		if (editedFields.primaryStory) {
+			const primaryStory = document.getElementById("editPrimaryStory")  as HTMLInputElement;
+			if (primaryStory) {
+				formData.append("primaryStory", JSON.stringify(primaryStory.checked));
+			}
+		}
+		if (editedFields.wip) {
+			const wip = document.getElementById("editWIP")  as HTMLInputElement;
+			if (wip) {
+				formData.append("wip", JSON.stringify(wip.checked));
+			}
+		}
+
+		if (chaptersIsEdited) {
+			let editedChaptersObj = {} as Record<string, number | { title: string, content: string }>;
+
+			if (chapters.length < prevPost.chapters.length) {
+				formData.append("chaptersDeleted", JSON.stringify(Array.from(
+					{ length: prevPost.chapters.length - chapters.length },
+					(v, i) => chapters.length + i + 1
+				))); //creates list of numbers starting from chapters.length and ending at prevPost.chapters.length
+			}
+
+			editedChapters.forEach((v, i) => {
+				if (v.edited) {
+					let chapter = {} as { title: string, content: string };
+					if (i > prevPost.chapters.length - 1) {
+						chapter.title = chapters[i].title;
+						chapter.content = chapters[i].content;
+					} else {
+						if (v.title) {
+							chapter.title = chapters[i].title;
+						}
+						if (v.content) {
+							chapter.content = chapters[i].content;
+						}
+					}
+					editedChaptersObj[i] = chapter;
+				}
+			});
+			formData.append("chapters", JSON.stringify(editedChaptersObj))
+		}
+
+		return formData;
 	}
 
 	//onClick handler for delete button
-	async function handleDelete (event: MouseEvent<HTMLButtonElement>) {
+	async function handleDelete () {
 		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
 		if (editLoadingModal) {
 			editLoadingModal.checked = true;
@@ -361,8 +388,8 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			titleError.scrollIntoView({ behavior: "smooth" });
 			return false;
 		}
-		
-		if (isEdited()) {
+
+		if (!isEdited(editedFields) && !chaptersIsEdited) {
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 			return false;
 		}
@@ -371,17 +398,10 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (editLoadingModal) {
 			editLoadingModal.checked = true;
 		}
-		let formData = new FormData(event.currentTarget);
-		//@ts-ignore
-		if (formData.get("image").size === 0) {
-			formData.delete("image");
-		}
-		formData.append("chapters", JSON.stringify(chapters));
-		//TODO: only submit fields that are changed
 
 		const res = await fetch(`${process.env.PUBLIC_URL_DEV}/api/posts/admin/editPost`, {
 			method: "POST",
-			body: formData
+			body: getEditedForm()
 		}).then((res) => res.json());
 		if (res.response === "success") {
 			setPostResponse(res.response);
@@ -441,14 +461,14 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 								</div>
 								<div className="form-control">
 									<span className="label-text">Primary Story?</span> 
-									<input id="editPrimaryStory" onChange={handlePrimaryStory} type="checkbox" name="primaryStory" value="true" className={`${editedFields.primaryStory ? "checkbox-success" : ""} checkbox`} />
+									<input id="editPrimaryStory" value="true" onChange={handlePrimaryStory} type="checkbox" name="primaryStory" className={`${editedFields.primaryStory ? "checkbox-success" : ""} checkbox`} />
 								</div>
 								<div className="form-control">
 									<span className="label-text">WIP</span> 
-									<input id="editWIP" onChange={handleWIP} type="checkbox" name="wip" value="true" className={`${editedFields.wip ? "checkbox-success" : ""} checkbox`} />
+									<input id="editWIP" value="true" onChange={handleWIP} type="checkbox" name="wip" className={`${editedFields.wip ? "checkbox-success" : ""} checkbox`} />
 								</div>
 								<button type="submit" className="btn btn-outline">Submit</button>
-								<div id="editChaptersContainer" className={`${editedFields.chaptersContainer.edited ? "textarea-success" : ""} textarea`}>
+								<div className={`${chaptersIsEdited ? "textarea-success" : ""} textarea`}>
 									{postTypeId === "blogs" ? <div></div> :
 										<div>
 											<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
@@ -457,16 +477,16 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 										</div>
 									}
 									{chapters.map(({ title: chapterTitle }, i) => (
-										<div id={`editChapter${i}`} key={i} className={`${editedFields.chaptersContainer.chapters[i].edited ? "input-success" : ""} textarea`}>
+										<div key={i} className={`${editedChapters[i].edited ? "input-success" : ""} textarea`}>
 											{postTypeId === "blogs" ? <div></div> :
 												<div>
 													<label className="label">
 														<span className="label-text">Chapter Title</span>
 													</label>
-													<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className={`${editedFields.chaptersContainer.chapters[i].title ? "input-success" : ""} input input-bordered w-full max-w-xs`}/>
+													<input onChange={(e) => handleChapterTitle(e, i)} value={chapterTitle} type="text" placeholder="Title" className={`${editedChapters[i].title ? "input-success" : ""} input input-bordered w-full max-w-xs`}/>
 												</div>
 											}
-											<Editor id={`editChapterEditor${i}`} data={chapters[i].content} setData={(chapterContent: string) => handleChapterContent(chapterContent, i)} className={`${editedFields.chaptersContainer.chapters[i].content ? "textarea-success" : ""} textarea`}/>
+											<Editor data={chapters[i].content} setData={(chapterContent: string) => handleChapterContent(chapterContent, i)} className={`${editedChapters[i].content ? "textarea-success" : ""} textarea`}/>
 										</div>
 									))}
 								</div>
@@ -521,7 +541,12 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 								</div>
 							</div>
 							:
-							<div></div>
+							<div>
+								<h3 className="font-bold text-lg">Error</h3>
+								<div className="modal-action">
+									<label htmlFor="editLoadingModal" className="btn">Close</label>
+								</div>
+							</div>
 						}
 					</div>
 				}
