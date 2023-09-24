@@ -1,7 +1,16 @@
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+"use client"
+
+import "./globals.css";
+import AuthProvider from "./context/AuthProvider";
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<div className="flex flex-col min-h-screen">
-			{children}
-		</div>
+		<html lang="en" className="min-w-screen min-h-screen overflow-x-hidden m-0 p-0">
+			<body className="min-w-screen min-h-screen overflow-x-hidden m-0 p-0">
+				<AuthProvider>
+					{children}
+				</AuthProvider>
+			</body>
+		</html>
 	);
 }
