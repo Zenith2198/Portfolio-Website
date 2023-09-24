@@ -7,7 +7,7 @@ import { fetcher, getBaseUrl } from "@/lib/utils";
 
 export default function Nav({ urlQuery }: { urlQuery: string }) {
 	const { data, isLoading, error } = useSWR(`${getBaseUrl()}/api/posts?${urlQuery}`, fetcher);
-	console.log(data)
+	console.log(`${getBaseUrl()}/api/posts?${urlQuery}`)
 	console.log(error)
 	if (isLoading) return <div>Loading...</div>;
   	if (error) return <div>Error</div>;
