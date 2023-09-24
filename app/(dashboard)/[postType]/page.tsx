@@ -1,4 +1,4 @@
-import { buildURLParams } from "@/lib/utils";
+import { buildURLParams } from "@/lib/utils2";
 import Link from "next/link";
 import type { Post } from "@prisma/client";
 

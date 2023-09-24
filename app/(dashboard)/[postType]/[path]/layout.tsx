@@ -1,4 +1,4 @@
-import { fixDate, buildURLParams } from "@/lib/utils";
+import { fixDate, buildURLParams } from "@/lib/utils2";
 import Image from "next/image";
 
 export default async function PostLayout({ children, params }: { children: React.ReactNode, params: { path: string, chapterNum: string } }) {

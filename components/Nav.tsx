@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { Post } from "@prisma/client";
 import useSWR from "swr";
-import { fetcher } from "@/lib/utils";
+import { fetcher } from "@/lib/utils2";
 
 export default function Nav({ urlQuery }: { urlQuery: string }) {
 	const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_URL}/api/posts?${urlQuery}`, fetcher);

@@ -1,5 +1,5 @@
 import type { Chapter } from "@prisma/client";
-import { buildURLParams } from "@/lib/utils";
+import { buildURLParams } from "@/lib/utils2";
 
 export default function PostLayout({ children }: { children: React.ReactNode }) {
 	return (

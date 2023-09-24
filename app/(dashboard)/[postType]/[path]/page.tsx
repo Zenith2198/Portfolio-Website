@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { buildURLParams } from "@/lib/utils";
+import { buildURLParams } from "@/lib/utils2";
 
 export const dynamicParams = false;
 

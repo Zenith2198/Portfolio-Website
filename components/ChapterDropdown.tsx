@@ -1,7 +1,7 @@
 "use client"
 
 import useSWR from "swr";
-import { fetcher } from "@/lib/utils";
+import { fetcher } from "@/lib/utils2";
 import Link from "next/link";
 
 export default function ChapterDropdown({ className, path, chapterNum, urlQuery }: { className?: string, path: string, chapterNum: string, urlQuery: string}) {

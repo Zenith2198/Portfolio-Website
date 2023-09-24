@@ -1,4 +1,4 @@
-import { buildURLParams } from "@/lib/utils";
+import { buildURLParams } from "@/lib/utils2";
 import type { PostWithChapters } from "@/types/types";
 import HoverCard from "@/components/HoverCard";
 

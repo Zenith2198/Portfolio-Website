@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { Post } from "@prisma/client";
 import useSWR from "swr";
-import { fetcher } from "@/lib/utils";
+import { fetcher } from "@/lib/utils2";
 // import Search from "./Search";
 
 export default function SmallNav({ urlQuery }: { urlQuery: string }) {

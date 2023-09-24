@@ -5,7 +5,7 @@ import Editor from "@/components/Editor";
 import type { ChangeEvent, FormEvent } from "react";
 import type { PostType } from "@prisma/client";
 import useSWR from "swr";
-import { fetcher } from "@/lib/utils";
+import { fetcher } from "@/lib/utils2";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
 	const [postResponse, setPostResponse] = useState("");
