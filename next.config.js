@@ -1,3 +1,5 @@
+import { getBaseUrl } from "@/lib/utils";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	env: {
@@ -8,7 +10,7 @@ const nextConfig = {
 		return config;
 	},
 	images: {
-		domains: ["localhost"]
+		domains: [getBaseUrl()]
 	}
 };
 
