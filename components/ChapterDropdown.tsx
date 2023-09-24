@@ -5,7 +5,7 @@ import { fetcher } from "@/lib/utils";
 import Link from "next/link";
 
 export default function ChapterDropdown({ className, path, chapterNum, urlQuery }: { className?: string, path: string, chapterNum: string, urlQuery: string}) {
-	const { data, isLoading, error } = useSWR(`/api/posts/${path}?${urlQuery}`, fetcher);
+	const { data, isLoading, error } = useSWR(`${process.env.PUBLIC_URL_DEV}/api/posts/${path}?${urlQuery}`, fetcher);
 	if (isLoading) return <div>Loading...</div>;
   	if (error) return <div>Error</div>;
 

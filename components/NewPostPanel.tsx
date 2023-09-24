@@ -17,8 +17,8 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 	]);
 	
-	const postTypesResponse = useSWR("/api/posts/postTypes", fetcher);
-	const postTitlesResponse = useSWR("/api/posts/postTitles", fetcher);
+	const postTypesResponse = useSWR(`${process.env.PUBLIC_URL_DEV}/api/posts/postTypes`, fetcher);
+	const postTitlesResponse = useSWR(`${process.env.PUBLIC_URL_DEV}/api/posts/postTitles`, fetcher);
 	if (postTypesResponse.isLoading || postTitlesResponse.isLoading) return <div>Loading...</div>;
   	if (postTypesResponse.error || postTitlesResponse.error) return <div>Error</div>;
 	const allPostTypes: Array<PostType> = postTypesResponse.data;

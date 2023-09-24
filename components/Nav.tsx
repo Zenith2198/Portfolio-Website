@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/utils";
 
 export default function Nav({ urlQuery }: { urlQuery: string }) {
-	const { data, isLoading, error } = useSWR(`/api/posts?${urlQuery}`, fetcher);
+	const { data, isLoading, error } = useSWR(`${process.env.PUBLIC_URL_DEV}/api/posts?${urlQuery}`, fetcher);
 	if (isLoading) return <div>Loading...</div>;
   	if (error) return <div>Error</div>;
 

@@ -76,9 +76,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	}, [editedChapters]);
 
 	//making GET requests
-	const postTypesResponse = useSWR("/api/posts/postTypes", fetcher);
-	const postTitlesResponse = useSWR("/api/posts/postTitles", fetcher);
-	const postsResponse = useSWR("/api/posts?sort=-dateModified", fetcher);
+	const postTypesResponse = useSWR(`${process.env.PUBLIC_URL_DEV}/api/posts/postTypes`, fetcher);
+	const postTitlesResponse = useSWR(`${process.env.PUBLIC_URL_DEV}/api/posts/postTitles`, fetcher);
+	const postsResponse = useSWR(`${process.env.PUBLIC_URL_DEV}/api/posts?sort=-dateModified`, fetcher);
 	if (postTypesResponse.isLoading || postTitlesResponse.isLoading || postsResponse.isLoading) return <div>Loading...</div>;
   	if (postTypesResponse.error || postTitlesResponse.error || postsResponse.error) return <div>Error</div>;
 	const allPostTypes: Array<PostType> = postTypesResponse.data;

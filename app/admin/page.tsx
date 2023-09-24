@@ -9,5 +9,5 @@ export default async function Admin() {
         redirect(`${process.env.PUBLIC_URL_DEV}/api/auth/signin?callbackUrl=/admin`);
     }
 
-	redirect('/admin/newPost');
+	redirect(`${process.env.PUBLIC_URL_DEV}/admin/newPost`);
 }

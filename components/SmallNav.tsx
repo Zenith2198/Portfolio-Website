@@ -7,7 +7,7 @@ import { fetcher } from "@/lib/utils";
 // import Search from "./Search";
 
 export default function SmallNav({ urlQuery }: { urlQuery: string }) {
-	const { data, isLoading, error } = useSWR(`/api/posts?${urlQuery}`, fetcher);
+	const { data, isLoading, error } = useSWR(`${process.env.PUBLIC_URL_DEV}/api/posts?${urlQuery}`, fetcher);
 	if (isLoading) return <div className="lg:hidden">Loading...</div>;
   	if (error) return <div className="lg:hidden">Error</div>;
 
