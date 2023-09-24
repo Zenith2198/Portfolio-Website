@@ -8,7 +8,7 @@ const nextConfig = {
 		return config;
 	},
 	images: {
-		domains: [process.env.NEXT_PUBLIC_VERCEL_URL]
+		domains: ["localhost", "https://portfolio-website-navy-three.vercel.app"]
 	}
 };
 
