@@ -1,5 +1,5 @@
 import { getBaseUrl, buildURLParams } from "@/lib/utils";
-import ChapterNav from "@/components/ChapterNav";
+// import ChapterNav from "@/components/ChapterNav";
 
 export const dynamicParams = false;
 

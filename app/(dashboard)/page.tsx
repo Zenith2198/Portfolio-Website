@@ -1,6 +1,6 @@
 import { buildURLParams } from "@/lib/utils";
 import type { PostWithChapters } from "@/types/types";
-import HoverCard from "@/components/HoverCard";
+// import HoverCard from "@/components/HoverCard";
 import { getBaseUrl } from "@/lib/utils";
 
 export default async function Dashboard() {
