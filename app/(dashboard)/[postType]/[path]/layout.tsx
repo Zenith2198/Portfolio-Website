@@ -34,7 +34,7 @@ export async function generateStaticParams({ params }: { params: { postType: str
 
 	const urlQuery = buildURLParams({ fields: ["path"] });
 	const allPathsRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes/${params.postType}?${urlQuery}`);
-	if (!allPathsRes.ok) return <div>Error</div>;
+	if (!allPathsRes.ok) return [];
 	const allPaths = await allPathsRes.json();
 
 	for (const { path } of allPaths) {
@@ -48,7 +48,7 @@ export async function generateStaticParams({ params }: { params: { postType: str
 
 export async function generateMetadata({ params }: { params: { path: string } }) {
 	const postDataRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/${params.path}`);
-	if (!postDataRes.ok) return <div>Error</div>;
+	if (!postDataRes.ok) return { title: "Error" };
 	const postData = await postDataRes.json();
 
 	return {
