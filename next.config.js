@@ -1,5 +1,3 @@
-import { getBaseUrl } from "@/lib/utils";
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	env: {
@@ -10,7 +8,7 @@ const nextConfig = {
 		return config;
 	},
 	images: {
-		domains: [getBaseUrl()]
+		domains: [process.env.NEXT_PUBLIC_VERCEL_URL]
 	}
 };
 
