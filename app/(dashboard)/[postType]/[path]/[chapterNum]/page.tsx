@@ -13,7 +13,7 @@ export default async function Chapter({ params }: { params: { path: string, chap
 			<ChapterNav path={params.path} chapterNum={params.chapterNum}/>
 			<div className="card bg-base-100 shadow-xl p-10 my-3">
 				<h1 className="text-5xl pb-5">{postData.chapters[Number(params.chapterNum) - 1].title}</h1>
-				<div className="m-5" />
+				<div className="m-5" dangerouslySetInnerHTML={{ __html: postData.chapters[Number(params.chapterNum) - 1].content }} />
 			</div>
 			<ChapterNav className="dropdown-top" path={params.path} chapterNum={params.chapterNum}/>
 		</div>
