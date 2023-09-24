@@ -8,7 +8,7 @@ export default async function PostLayout({ children, params }: { children: React
 			path: params.path
 		}
 	});
-	if (!post) return <div></div>;
+	if (!post) return <div>Error {post}</div>;
 
 	return (
 		<div className="flex-1 grid grid-cols-4 gap-5 m-5">
