@@ -6,16 +6,12 @@ import useSWR from "swr";
 import { getBaseUrl, fetcher } from "@/lib/utils";
 // import Search from "./Search";
 
-export default function SmallNav({ urlQuery }: { urlQuery: string }) {
-	const { data, isLoading, error } = useSWR(`${getBaseUrl()}/api/posts?${urlQuery}`, fetcher);
-	if (isLoading) return <div className="lg:hidden">Loading...</div>;
-  	if (error) return <div className="lg:hidden">Error</div>;
-
+export default function SmallNav({ posts }: { posts: Post[] }) {
 	let shortStories: Array<Post> = [];
 	let longStories: Array<Post> = [];
 	let blogs: Array<Post> = [];
 	// TODO: optimize to not use allPostData
-	data.forEach((post: Post) => {
+	posts.forEach((post: Post) => {
 		switch(post.postTypeId) {
 			case "short-stories":
 				shortStories.push(post);
