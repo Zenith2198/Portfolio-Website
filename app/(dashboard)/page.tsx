@@ -19,6 +19,7 @@ export default async function Dashboard() {
 
 	return (
 		<main className="min-w-full">
+			{process.env.VERCEL_URL}
 			<div className="flex flex-col lg:flex-row justify-evenly p-10 min-h-full max-w-full">
 				<HoverCard posts={primaryStoryArr} />
 				<HoverCard posts={recentShortStoryArr} />
