@@ -1,6 +1,5 @@
 import { getBaseUrl, buildURLParams } from "@/lib/utils";
 
-
 export default async function ChapterDisplay({ path, chapterNum }: { path: string, chapterNum: string }) {
 	// const urlQuery = buildURLParams({ chapters: true  });
 	// const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${path}?${urlQuery}`);
