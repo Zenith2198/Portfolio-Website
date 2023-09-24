@@ -86,10 +86,12 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 		formData.append("chapters", JSON.stringify(chapters));
 
-		const res = await fetch(`${getBaseUrl()}/api/posts/admin/newPost`, {
+		const submitRes = await fetch(`${getBaseUrl()}/api/posts/admin/newPost`, {
 			method: "POST",
 			body: formData
-		}).then((res) => res.json());
+		});
+		if (!submitRes.ok) return false;
+		const res = await submitRes.json();
 		setPostResponse(res.response);
 	};
 

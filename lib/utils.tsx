@@ -1,7 +1,11 @@
 import moment from "moment";
 import type { Post } from "@prisma/client";
 
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+export async function fetcher(url: string) {
+	const res = await fetch(url);
+	if (!res.ok) return { response: "error" };
+	return await res.json();
+}
 
 export function getBaseUrl() {
 	if (process.env.NEXT_PUBLIC_VERCEL_ENV === "production")

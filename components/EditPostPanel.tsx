@@ -126,6 +126,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		setPath(event.target.value);
 
 		const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${event.target.value}?chapters=true`);
+		if (!postDataRes.ok) return;
 		const postData = await postDataRes.json();
 		setTitle(postData.title);
 		setPrevPost(postData);
@@ -370,10 +371,12 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (editLoadingModal) {
 			editLoadingModal.checked = true;
 		}
-		const res = await fetch(`${getBaseUrl()}/api/posts/admin/deletePost`, {
+		const deleteRes = await fetch(`${getBaseUrl()}/api/posts/admin/deletePost`, {
 			method: "POST",
 			body: JSON.stringify({path: path})
-		}).then((res) => res.json());
+		});
+		if (!deleteRes.ok) return;
+		const res = await deleteRes.json();
 		if (res.response === "success") {
 			setPostResponse(res.response);
 		}
@@ -399,10 +402,12 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			editLoadingModal.checked = true;
 		}
 
-		const res = await fetch(`${getBaseUrl()}/api/posts/admin/editPost`, {
+		const submitRes = await fetch(`${getBaseUrl()}/api/posts/admin/editPost`, {
 			method: "POST",
 			body: getEditedForm()
-		}).then((res) => res.json());
+		});
+		if (!submitRes.ok) return false;
+		const res = await submitRes.json();
 		if (res.response === "success") {
 			setPostResponse(res.response);
 		}
