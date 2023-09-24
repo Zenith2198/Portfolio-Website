@@ -5,7 +5,7 @@ export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function getBaseUrl() {
 	if (process.env.NEXT_PUBLIC_VERCEL_ENV === "production")
-		return "https://your-production.url";
+		return `https://${window.location.origin}`;
 	if (process.env.NEXT_PUBLIC_VERCEL_ENV === "preview")
 		return `https://${window.location.origin}`;
 	return "http://localhost:3000";
