@@ -5,7 +5,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"seed": "node prisma/seed.mjs"
+		"seed": "node prisma/seed.mjs",
+		"postinstall": "prisma generate"
 	},
 	"dependencies": {
 		"@ckeditor/ckeditor5-build-classic": "^39.0.1",
