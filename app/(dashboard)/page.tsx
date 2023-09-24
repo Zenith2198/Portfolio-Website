@@ -4,15 +4,15 @@ import HoverCard from "@/components/HoverCard";
 
 export default async function Dashboard() {
 	const primaryStoryQuery = buildURLParams({ filter: [{ filterField: "primaryStory", filterValue: "true" }], chapters: true });
-	const primaryStoryRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts?${primaryStoryQuery}`, { cache: 'no-store' }); //TODO: remove caching
+	const primaryStoryRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts?${primaryStoryQuery}`); 
 	const primaryStoryArr: Array<PostWithChapters> = await primaryStoryRes.json();
 
 	const recentShortStoryQuery = buildURLParams({ sort: [{ sortField: "dateModified", desc: true }], take: 1, chapters: true });
-	const recentShortStoryRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes/short-stories?${recentShortStoryQuery}`, { cache: 'no-store' }); //TODO: remove caching
+	const recentShortStoryRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes/short-stories?${recentShortStoryQuery}`); 
 	const recentShortStoryArr: Array<PostWithChapters> = await recentShortStoryRes.json();
 
 	const recentBlogsQuery = buildURLParams({ sort: [{ sortField: "dateModified", desc: true }], take: 4, chapters: true });
-	const recentBlogsRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes/blogs?${recentBlogsQuery}`, { cache: 'no-store' }); //TODO: remove caching
+	const recentBlogsRes = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/postTypes/blogs?${recentBlogsQuery}`); 
 	const recentBlogsArr: Array<PostWithChapters> = await recentBlogsRes.json();
 
 	return (
