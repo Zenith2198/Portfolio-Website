@@ -38,7 +38,7 @@ export default async function Header() {
 				</div>
 				<div className="navbar-end">
 					<Link href={`${getBaseUrl()}/admin`}>Admin</Link>
-					<Link href={`${getBaseUrl()}/api/auth/signout?callbackUrl=${getBaseUrl()}`}>Sign Out</Link>
+					<Link href={`${getBaseUrl()}/api/auth/signout?callbackUrl=/`}>Sign Out</Link>
 				</div>
 			</div>
 		</header>
