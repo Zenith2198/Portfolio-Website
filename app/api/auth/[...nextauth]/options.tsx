@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/db";
-import { checkPass } from "@/lib/crypto";
+// import { checkPass } from "@/lib/crypto";
 
 export const authOptions: NextAuthOptions = {
 	providers: [
@@ -29,11 +29,11 @@ export const authOptions: NextAuthOptions = {
 					}
 				});
 
-				if (user && credentials.username === user.name && await checkPass(credentials.password, user.passwordHash)) {
+				// if (user && credentials.username === user.name && await checkPass(credentials.password, user.passwordHash)) {
 					return user;
-				} else {
-					return null;
-				}
+				// } else {
+				// 	return null;
+				// }
 			}
 		})
 	],
