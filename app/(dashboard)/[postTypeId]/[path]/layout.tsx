@@ -51,12 +51,8 @@ export async function generateStaticParams({ params }: { params: { postTypeId: s
 
 	if (allPaths) {
 		for (const { path } of allPaths.posts) {
-			let newPath = path;
-			if (process.env.NODE_ENV !== "development") {
-				newPath = decodeURIComponent(path);
-			}
 			allPosts.push({
-				path: newPath
+				path
 			});
 		}
 	}
