@@ -19,14 +19,12 @@ export default async function PostLayout({ children, params }: { children: React
 			<div>
 				<div className="card lg:card-side bg-base-100 shadow-xl">
 					{post.imageLink ? 
-						<Image src={post.imageLink} alt="" fill={true} className="object-contain max-h-[32rem]" />
+						<figure><Image src={post.imageLink} alt="" className="object-contain max-h-lg" width={512} height={100} /></figure>
 					: <div></div>
 					}
-					<div className="card-body justify-center">
+					<div className="card-body">
 						<h2 className="card-title">{post?.title}</h2>
-						<h1 className="text-info text-xl pb-2 mb-5">
-							{fixDate(post.dateModified)}
-						</h1>
+						<h1 className="text-info text-xl pb-2 mb-5">{fixDate(post.dateModified)}</h1>
 					</div>
 				</div>
 			</div>
