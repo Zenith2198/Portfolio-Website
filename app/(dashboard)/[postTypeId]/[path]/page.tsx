@@ -11,7 +11,7 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 	}
 	const postCount = await prisma.post.findUnique({
 		where: {
-			path
+			path: decodeURIComponent(params.path)
 		},
 		select: {
 			_count: {
