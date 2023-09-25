@@ -9,7 +9,7 @@ export default async function PostLayout({ children, params }: { children: React
 	}
 	const post = await prisma.post.findUnique({
 		where: {
-			path: params.path
+			path
 		}
 	});
 	if (!post) return <div>Error</div>;
