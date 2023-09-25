@@ -19,7 +19,7 @@ export default async function PostLayout({ children, params }: { children: React
 			<div>
 				<div className="card lg:card-side bg-base-100 shadow-xl">
 					{post.imageLink ? 
-						<figure><Image src={post.imageLink ? post.imageLink : ""} alt="" fill={true} className="object-contain max-h-[32rem]" /></figure>
+						<Image src={post.imageLink} alt="" fill={true} className="object-contain max-h-[32rem]" />
 					: <div></div>
 					}
 					<div className="card-body justify-center">

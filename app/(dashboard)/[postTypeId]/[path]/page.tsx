@@ -5,13 +5,9 @@ import { prisma } from "@/lib/db";
 export const dynamicParams = false;
 
 export default async function Post({ params }: { params: { postTypeId: string, path: string } }) {
-	let path = params.path;
-	// if (process.env.NODE_ENV !== "development") {
-	// 	path = decodeURIComponent(path)
-	// }
 	const postCount = await prisma.post.findUnique({
 		where: {
-			path
+			path: params.path
 		},
 		select: {
 			_count: {
@@ -21,7 +17,7 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 			}
 		}
 	});
-	if (!postCount) return <div>Error</div>;
+	if (!postCount) return <div>Error1</div>;
 
 	if (postCount._count.chapters === 0) {
 		return (
@@ -33,13 +29,13 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 
 	const post = await prisma.post.findUnique({
 		where: {
-			path
+			path: params.path
 		},
 		select: {
 			chapters: true
 		}
 	});
-	if (!post) return <div>Error</div>;
+	if (!post) return <div>Error2</div>;
 
 	return (
 		<div>
