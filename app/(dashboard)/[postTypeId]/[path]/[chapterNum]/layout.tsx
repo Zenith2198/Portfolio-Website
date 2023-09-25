@@ -37,9 +37,13 @@ export async function generateStaticParams({ params }: { params: { path: string 
 }
 
 export async function generateMetadata({ params }: { params: { path: string, chapterNum: string } }) {
+	let path = params.path;
+	if (process.env.NODE_ENV !== "development") {
+		path = decodeURIComponent(params.path);
+	}
 	const post = await prisma.post.findUnique({
 		where: {
-			path: params.path
+			path
 		},
 		select: {
 			title: true
