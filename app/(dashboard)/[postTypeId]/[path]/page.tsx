@@ -9,7 +9,7 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 	if (process.env.NODE_ENV !== "development") {
 		path = decodeURIComponent(params.path);
 	}
-	const postCount = await prisma.post.findUnique({
+	const chaptersCount = await prisma.post.findUnique({
 		where: {
 			path
 		},
@@ -21,13 +21,13 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 			}
 		}
 	});
-	if (!postCount) return <div>Error1</div>;
+	if (!chaptersCount) return <div>Error1</div>;
 
-	if (postCount._count.chapters === 0) {
+	if (chaptersCount._count.chapters === 0) {
 		return (
 			<div className="card bg-base-100 shadow-xl text-9xl p-16 text-center">There is nothing here yet!</div>
 		);
-    } else if (postCount._count.chapters > 1) {
+    } else if (chaptersCount._count.chapters > 1) {
         redirect(`${getBaseUrl()}/${params.postTypeId}/${params.path}/1`);
     }
 

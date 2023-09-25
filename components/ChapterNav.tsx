@@ -1,15 +1,26 @@
-import { getBaseUrl, buildURLParams } from "@/lib/utils";
+import { prisma } from "@/lib/db";
+import { getBaseUrl } from "@/lib/utils";
 import Link from "next/link";
 import ChapterDropdown from "@/components/ChapterDropdown";
 
 export default async function ChapterNav({ className, path, chapterNum }: { className?: string, path: string, chapterNum: string}) {
-	const urlQuery = buildURLParams({ chapters: true  });
-	const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${path}?${urlQuery}`);
-	if (!postDataRes.ok) return <div>Error</div>;
-	const postData = await postDataRes.json();
+	const post = await prisma.post.findUnique({
+		where: {
+			path
+		},
+		select: {
+			postTypeId: true,
+			_count: {
+				select: {
+					chapters: true
+				}
+			}
+		}
+	});
+	if (!post) return <div>Error</div>;
 
-	const chaptersLen = postData.chapters.length;
-	const currURL = `${getBaseUrl()}/${postData.postTypeId}/${path}`;
+	const chaptersLen = post._count.chapters;
+	const currURL = `${getBaseUrl()}/${post.postTypeId}/${path}`;
 	const currChapter = Number(chapterNum);
 
 	let chapterOptions = [];
@@ -27,14 +38,14 @@ export default async function ChapterNav({ className, path, chapterNum }: { clas
 
 	return (
 		<div className="join">
-			<ChapterDropdown className={`${className} join-item`} path={path} chapterNum={chapterNum} urlQuery={urlQuery}/>
+			<ChapterDropdown className={`${className} join-item`} path={path} chapterNum={chapterNum} postTypeId={post.postTypeId}/>
 			<Link href={`${currChapter-1 > 0 ? currURL+"/"+(currChapter-1) : ""}`} className="w-[40px]">
 				<button className="join-item btn">«</button>
 			</Link>
 			{/* @ts-ignore */}
 			{chapterOptions.map((i) => (
 				<Link href={`${currURL}/${i}`} key={i}>
-					<button className={`join-item btn w-[40px] ${i == chapterNum ? "btn-active" : ""}`}>{i}</button>
+					<button className={`join-item btn w-[40px] ${i == currChapter ? "btn-active" : ""}`}>{i}</button>
 				</Link>
 			))}
 			<Link href={`${currChapter+1 < chaptersLen+1 ? currURL+"/"+(currChapter+1) : ""}`}>
