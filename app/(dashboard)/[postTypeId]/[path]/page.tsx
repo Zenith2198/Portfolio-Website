@@ -17,7 +17,7 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 			}
 		}
 	});
-	if (!postCount) return <div>Error1</div>;
+	if (!postCount) return <div>Error1: {params.path} : {decodeURIComponent(params.path)}</div>;
 
 	if (postCount._count.chapters === 0) {
 		return (
