@@ -19,7 +19,7 @@ export default async function PostLayout({ children, params }: { children: React
 			<div>
 				<div className="card lg:card-side bg-base-100 shadow-xl">
 					{post.imageLink ? 
-						<figure><Image src={post.imageLink} alt="" fill={true} className="object-contain max-h-[32rem]" /></figure>
+						<figure><Image src={post.imageLink ? post.imageLink : ""} alt="" fill={true} className="object-contain max-h-[32rem]" /></figure>
 					: <div></div>
 					}
 					<div className="card-body justify-center">
@@ -55,10 +55,6 @@ export async function generateStaticParams({ params }: { params: { postTypeId: s
 
 	if (allPaths) {
 		for (const { path } of allPaths.posts) {
-			let newPath = path;
-			if (process.env.NODE_ENV !== "development") {
-				newPath = decodeURIComponent(path);
-			}
 			allPosts.push({
 				path
 			});
