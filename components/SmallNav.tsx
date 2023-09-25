@@ -24,37 +24,42 @@ export default function SmallNav({ posts }: { posts: Post[] }) {
 
 	return (
 		<div className="dropdown">
-			<label className="btn btn-ghost lg:hidden">
+			<label tabIndex={0} className="btn btn-ghost lg:hidden">
 				<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
 			</label>
-			<ul className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-300 rounded-box">
-				{/* <Search/> */}
-				<li key="longWorks">
-					<Link href={`${getBaseUrl()}/long-stories`} className="break-words">Long Works</Link>
-					<ul className="p-2">
+			<ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+				<li key="longWorks" className="max-w-full">
+					<Link href={`${getBaseUrl()}/long-stories`} className="max-w-full">Long Works</Link>
+					<ul className="max-w-full">
 						{longStories.map(({ title, path }, i) => (
 							<li key={i}>
-								<Link href={`${getBaseUrl()}/long-stories/${path}`} className="break-words">{title}</Link>
+								<Link href={`${getBaseUrl()}/long-stories/${path}`} className="max-w-full">
+									<div className="overflow-hidden">{title}</div>
+								</Link>
 							</li>
 						))}
 					</ul>
 				</li>
-				<li key="shortWorks">
-					<Link href={`${getBaseUrl()}/short-stories`} className="break-words">Short Works</Link>
-					<ul className="p-2">
+				<li key="shortWorks" className="max-w-full">
+					<Link href={`${getBaseUrl()}/short-stories`} className="max-w-full">Short Works</Link>
+					<ul className="max-w-full">
 						{shortStories.map(({ title, path }, i) => (
 							<li key={i}>
-								<Link href={`${getBaseUrl()}/short-stories/${path}`} className="break-words">{title}</Link>
+								<Link href={`${getBaseUrl()}/short-stories/${path}`} className="max-w-full">
+									<div className="overflow-hidden">{title}</div>
+								</Link>
 							</li>
 						))}
 					</ul>
 				</li>
-				<li key="blogs">
-					<Link href={`${getBaseUrl()}/blogs`} className="break-words">Blogs</Link>
-					<ul className="p-2">
+				<li key="blogs" className="max-w-full">
+					<Link href={`${getBaseUrl()}/blogs`} className="max-w-full">Blogs</Link>
+					<ul className="max-w-full">
 						{blogs.map(({ title, path }, i) => (
 							<li key={i}>
-								<Link href={`${getBaseUrl()}/blogs/${path}`} className="break-words">{title}</Link>
+								<Link href={`${getBaseUrl()}/blogs/${path}`}  className="max-w-full">
+									<div className="overflow-hidden">{title}</div>
+								</Link>
 							</li>
 						))}
 					</ul>
@@ -63,3 +68,5 @@ export default function SmallNav({ posts }: { posts: Post[] }) {
 		</div>
 	);
 }
+
+
