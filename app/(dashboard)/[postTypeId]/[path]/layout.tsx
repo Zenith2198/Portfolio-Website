@@ -3,6 +3,10 @@ import { prisma } from "@/lib/db";
 import Image from "next/image";
 
 export default async function PostLayout({ children, params }: { children: React.ReactNode, params: { path: string, chapterNum: string } }) {
+	let path = params.path;
+	if (process.env.NODE_ENV !== "development") {
+		path = decodeURIComponent(path)
+	}
 	const post = await prisma.post.findUnique({
 		where: {
 			path: params.path
@@ -36,17 +40,25 @@ export default async function PostLayout({ children, params }: { children: React
 export async function generateStaticParams({ params }: { params: { postTypeId: string } }) {
 	let allPosts = [];
 
-	const posts = await prisma.post.findMany({
+	const allPaths = await prisma.postType.findUnique({
 		where: {
 			postTypeId: params.postTypeId
 		},
 		select: {
-			path: true
+			posts: {
+				select: {
+					path: true
+				}
+			}
 		}
 	});
 
-	if (posts) {
-		for (const { path } of posts) {
+	if (allPaths) {
+		for (const { path } of allPaths.posts) {
+			let newPath = path;
+			if (process.env.NODE_ENV !== "development") {
+				newPath = decodeURIComponent(path);
+			}
 			allPosts.push({
 				path
 			});
