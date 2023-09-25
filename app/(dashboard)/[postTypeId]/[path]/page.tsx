@@ -5,14 +5,9 @@ import { prisma } from "@/lib/db";
 export const dynamicParams = false;
 
 export default async function Post({ params }: { params: { postTypeId: string, path: string } }) {
-	let path = params.path;
-	if (process.env.NODE_ENV !== "development") {
-		path = decodeURIComponent(params.path);
-		path = params.path
-	}
 	const postCount = await prisma.post.findUnique({
 		where: {
-			path
+			path: params.path
 		},
 		select: {
 			_count: {
@@ -29,12 +24,12 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 			<div className="card bg-base-100 shadow-xl text-9xl p-16 text-center">There is nothing here yet!</div>
 		);
     } else if (postCount._count.chapters > 1) {
-        redirect(`${getBaseUrl()}/${params.postTypeId}/${path}/1`);
+        redirect(`${getBaseUrl()}/${params.postTypeId}/${params.path}/1`);
     }
 
 	const post = await prisma.post.findUnique({
 		where: {
-			path
+			path: params.path
 		},
 		select: {
 			chapters: true

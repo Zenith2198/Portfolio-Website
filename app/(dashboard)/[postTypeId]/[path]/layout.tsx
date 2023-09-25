@@ -3,13 +3,9 @@ import { prisma } from "@/lib/db";
 import Image from "next/image";
 
 export default async function PostLayout({ children, params }: { children: React.ReactNode, params: { path: string, chapterNum: string } }) {
-	let path = params.path;
-	if (process.env.NODE_ENV !== "development") {
-		path = decodeURIComponent(params.path)
-	}
 	const post = await prisma.post.findUnique({
 		where: {
-			path
+			path: params.path
 		}
 	});
 	if (!post) return <div>Error</div>;
