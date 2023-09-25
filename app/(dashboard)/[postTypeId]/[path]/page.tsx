@@ -6,9 +6,9 @@ export const dynamicParams = false;
 
 export default async function Post({ params }: { params: { postTypeId: string, path: string } }) {
 	let path = params.path;
-	if (process.env.NODE_ENV !== "development") {
-		path = decodeURIComponent(path)
-	}
+	// if (process.env.NODE_ENV !== "development") {
+	// 	path = decodeURIComponent(path)
+	// }
 	const postCount = await prisma.post.findUnique({
 		where: {
 			path
