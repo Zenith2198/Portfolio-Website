@@ -14,13 +14,6 @@ export function getBaseUrl() {
 	return `https://portfolio-website-navy-three.vercel.app`;
 }
 
-export function fixPath(path: string) {
-	if (process.env.NODE_ENV === "development") {
-		return path;
-	}
-	return decodeURIComponent(path);
-}
-
 export function fixDate(unixTimestamp: number) {
 	return moment(unixTimestamp * 1000).format("M.D.YYYY");
 }

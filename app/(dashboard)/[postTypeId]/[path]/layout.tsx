@@ -56,7 +56,7 @@ export async function generateStaticParams({ params }: { params: { postTypeId: s
 				newPath = decodeURIComponent(path);
 			}
 			allPosts.push({
-				path
+				path: newPath
 			});
 		}
 	}
