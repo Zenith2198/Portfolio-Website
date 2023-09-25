@@ -33,7 +33,7 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 
 	const post = await prisma.post.findUnique({
 		where: {
-			path: params.path
+			path
 		},
 		select: {
 			chapters: true

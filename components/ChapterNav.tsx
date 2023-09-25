@@ -38,7 +38,7 @@ export default async function ChapterNav({ className, path, chapterNum }: { clas
 
 	return (
 		<div className="join">
-			<ChapterDropdown className={`${className} join-item`} path={path} chapterNum={chapterNum} urlQuery={buildURLParams({ chapters: true  })}/>
+			<ChapterDropdown className={`${className} join-item`} path={path} chapterNum={Number(chapterNum)} postTypeId={post.postTypeId} chaptersLen={chaptersLen}/>
 			<Link href={`${currChapter-1 > 0 ? currURL+"/"+(currChapter-1) : ""}`} className="w-[40px]">
 				<button className="join-item btn">«</button>
 			</Link>
