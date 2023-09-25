@@ -7,7 +7,7 @@ export const dynamicParams = false;
 export default async function Post({ params }: { params: { postTypeId: string, path: string } }) {
 	const postCount = await prisma.post.findUnique({
 		where: {
-			path: params.path
+			path: decodeURIComponent(params.path)
 		},
 		select: {
 			_count: {
