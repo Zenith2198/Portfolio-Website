@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl, buildURLParams } from "@/lib/utils";
 import Link from "next/link";
 import ChapterDropdown from "@/components/ChapterDropdown";
 
@@ -38,7 +38,7 @@ export default async function ChapterNav({ className, path, chapterNum }: { clas
 
 	return (
 		<div className="join">
-			<ChapterDropdown className={`${className} join-item`} path={path} chapterNum={chapterNum} postTypeId={post.postTypeId}/>
+			<ChapterDropdown className={`${className} join-item`} path={path} chapterNum={chapterNum} urlQuery={buildURLParams({ chapters: true  })}/>
 			<Link href={`${currChapter-1 > 0 ? currURL+"/"+(currChapter-1) : ""}`} className="w-[40px]">
 				<button className="join-item btn">«</button>
 			</Link>
