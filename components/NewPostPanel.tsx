@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Editor from "@/components/Editor";
 import type { ChangeEvent, FormEvent } from "react";
 import type { PostType } from "@prisma/client";
@@ -24,9 +24,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	const allPostTypes: Array<PostType> = postTypesResponse.data;
 	let allPostTitles: Array<{ title: string }> = postTitlesResponse.data;
 
-	const handleTitle = (event: ChangeEvent<HTMLInputElement>) => {
+	function handleTitle(event: ChangeEvent<HTMLInputElement>) {
 		const titleMatchArr = allPostTitles.filter((str) => event.target.value?.toLowerCase() === str.title.toLowerCase());
-		const titleError = document.getElementById("titleError");
+		const titleError = document.getElementById("newTitleError");
 		if (titleMatchArr.length !== 0) {
 			if (!event.target.className.includes(" input-error")) {
 				if (titleError) {
@@ -42,17 +42,17 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 	};
 
-	const handleChapterTitle = (event: ChangeEvent<HTMLInputElement>, i: number) => {
+	function handleChapterTitle(event: ChangeEvent<HTMLInputElement>, i: number) {
 		let cs = [...chapters];
 		cs[i].title = event.target.value;
 		setChapters(cs);
 	};
-	const handleChapterContent = (chapterContent: string, i: number) => {
+	function handleChapterContent(chapterContent: string, i: number) {
 		let cs = [...chapters];
 		cs[i].content = chapterContent;
 		setChapters(cs);
 	};
-	const handleAddChapter = () => {
+	function handleAddChapter() {
 		let cs = [...chapters];
 		cs.push({
 			title: "",
@@ -60,13 +60,13 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		});
 		setChapters(cs);
 	};
-	const handleRemoveChapter = () => {
+	function handleRemoveChapter() {
 		let cs = [...chapters];
 		cs.pop();
 		setChapters(cs);
 	};
 
-	const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+	async function onSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		const titleError = document.getElementById("newTitleError");
@@ -75,18 +75,19 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			return false;
 		}
 
-		const newLoadingModal = document.getElementById("newLoadingModal") as HTMLInputElement;
-		if (newLoadingModal) {
-			newLoadingModal.checked = true;
-		}
 		let formData = new FormData(event.currentTarget);
 		//@ts-ignore
 		if (formData.get("image").size === 0) {
 			formData.delete("image");
 		}
+
 		formData.append("chapters", JSON.stringify(chapters));
 
-		const submitRes = await fetch(`${getBaseUrl()}/api/posts/admin/newPost`, {
+		const newLoadingModal = document.getElementById("newLoadingModal") as HTMLInputElement;
+		if (newLoadingModal) {
+			newLoadingModal.checked = true;
+		}
+		const submitRes = await fetch(`${getBaseUrl()}/api/admin/newPost`, {
 			method: "POST",
 			body: formData
 		});

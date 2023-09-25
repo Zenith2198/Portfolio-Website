@@ -108,21 +108,16 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	}
 
 	//onChange handlers
-	function handlePostType (event: ChangeEvent<HTMLSelectElement>) {
+	function handlePostType(event: ChangeEvent<HTMLSelectElement>) {
 		setPostTypeId(event.target.value);
 
 		setPath("");
 		setTitle("");
 		setPostResponse("");
 		setPrevPost({} as PostWithChapters);
-
-		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
-		if (editLoadingModal) {
-			editLoadingModal.checked = false;
-		}
 	}
 
-	async function handlePost (event: ChangeEvent<HTMLSelectElement>) {
+	async function handlePost(event: ChangeEvent<HTMLSelectElement>) {
 		setPath(event.target.value);
 
 		const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${event.target.value}?chapters=true`);
@@ -137,44 +132,49 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 	}
 
-	function handleTitle (event: ChangeEvent<HTMLInputElement>) {
+	function handleTitle(event: ChangeEvent<HTMLInputElement>) {
 		setTitle(event.target.value);
 
 		//set the title border to green if it has been edited, or red if it already exists
 		const titleMatchArr = allPostTitles.filter((str) => event.target.value?.toLowerCase() === str.title.toLowerCase());
 		const titleError = document.getElementById("editTitleError");
-		if (titleMatchArr.length !== 0 && event.target.value !== prevPost.title) {
-			if (!event.target.className.includes(" input-error")) {
-				if (titleError) {
-					titleError.className = titleError.className.replace(" hidden", "");
+		if (titleError) {
+			if (titleMatchArr.length !== 0) {
+				if (event.target.value === prevPost.title) {
+					titleError.innerHTML = "Title is the same as previous";
+				} else {
+					titleError.innerHTML = "Title already exists";
 				}
-				event.target.className += " input-error";
-			}
-			setEditedFields({
-				...editedFields,
-				title: false
-			});
-		} else {
-			if (titleError && !titleError.className.includes(" hidden")) {
-				titleError.className += " hidden";
-			}
-			event.target.className = event.target.className.replace(" input-error", "");
-
-			if (event.target.value !== "" && event.target.value !== prevPost.title) {
-				setEditedFields({
-					...editedFields,
-					title: true
-				});
-			} else {
+				if (!event.target.className.includes(" input-error")) {
+					titleError.className = titleError.className.replace(" hidden", "");
+					event.target.className += " input-error";
+				}
 				setEditedFields({
 					...editedFields,
 					title: false
 				});
+			} else {
+				if (!titleError.className.includes(" hidden")) {
+					titleError.className += " hidden";
+				}
+				event.target.className = event.target.className.replace(" input-error", "");
+
+				if (event.target.value !== "" && event.target.value !== prevPost.title) {
+					setEditedFields({
+						...editedFields,
+						title: true
+					});
+				} else {
+					setEditedFields({
+						...editedFields,
+						title: false
+					});
+				}
 			}
 		}
 	}
 
-	function handleImage (event: ChangeEvent<HTMLInputElement>) {
+	function handleImage(event: ChangeEvent<HTMLInputElement>) {
 		if (event.target.files) {
 		}
 		//set the image border to green if an image has been selected
@@ -184,7 +184,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		});
 	}
 
-	function handlePrimaryStory (event: ChangeEvent<HTMLInputElement>) {
+	function handlePrimaryStory(event: ChangeEvent<HTMLInputElement>) {
 		//set the primary story border to green if it has been edited
 		if (event.target.checked != !!prevPost.primaryStory) {
 			setEditedFields({
@@ -199,7 +199,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 	}
 
-	function handleWIP (event: ChangeEvent<HTMLInputElement>) {
+	function handleWIP(event: ChangeEvent<HTMLInputElement>) {
 		//set the wip border to green if it has been edited
 		if (event.target.checked != !!prevPost.wip) {
 			setEditedFields({
@@ -214,7 +214,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 	};
 
-	const handleRemoveChapter = () => {
+	function handleRemoveChapter() {
 		let cs = [...chapters];
 		cs.pop();
 		setChapters(cs);
@@ -223,7 +223,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		tempChapters.pop();
 		setEditedChapters(tempChapters);
 	};
-	const handleAddChapter = async () => {
+	async function handleAddChapter() {
 		let cs = [...chapters];
 		cs.push({
 			title: "",
@@ -241,7 +241,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		});
 		setEditedChapters(tempChapters);
 	}
-	function handleChapterTitle (event: ChangeEvent<HTMLInputElement>, i: number) {
+	function handleChapterTitle(event: ChangeEvent<HTMLInputElement>, i: number) {
 		let cs = [...chapters];
 		cs[i].title = event.target.value;
 		setChapters(cs);
@@ -263,7 +263,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 		setEditedChapters(tempChapters);
 	}
-	function handleChapterContent (chapterContent: string, i: number) {
+	function handleChapterContent(chapterContent: string, i: number) {
 		let cs = [...chapters];
 		cs[i].content = chapterContent;
 		setChapters(cs);
@@ -366,12 +366,12 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	}
 
 	//onClick handler for delete button
-	async function handleDelete () {
+	async function handleDelete() {
 		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
 		if (editLoadingModal) {
 			editLoadingModal.checked = true;
 		}
-		const deleteRes = await fetch(`${getBaseUrl()}/api/posts/admin/deletePost`, {
+		const deleteRes = await fetch(`${getBaseUrl()}/api/admin/deletePost`, {
 			method: "POST",
 			body: JSON.stringify({path: path})
 		});
@@ -383,7 +383,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	}
 
 	//onSubmit handler
-	async function onSubmit (event: FormEvent<HTMLFormElement>) {
+	async function onSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		const titleError = document.getElementById("editTitleError");
@@ -401,8 +401,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (editLoadingModal) {
 			editLoadingModal.checked = true;
 		}
-
-		const submitRes = await fetch(`${getBaseUrl()}/api/posts/admin/editPost`, {
+		const submitRes = await fetch(`${getBaseUrl()}/api/admin/editPost`, {
 			method: "POST",
 			body: getEditedForm()
 		});
@@ -454,7 +453,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 								<div className="form-control w-full max-w-xs">
 									<label className="label">
 										<span className="label-text">Post Title</span>
-										<span id="editTitleError" className="label-text-alt hidden">Title already exists</span>
+										<span id="editTitleError" className="label-text-alt hidden"></span>
 									</label>
 									<input name="title" required onChange={handleTitle} value={title} type="text" placeholder="Enter post title" className={`${editedFields.title ? "input-success" : ""} input input-bordered w-full max-w-xs`}/>
 								</div>

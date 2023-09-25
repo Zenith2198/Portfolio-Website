@@ -9,7 +9,8 @@ export default function PanelLayout({ children, params }: { children: React.Reac
 export async function generateStaticParams() {
 	return [
 		{ "panel": "newPost" },
-		{ "panel": "editPost" }
+		{ "panel": "editPost" },
+		{ "panel": "editUser" }
 	];
 }
 

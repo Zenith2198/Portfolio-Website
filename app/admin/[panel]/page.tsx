@@ -2,6 +2,7 @@
 
 import NewPostPanel from "@/components/NewPostPanel";
 import EditPostPanel from "@/components/EditPostPanel";
+import EditUserPanel from "@/components/EditUserPanel";
 import type { ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { getBaseUrl } from "@/lib/utils";
@@ -20,9 +21,11 @@ export default function Panel({ params }: { params: { panel: string } }) {
 			<div className="join" onChange={handleOptionSelect}>
 				<input value="newPost" checked={params.panel === "newPost"} readOnly className="join-item btn" type="radio" name="options" aria-label="New Post"/>
 				<input value="editPost" checked={params.panel === "editPost"} readOnly className="join-item btn" type="radio" name="options" aria-label="Edit Post"/>
+				<input value="editUser" checked={params.panel === "editUser"} readOnly className="join-item btn" type="radio" name="options" aria-label="Edit User"/>
 			</div>
 			<NewPostPanel className={`${params.panel==="newPost"?"block":"hidden"}`}/>
 			<EditPostPanel className={`${params.panel==="editPost"?"block":"hidden"}`}/>
+			<EditUserPanel className={`${params.panel==="editUser"?"block":"hidden"}`}/>
 		</div>
 	);
 }
