@@ -8,7 +8,7 @@ export default async function PostLayout({ children, params }: { children: React
 			path: params.path
 		}
 	});
-	if (!post) return <div>Error {params.path}</div>;
+	if (!post) return <div>Error</div>;
 
 	return (
 		<div className="flex-1 grid grid-cols-4 gap-5 m-5">
@@ -36,21 +36,17 @@ export default async function PostLayout({ children, params }: { children: React
 export async function generateStaticParams({ params }: { params: { postTypeId: string } }) {
 	let allPosts = [];
 
-	const allPaths = await prisma.postType.findUnique({
+	const posts = await prisma.post.findMany({
 		where: {
 			postTypeId: params.postTypeId
 		},
 		select: {
-			posts: {
-				select: {
-					path: true
-				}
-			}
+			path: true
 		}
 	});
 
-	if (allPaths) {
-		for (const { path } of allPaths.posts) {
+	if (posts) {
+		for (const { path } of posts) {
 			allPosts.push({
 				path
 			});
