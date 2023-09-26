@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+import { postTypeFindUnique } from "@/lib/db";
 
 // export const dynamicParams = false;
 
@@ -17,7 +17,7 @@ export default function PostLayout({ children }: { children: React.ReactNode }) 
 // }
 
 export async function generateMetadata({ params }: { params: { postTypeId: string } }) {
-	const postType = await prisma.postType.findUnique({
+	const postType = await postTypeFindUnique({
 		where: {
 			postTypeId: params.postTypeId
 		},
