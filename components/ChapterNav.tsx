@@ -1,12 +1,24 @@
 import Link from "next/link";
 import ChapterDropdown from "@/components/ChapterDropdown";
-import { getBaseUrl, buildURLParams } from "@/lib/utils";
+import { getBaseUrl } from "@/lib/utils";
+import { postFindUnique } from "@/lib/db";
+import type { PostWithChaptersCount } from "@/types/types.d";
 
 export default async function ChapterNav({ className, path, chapterNum }: { className?: string, path: string, chapterNum: string}) {
-	const urlParams = buildURLParams({ fields: [{ fieldKey: "postTypeId" }] });
-	const postRes = await fetch(`${getBaseUrl()}/api/posts/${path}/chaptersCount${urlParams}`);
-	if (!postRes.ok) throw new Error('Failed to fetch data');
-	const post = await postRes.json();
+	const post = await postFindUnique({
+		where: {
+			path
+		},
+		select: {
+			postTypeId: true,
+			_count: {
+				select: {
+					chapters: true
+				}
+			}
+		}
+	}) as PostWithChaptersCount;
+	if (!post) return <div>Error</div>;
 
 	const chaptersLen = post._count.chapters;
 	const currURL = `${getBaseUrl()}/${post.postTypeId}/${path}`;
@@ -27,7 +39,7 @@ export default async function ChapterNav({ className, path, chapterNum }: { clas
 
 	return (
 		<div className="join">
-			<ChapterDropdown className={`${className} join-item`} path={path} chapterNum={Number(chapterNum)} postTypeId={post.postTypeId} chaptersLen={chaptersLen}/>
+			<ChapterDropdown className={`${className} join-item`} path={path} chapterNum={currChapter} postTypeId={post.postTypeId} chaptersLen={chaptersLen}/>
 			<Link href={`${currChapter-1 > 0 ? currURL+"/"+(currChapter-1) : ""}`} className="w-[40px]">
 				<button className="join-item btn">«</button>
 			</Link>

@@ -1,13 +1,15 @@
 import { fixDate } from "@/lib/utils";
-import { prisma } from "@/lib/db";
+import { postFindUnique } from "@/lib/db";
 import Image from "next/image";
+
+// export const dynamicParams = false;
 
 export default async function PostLayout({ children, params }: { children: React.ReactNode, params: { path: string, chapterNum: string } }) {
 	let path = params.path;
 	if (process.env.NODE_ENV !== "development") {
 		path = decodeURIComponent(params.path);
 	}
-	const post = await prisma.post.findUnique({
+	const post = await postFindUnique({
 		where: {
 			path
 		}
@@ -35,35 +37,35 @@ export default async function PostLayout({ children, params }: { children: React
 	);
 }
 
-export async function generateStaticParams({ params }: { params: { postTypeId: string } }) {
-	let allPosts = [];
+// export async function generateStaticParams({ params }: { params: { postTypeId: string } }) {
+// 	let allPosts = [];
 
-	const allPaths = await prisma.postType.findUnique({
-		where: {
-			postTypeId: params.postTypeId
-		},
-		select: {
-			posts: {
-				select: {
-					path: true
-				}
-			}
-		}
-	});
+// 	const allPaths = await prisma.postType.findUnique({
+// 		where: {
+// 			postTypeId: params.postTypeId
+// 		},
+// 		select: {
+// 			posts: {
+// 				select: {
+// 					path: true
+// 				}
+// 			}
+// 		}
+// 	});
 
-	if (allPaths) {
-		for (const { path } of allPaths.posts) {
-			allPosts.push({
-				path
-			});
-		}
-	}
+// 	if (allPaths) {
+// 		for (const { path } of allPaths.posts) {
+// 			allPosts.push({
+// 				path
+// 			});
+// 		}
+// 	}
 
-	return allPosts;
-}
+// 	return allPosts;
+// }
 
 export async function generateMetadata({ params }: { params: { path: string } }) {
-	const post = await prisma.post.findUnique({
+	const post = await postFindUnique({
 		where: {
 			path: params.path
 		},

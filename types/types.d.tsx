@@ -1,10 +1,4 @@
-import type { Prisma, Chapter } from "@prisma/client";
-
-export type PostWithChaptersTemp = Prisma.PostGetPayload<{
-	include: {
-		chapters: true
-	}
-}>;
+import type { Prisma, Chapter, Post } from "@prisma/client";
 
 export type PostTypeWithPosts = Prisma.PostTypeGetPayload<{
 	include: {
@@ -16,6 +10,12 @@ export interface ChapterStringContent extends Omit<Chapter, "content"> {
 	content: string
 }
 
-export interface PostWithChapters extends Omit<PostWithChaptersTemp, "chapters"> {
+export interface PostWithChapters extends Post {
 	chapters: Array<ChapterStringContent>
+}
+
+export interface PostWithChaptersCount extends Post {
+	_count: {
+		chapters: number
+	}
 }

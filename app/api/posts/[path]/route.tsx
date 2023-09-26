@@ -6,7 +6,7 @@ import type { PostWithChapters } from "@/types/types.d";
 
 export async function GET(request: NextRequest, { params }: { params: {path: string} }) {
 	const searchParams = request.nextUrl.searchParams;
-	const findUnique = processSearchParams(searchParams);
+	let findUnique = processSearchParams(searchParams);
 
 	findUnique.where = {
 		path: params.path

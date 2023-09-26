@@ -5,7 +5,7 @@ import { processSearchParams } from '@/lib/utils';
 
 export async function GET(request: NextRequest, { params }: { params: { postTypeId: string } }) {
 	const searchParams = request.nextUrl.searchParams;
-	const findMany = processSearchParams(searchParams);
+	let findMany = processSearchParams(searchParams);
 
 	if (findMany.where) {
 		findMany.where = {

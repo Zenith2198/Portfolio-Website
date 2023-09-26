@@ -158,7 +158,7 @@ export function processSearchParams(searchParams: URLSearchParams) {
 							chapterNum: "asc"
 						}
 					}
-				}
+				};
 			} else {
 				select = {
 					...select,
@@ -167,7 +167,7 @@ export function processSearchParams(searchParams: URLSearchParams) {
 							chapterNum: "asc"
 						}
 					}
-				}
+				};
 			}
 		} else {
 			if (isEmpty(select)) {
@@ -177,7 +177,7 @@ export function processSearchParams(searchParams: URLSearchParams) {
 							chapterNum: String(urlChapters)
 						}
 					}
-				}
+				};
 			}
 		}
 	}

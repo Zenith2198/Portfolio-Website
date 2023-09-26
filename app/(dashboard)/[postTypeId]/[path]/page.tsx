@@ -1,16 +1,14 @@
 import { redirect } from "next/navigation";
 import { getBaseUrl, fixChapters } from "@/lib/utils";
-import { prisma } from "@/lib/db";
-import type { PostWithChapters } from "@/types/types.d";
-
-export const dynamicParams = false;
+import { postFindUnique } from "@/lib/db";
+import type { PostWithChapters, PostWithChaptersCount } from "@/types/types.d";
 
 export default async function Post({ params }: { params: { postTypeId: string, path: string } }) {
 	let path = params.path;
 	if (process.env.NODE_ENV !== "development") {
 		path = decodeURIComponent(params.path);
 	}
-	const chaptersCount = await prisma.post.findUnique({
+	const chaptersCount = await postFindUnique({
 		where: {
 			path
 		},
@@ -21,7 +19,7 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 				}
 			}
 		}
-	});
+	}) as PostWithChaptersCount;
 	if (!chaptersCount) return <div>Error1</div>;
 
 	if (chaptersCount._count.chapters === 0) {
@@ -32,14 +30,14 @@ export default async function Post({ params }: { params: { postTypeId: string, p
         redirect(`${getBaseUrl()}/${params.postTypeId}/${params.path}/1`);
     }
 
-	const post = await prisma.post.findUnique({
+	const post = await postFindUnique({
 		where: {
 			path
 		},
 		select: {
 			chapters: true
 		}
-	}) as unknown as PostWithChapters;
+	}) as PostWithChapters;
 	if (!post) return <div>Error2</div>;
 
 	fixChapters(post);

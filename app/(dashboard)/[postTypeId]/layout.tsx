@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/db";
 
+// export const dynamicParams = false;
+
 export default function PostLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className="flex flex-1">
@@ -8,11 +10,11 @@ export default function PostLayout({ children }: { children: React.ReactNode }) 
 	);
 }
 
-export async function generateStaticParams() {
-	const postTypes = await prisma.postType.findMany();
+// export async function generateStaticParams() {
+// 	const postTypes = await prisma.postType.findMany();
 
-	return postTypes.map(({ postTypeId }: { postTypeId: string }) => ({ postTypeId }));
-}
+// 	return postTypes.map(({ postTypeId }: { postTypeId: string }) => ({ postTypeId }));
+// }
 
 export async function generateMetadata({ params }: { params: { postTypeId: string } }) {
 	const postType = await prisma.postType.findUnique({

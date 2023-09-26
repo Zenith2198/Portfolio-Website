@@ -1,6 +1,9 @@
+"use client"
+
 import Link from "next/link";
 import type { Post } from "@prisma/client";
-import { getBaseUrl, buildURLParams } from "@/lib/utils";
+import useSWR from "swr";
+import { fetcher, getBaseUrl, buildURLParams } from "@/lib/utils";
 // import Search from "./Search";
 
 export default async function SmallNav() {
@@ -8,9 +11,10 @@ export default async function SmallNav() {
 		fields: [{ fieldKey: "title" }, { fieldKey: "path" }, { fieldKey: "postTypeId" }],
 		sort: [{ sortKey: "dateModified", desc: true }]
 	});
-	const postsRes = await fetch(`${getBaseUrl()}/api/posts${urlParams}`, { next: { revalidate: 1 } });
-	if (!postsRes.ok) throw new Error('Failed to fetch data');
-	const posts: Array<Post> = await postsRes.json();
+	const postsRes = useSWR(`${getBaseUrl()}/api/posts${urlParams}`, fetcher, { refreshInterval: 10000 });
+	if (postsRes.isLoading) return <div>Loading...</div>;
+  	if (postsRes.error) return <div>Error</div>;
+	const posts: Array<Post> = postsRes.data;
 
 	let shortStories: Array<Post> = [];
 	let longStories: Array<Post> = [];

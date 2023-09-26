@@ -1,10 +1,10 @@
 import HoverCard from "@/components/HoverCard";
-import { prisma } from "@/lib/db";
+import { postFindMany } from "@/lib/db";
 import { fixChaptersArr } from "@/lib/utils";
 import type { PostWithChapters } from "@/types/types.d";
 
 export default async function Dashboard() {
-	const primaryStoryArr = await prisma.post.findMany({
+	const primaryStoryArr = await postFindMany({
 		where: {
 			primaryStory: true
 		},
@@ -15,8 +15,8 @@ export default async function Dashboard() {
 				}
 			}
 		}
-	}) as unknown as PostWithChapters[];
-	const recentShortStoryArr = await prisma.post.findMany({
+	}) as PostWithChapters[];
+	const recentShortStoryArr = await postFindMany({
 		where: {
 			postTypeId: "short-stories"
 		},
@@ -31,8 +31,8 @@ export default async function Dashboard() {
 				}
 			}
 		}
-	}) as unknown as PostWithChapters[];
-	const recentBlogsArr = await prisma.post.findMany({
+	}) as PostWithChapters[];
+	const recentBlogsArr = await postFindMany({
 		where: {
 			postTypeId: "blogs"
 		},
@@ -47,7 +47,7 @@ export default async function Dashboard() {
 				}
 			}
 		}
-	}) as unknown as PostWithChapters[];
+	}) as PostWithChapters[];
 	if (!primaryStoryArr || !recentShortStoryArr || !recentBlogsArr) return <div>Error</div>;
 
 	fixChaptersArr(primaryStoryArr);

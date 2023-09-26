@@ -1,16 +1,14 @@
-import { prisma } from "@/lib/db";
+import { postFindUnique } from "@/lib/db";
 import ChapterNav from "@/components/ChapterNav";
 import { fixChapters } from "@/lib/utils";
 import type { PostWithChapters } from "@/types/types.d";
-
-export const dynamicParams = false;
 
 export default async function Chapter({ params }: { params: { path: string, chapterNum: string } }) {
 	let path = params.path;
 	if (process.env.NODE_ENV !== "development") {
 		path = decodeURIComponent(params.path);
 	}
-	const post = await prisma.post.findUnique({
+	const post = await postFindUnique({
 		where: {
 			path
 		},
@@ -21,7 +19,7 @@ export default async function Chapter({ params }: { params: { path: string, chap
 				}
 			}
 		}
-	}) as unknown as PostWithChapters;
+	}) as PostWithChapters;
 	if (!post) return <div>Error</div>;
 
 	fixChapters(post);
