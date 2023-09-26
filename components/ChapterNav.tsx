@@ -18,7 +18,7 @@ export default async function ChapterNav({ className, path, chapterNum }: { clas
 			}
 		}
 	}) as PostWithChaptersCount;
-	if (!post) return <div>Error</div>;
+	if (!post) return <div>Failed to load ChapterNav</div>;
 
 	const chaptersLen = post._count.chapters;
 	const currURL = `${getBaseUrl()}/${post.postTypeId}/${path}`;

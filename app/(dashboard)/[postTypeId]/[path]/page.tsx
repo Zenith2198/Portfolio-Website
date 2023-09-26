@@ -4,10 +4,10 @@ import { postFindUnique } from "@/lib/db";
 import type { PostWithChapters, PostWithChaptersCount } from "@/types/types.d";
 
 export default async function Post({ params }: { params: { postTypeId: string, path: string } }) {
-	let path = params.path;
-	if (process.env.NODE_ENV !== "development") {
-		path = decodeURIComponent(params.path);
-	}
+	// let path = params.path;
+	// if (process.env.NODE_ENV !== "development") {
+	// 	path = decodeURIComponent(params.path);
+	// }
 	const chaptersCount = await postFindUnique({
 		where: {
 			path: params.path
@@ -20,7 +20,7 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 			}
 		}
 	}) as PostWithChaptersCount;
-	if (!chaptersCount) return <div>Error1 {path} {params.path}</div>;
+	if (!chaptersCount) return <div>Failed to load Post chapters count</div>;
 
 	if (chaptersCount._count.chapters === 0) {
 		return (
@@ -32,13 +32,13 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 
 	const post = await postFindUnique({
 		where: {
-			path
+			path: params.path
 		},
 		select: {
 			chapters: true
 		}
 	}) as PostWithChapters;
-	if (!post) return <div>Error2</div>;
+	if (!post) return <div>Failed to load Post</div>;
 
 	fixChapters(post);
 

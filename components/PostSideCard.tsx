@@ -3,16 +3,16 @@ import { postFindUnique } from "@/lib/db";
 import Image from "next/image";
 
 export default async function PostSideCard({ path }: { path: string }) {
-	if (process.env.NODE_ENV !== "development") {
-		path = decodeURIComponent(path);
-	}
+	// if (process.env.NODE_ENV !== "development") {
+	// 	path = decodeURIComponent(path);
+	// }
 	const post = await postFindUnique({
 		where: {
 			path
 		}
 	});
 
-	if (!post) return <div>Error</div>;
+	if (!post) return <div>Failed to load PostSideCard</div>;
 	
 	return (
 		<div>

@@ -12,7 +12,7 @@ export default async function PostTypeId({ params }: { params: { postTypeId: str
 			title: true
 		}
 	});
-	if (!allPostsOfType) return <div>Error {params.postTypeId}</div>;
+	if (!allPostsOfType) return <div>Failed to load PostTypeId</div>;
 
 	return (
 		<div>
