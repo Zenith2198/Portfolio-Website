@@ -3,7 +3,7 @@ import { postFindMany } from "@/lib/db";
 import { fixChaptersArr } from "@/lib/utils";
 import type { PostWithChapters } from "@/types/types.d";
 
-const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic'
 
 export default async function Dashboard() {
 	const primaryStoryArr = await postFindMany({
