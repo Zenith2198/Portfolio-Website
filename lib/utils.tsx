@@ -11,7 +11,7 @@ export function getBaseUrl() {
 	if (process.env.NODE_ENV === "development") {
 		return "http://localhost:3000";
 	}
-	return `https://portfolio-website-navy-three.vercel.app`;
+	return `https://www.paradoxacrania.com/`;
 }
 
 export function fixDate(unixTimestamp: number) {
