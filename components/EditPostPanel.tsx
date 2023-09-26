@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import type { FormEvent, ChangeEvent, MouseEvent } from "react";
-import type { PostType, Post, Chapter } from "@prisma/client";
-import type { PostWithChapters } from "@/types/types";
+import type { PostType, Post } from "@prisma/client";
+import type { PostWithChapters } from "@/types/types.d";
 import useSWR from "swr";
 import { getBaseUrl, fetcher, isEmpty } from "@/lib/utils";
 import Editor from "@/components/Editor";

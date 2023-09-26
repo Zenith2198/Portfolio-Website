@@ -38,7 +38,7 @@ model Chapter {
 	@@index([postId])
 	chapterNum Int
 	title String?
-	content String?
+	content Bytes?
 	@@id([postId, chapterNum])
 }
 

@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/db";
 import ChapterNav from "@/components/ChapterNav";
+import { fixChapters } from "@/lib/utils";
+import type { PostWithChapters } from "@/types/types.d";
 
 export const dynamicParams = false;
 
@@ -19,8 +21,10 @@ export default async function Chapter({ params }: { params: { path: string, chap
 				}
 			}
 		}
-	});
+	}) as unknown as PostWithChapters;
 	if (!post) return <div>Error</div>;
+
+	fixChapters(post);
 
 	return (
 		<div>

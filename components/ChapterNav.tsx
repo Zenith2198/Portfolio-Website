@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { getBaseUrl, buildURLParams } from "@/lib/utils";
+import { getBaseUrl } from "@/lib/utils";
 import Link from "next/link";
 import ChapterDropdown from "@/components/ChapterDropdown";
 

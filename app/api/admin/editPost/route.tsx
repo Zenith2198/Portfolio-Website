@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { Prisma } from "@prisma/client";
 import type { Post } from "@prisma/client";
-import { getBaseUrl } from "@/lib/utils";
 
 export async function POST(request: Request) {
 	const formData = await request.formData();
@@ -11,6 +10,7 @@ export async function POST(request: Request) {
 
 	let chaptersObj = JSON.parse(formData.get("chapters") as string);
 	formData.delete("chapters");
+
 	const chaptersDeleted = JSON.parse(formData.get("chaptersDeleted") as string);
 	formData.delete("chaptersDeleted");
 	const image = formData.get("image");
@@ -71,6 +71,9 @@ export async function POST(request: Request) {
 			});
 
 			for (const k in chaptersObj) {
+				if (chaptersObj[k].content) {
+					chaptersObj[k].content = Buffer.from(chaptersObj[k].content, "utf8");
+				}
 				await tx.chapter.upsert({
 					where: {
 						postId_chapterNum: {

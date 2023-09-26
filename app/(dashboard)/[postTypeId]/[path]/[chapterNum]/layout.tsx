@@ -1,4 +1,3 @@
-import type { Chapter } from "@prisma/client";
 import { prisma } from "@/lib/db";
 
 export default function PostLayout({ children }: { children: React.ReactNode }) {
@@ -17,7 +16,11 @@ export async function generateStaticParams({ params }: { params: { path: string 
 			path: params.path
 		},
 		select: {
-			chapters: true
+			chapters: {
+				select: {
+					chapterNum: true
+				}
+			}
 		}
 	});
 
@@ -26,7 +29,7 @@ export async function generateStaticParams({ params }: { params: { path: string 
 			chapterNum: "0"
 		});
 	} else {
-		post?.chapters.forEach((chapter: Chapter) => {
+		post?.chapters.forEach((chapter) => {
 			allChapters.push({
 				chapterNum: chapter.chapterNum.toString()
 			});

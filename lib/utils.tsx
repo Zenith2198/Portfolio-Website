@@ -1,4 +1,5 @@
 import moment from "moment";
+import type { PostWithChapters } from "@/types/types.d";
 import type { Post } from "@prisma/client";
 
 export async function fetcher(url: string) {
@@ -32,6 +33,26 @@ export function smartTrim(str: string, len: number) {
 export function isEmpty(obj: Object) {
 	for (const x in obj) { if (obj.hasOwnProperty(x))  return false; }
    return true;
+}
+
+export function fixChapters(post: PostWithChapters) {
+	post.chapters.forEach((chapter) => {
+		if (chapter.content) {
+			//@ts-ignore
+			chapter.content = chapter.content.toString("utf8");
+		}
+	});
+}
+
+export function fixChaptersArr(posts: PostWithChapters[]) {
+	posts.forEach((post) => {
+		post.chapters.forEach((chapter) => {
+			if (chapter.content) {
+				//@ts-ignore
+				chapter.content = chapter.content.toString("utf8");
+			}
+		});
+	});
 }
 
 export function buildURLParams({ fields, filter, sort, take, chapters }: {

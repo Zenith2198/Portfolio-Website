@@ -2,12 +2,16 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { Prisma } from "@prisma/client";
 import type { Post, Chapter } from "@prisma/client";
-import { getBaseUrl } from "@/lib/utils";
+import { ChapterStringContent } from "@/types/types.d";
 
 export async function POST(request: Request) {
 	const formData = await request.formData();
 	let chapters: Array<Chapter> = JSON.parse(formData.get("chapters") as string);
-	chapters.forEach((chapter: Chapter, i: number) => {
+	chapters.forEach((chapter: Chapter | ChapterStringContent, i: number) => {
+		if (chapter.content) {
+			//@ts-ignore
+			chapter.content = Buffer.from(chapter.content, "utf8");
+		}
 		chapter.chapterNum = i + 1;
 	});
 	formData.delete("chapters");
@@ -31,12 +35,6 @@ export async function POST(request: Request) {
 	if (post.wip) {
 		post.wip = true;
 	}
-
-	// for (const k in post) {
-	// 	if (typeof post[k] === "string") {
-	// 		post[k] = post[k].replace("'", "\\'");
-	// 	}
-	// }
 
 	// set up transaction query chain
 	try {

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl, fixChapters } from "@/lib/utils";
 import { prisma } from "@/lib/db";
+import type { PostWithChapters } from "@/types/types.d";
 
 export const dynamicParams = false;
 
@@ -38,8 +39,10 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 		select: {
 			chapters: true
 		}
-	});
+	}) as unknown as PostWithChapters;
 	if (!post) return <div>Error2</div>;
+
+	fixChapters(post);
 
 	return (
 		<div>
