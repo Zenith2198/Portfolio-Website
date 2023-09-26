@@ -8,11 +8,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 	return (
 		<html lang="en" className="min-w-screen min-h-screen overflow-x-hidden m-0 p-0">
 			<body className="min-w-screen min-h-screen overflow-x-hidden m-0 p-0">
-				<AuthProvider>
-					<Suspense>
+				<Suspense>
+					<AuthProvider>
 						{children}
-					</Suspense>
-				</AuthProvider>
+					</AuthProvider>
+				</Suspense>
 			</body>
 		</html>
 	);
