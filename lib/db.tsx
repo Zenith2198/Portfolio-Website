@@ -25,3 +25,7 @@ export const postFindMany = cache(async (query: Prisma.PostFindManyArgs) => {
 export const postTypeFindUnique = cache(async (query: Prisma.PostTypeFindUniqueArgs) => {
 	return await prisma.postType.findUnique(query);
 });
+
+export const userFindUnique = cache(async (query: Prisma.UserFindUniqueArgs) => {
+	return await prisma.user.findUnique(query);
+});

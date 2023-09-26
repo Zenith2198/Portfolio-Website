@@ -1,6 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "@/lib/db";
+import { userFindUnique } from "@/lib/db";
 import { checkPass } from "@/lib/crypto";
 
 export const authOptions: NextAuthOptions = {
@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
 					return null;
 				}
 
-				const user = await prisma.user.findUnique({
+				const user = await userFindUnique({
 					where: {
 						name: credentials.username
 					}
