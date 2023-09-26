@@ -10,7 +10,7 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 	}
 	const chaptersCount = await postFindUnique({
 		where: {
-			path
+			path: params.path
 		},
 		select: {
 			_count: {

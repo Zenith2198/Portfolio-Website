@@ -1,9 +1,9 @@
 import { getBaseUrl } from "@/lib/utils";
 import Link from "next/link";
-import { prisma } from "@/lib/db";
+import { postFindMany } from "@/lib/db";
 
 export default async function PostTypeId({ params }: { params: { postTypeId: string } }) {
-	const allPostsOfType = await prisma.post.findMany({
+	const allPostsOfType = await postFindMany({
 		where: {
 			postTypeId: params.postTypeId
 		},
