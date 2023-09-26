@@ -1,11 +1,17 @@
-"use client"
-
 import Link from "next/link";
 import type { Post } from "@prisma/client";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl, buildURLParams } from "@/lib/utils";
 // import Search from "./Search";
 
-export default function SmallNav({ posts }: { posts: Post[] }) {
+export default async function SmallNav() {
+	const urlParams = buildURLParams({
+		fields: [{ fieldKey: "title" }, { fieldKey: "path" }, { fieldKey: "postTypeId" }],
+		sort: [{ sortKey: "dateModified", desc: true }]
+	});
+	const postsRes = await fetch(`${getBaseUrl()}/api/posts${urlParams}`, { next: { revalidate: 1 } });
+	if (!postsRes.ok) throw new Error('Failed to fetch data');
+	const posts: Array<Post> = await postsRes.json();
+
 	let shortStories: Array<Post> = [];
 	let longStories: Array<Post> = [];
 	let blogs: Array<Post> = [];

@@ -149,7 +149,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 							<div>
 								<h3 className="font-bold text-lg">Success</h3>
 								<div className="modal-action">
-									<label htmlFor="editUserLoadingModal" onClick={() => window.location.href = window.location.href} className="btn">Close</label>
+									<label htmlFor="editUserLoadingModal" onClick={usersResponse.mutate} className="btn">Close</label>
 								</div>
 							</div>
 							:

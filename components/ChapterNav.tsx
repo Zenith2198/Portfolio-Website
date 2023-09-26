@@ -1,23 +1,12 @@
-import { prisma } from "@/lib/db";
-import { getBaseUrl } from "@/lib/utils";
 import Link from "next/link";
 import ChapterDropdown from "@/components/ChapterDropdown";
+import { getBaseUrl, buildURLParams } from "@/lib/utils";
 
 export default async function ChapterNav({ className, path, chapterNum }: { className?: string, path: string, chapterNum: string}) {
-	const post = await prisma.post.findUnique({
-		where: {
-			path
-		},
-		select: {
-			postTypeId: true,
-			_count: {
-				select: {
-					chapters: true
-				}
-			}
-		}
-	});
-	if (!post) return <div>Error</div>;
+	const urlParams = buildURLParams({ fields: [{ fieldKey: "postTypeId" }] });
+	const postRes = await fetch(`${getBaseUrl()}/api/posts/${path}/chaptersCount${urlParams}`);
+	if (!postRes.ok) throw new Error('Failed to fetch data');
+	const post = await postRes.json();
 
 	const chaptersLen = post._count.chapters;
 	const currURL = `${getBaseUrl()}/${post.postTypeId}/${path}`;

@@ -2,9 +2,18 @@
 
 import Link from "next/link";
 import type { Post } from "@prisma/client";
-import { getBaseUrl } from "@/lib/utils";
+import useSWR from "swr";
+import { fetcher, getBaseUrl, buildURLParams } from "@/lib/utils";
 
-export default function Nav({ posts }: { posts: Post[] }) {
+export default function Nav() {
+	const urlParams = buildURLParams({
+		fields: [{ fieldKey: "title" }, { fieldKey: "path" }, { fieldKey: "postTypeId" }],
+		sort: [{ sortKey: "dateModified", desc: true }]
+	});
+	const postsRes = useSWR(`${getBaseUrl()}/api/posts${urlParams}`, fetcher, { refreshInterval: 10000 });
+	if (postsRes.isLoading) return <div>Loading...</div>;
+  	if (postsRes.error) return <div>Error</div>;
+	const posts: Array<Post> = postsRes.data;
 
 	let shortStories: Array<Post> = [];
 	let longStories: Array<Post> = [];

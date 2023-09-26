@@ -1,16 +1,16 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import type { PostWithChapters } from "@/types/types.d"
-import { processGETUrl, fixChaptersArr } from "@/lib/utils";
+import { processSearchParams, fixChaptersArr } from "@/lib/utils";
 
-export async function GET(request: Request) {
-	const url = new URL(request.url);
-	const findMany = processGETUrl(url);
+export async function GET(request: NextRequest) {
+	const searchParams = request.nextUrl.searchParams;
+	const findMany = processSearchParams(searchParams);
 
 	let response = await prisma.post.findMany(findMany as Prisma.PostFindManyArgs) as PostWithChapters[];
 
-	if (url.searchParams.get("chapters")) {
+	if (searchParams.get("chapters")) {
 		fixChaptersArr(response);
 	}
 

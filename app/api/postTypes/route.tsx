@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
 	const searchParams = request.nextUrl.searchParams;
 	const findMany = processSearchParams(searchParams);
 
-	let response = await prisma.user.findMany(findMany as Prisma.UserFindManyArgs);
+	let response = await prisma.postType.findMany(findMany as Prisma.PostTypeFindManyArgs);
 
 	return NextResponse.json(response);
 }

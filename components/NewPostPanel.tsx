@@ -5,7 +5,7 @@ import Editor from "@/components/Editor";
 import type { ChangeEvent, FormEvent } from "react";
 import type { PostType } from "@prisma/client";
 import useSWR from "swr";
-import { fetcher, getBaseUrl } from "@/lib/utils";
+import { fetcher, getBaseUrl, buildURLParams } from "@/lib/utils";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
 	const [postResponse, setPostResponse] = useState("");
@@ -16,13 +16,14 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			content: ""
 		}
 	]);
-	
-	const postTypesResponse = useSWR(`${getBaseUrl()}/api/posts/postTypes`, fetcher);
-	const postTitlesResponse = useSWR(`${getBaseUrl()}/api/posts/postTitles`, fetcher);
+
+	const postTypesResponse = useSWR(`${getBaseUrl()}/api/postTypes`, fetcher);
+	const titlesParams = buildURLParams({ fields: [{ fieldKey: "title" }] });
+	const postTitlesResponse = useSWR(`${getBaseUrl()}/api/posts${titlesParams}`, fetcher);
 	if (postTypesResponse.isLoading || postTitlesResponse.isLoading) return <div>Loading...</div>;
   	if (postTypesResponse.error || postTitlesResponse.error) return <div>Error</div>;
 	const allPostTypes: Array<PostType> = postTypesResponse.data;
-	let allPostTitles: Array<{ title: string }> = postTitlesResponse.data;
+	const allPostTitles: Array<{ title: string }> = postTitlesResponse.data;
 
 	function handleTitle(event: ChangeEvent<HTMLInputElement>) {
 		const titleMatchArr = allPostTitles.filter((str) => event.target.value?.toLowerCase() === str.title.toLowerCase());
@@ -193,7 +194,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 							<div>
 								<h3 className="font-bold text-lg">Success</h3>
 								<div className="modal-action">
-									<label htmlFor="newLoadingModal" onClick={() => window.location.href = window.location.href} className="btn">Close</label>
+									<label htmlFor="newLoadingModal" onClick={postTitlesResponse.mutate} className="btn">Close</label>
 								</div>
 							</div>
 							:

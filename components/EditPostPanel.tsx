@@ -5,7 +5,7 @@ import type { FormEvent, ChangeEvent, MouseEvent } from "react";
 import type { PostType, Post } from "@prisma/client";
 import type { PostWithChapters } from "@/types/types.d";
 import useSWR from "swr";
-import { getBaseUrl, fetcher, isEmpty } from "@/lib/utils";
+import { getBaseUrl, fetcher, isEmpty, buildURLParams } from "@/lib/utils";
 import Editor from "@/components/Editor";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
@@ -76,13 +76,15 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	}, [editedChapters]);
 
 	//making GET requests
-	const postTypesResponse = useSWR(`${getBaseUrl()}/api/posts/postTypes`, fetcher);
-	const postTitlesResponse = useSWR(`${getBaseUrl()}/api/posts/postTitles`, fetcher);
-	const postsResponse = useSWR(`${getBaseUrl()}/api/posts?sort=-dateModified`, fetcher);
-	if (postTypesResponse.isLoading || postTitlesResponse.isLoading || postsResponse.isLoading) return <div>Loading...</div>;
-  	if (postTypesResponse.error || postTitlesResponse.error || postsResponse.error) return <div>Error</div>;
+	const postTypesResponse = useSWR(`${getBaseUrl()}/api/postTypes`, fetcher);
+	const postsParams = buildURLParams({
+		fields: [{ fieldKey: "title" }, { fieldKey: "path" }, { fieldKey: "postTypeId" }],
+		sort: [{ sortKey: "dateModified", desc: true }]
+	});
+	const postsResponse = useSWR(`${getBaseUrl()}/api/posts${postsParams}`, fetcher);
+	if (postTypesResponse.isLoading || postsResponse.isLoading) return <div>Loading...</div>;
+  	if (postTypesResponse.error || postsResponse.error) return <div>Error</div>;
 	const allPostTypes: Array<PostType> = postTypesResponse.data;
-	const allPostTitles: Array<{ title: string }> = postTitlesResponse.data;
 	const allPosts: Array<Post> = postsResponse.data;
 	
 	//assembling object to hold all posts sorted by postTypeId
@@ -120,8 +122,8 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	async function handlePost(event: ChangeEvent<HTMLSelectElement>) {
 		setPath(event.target.value);
 
-		const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${event.target.value}?chapters=true`);
-		if (!postDataRes.ok) return;
+		const postDataRes = await fetch(`${getBaseUrl()}/api/posts/${event.target.value}?chapters=true`); //possible anti-pattern?
+		if (!postDataRes.ok) throw new Error("Failed to fetch data");
 		const postData = await postDataRes.json();
 		setTitle(postData.title);
 		setPrevPost(postData);
@@ -136,7 +138,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		setTitle(event.target.value);
 
 		//set the title border to green if it has been edited, or red if it already exists
-		const titleMatchArr = allPostTitles.filter((str) => event.target.value?.toLowerCase() === str.title.toLowerCase());
+		const titleMatchArr = allPosts.filter((post) => event.target.value?.toLowerCase() === post.title.toLowerCase());
 		const titleError = document.getElementById("editTitleError");
 		if (titleError) {
 			if (titleMatchArr.length !== 0) {
@@ -541,7 +543,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 							<div>
 								<h3 className="font-bold text-lg">Success</h3>
 								<div className="modal-action">
-									<label htmlFor="editLoadingModal" onClick={() => window.location.href = window.location.href} className="btn">Close</label>
+									<label htmlFor="editLoadingModal" onClick={postsResponse.mutate} className="btn">Close</label>
 								</div>
 							</div>
 							:

@@ -1,20 +1,20 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db';
 import type { Prisma } from "@prisma/client";
-import { processGETUrl, fixChapters } from '@/lib/utils';
+import { processSearchParams, fixChapters } from '@/lib/utils';
 import type { PostWithChapters } from "@/types/types.d";
 
-export async function GET(request: Request) {
-	const url = new URL(request.url);
-	const findMany = processGETUrl(url);
+export async function GET(request: NextRequest, { params }: { params: {path: string} }) {
+	const searchParams = request.nextUrl.searchParams;
+	const findUnique = processSearchParams(searchParams);
 
-	const path = url.pathname.split("/").pop();
-	findMany.where = findMany.where ? { ...findMany.where, path } : { path };
+	findUnique.where = {
+		path: params.path
+	};
 
-	const postDataArr = await prisma.post.findMany(findMany as Prisma.PostFindManyArgs) as PostWithChapters[];
+	const response = await prisma.post.findUnique(findUnique as Prisma.PostFindUniqueArgs) as PostWithChapters;
 
-	let response = postDataArr[0];
-	if (url.searchParams.get("chapters")) {
+	if (searchParams.get("chapters")) {
 		fixChapters(response);
 	}
 
