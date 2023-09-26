@@ -1,6 +1,5 @@
 import moment from "moment";
 import type { PostWithChapters } from "@/types/types.d";
-import type { Post } from "@prisma/client";
 
 export async function fetcher(url: string) {
 	const res = await fetch(url);
@@ -57,20 +56,24 @@ export function fixChaptersArr(posts: PostWithChapters[]) {
 }
 
 export function buildURLParams({ fields, filter, sort, take, chapters }: {
-	fields?: Array<{ fieldKey: string, fieldValue?: Array<{ whereKey: string, whereValue: string }> }>,
-	filter?: Array<{ filterKey: string, filterValue: string }>,
-	sort?: Array<{ sortKey: string, desc?: boolean }>
+	fields?: Array<{ key: string, value?: Array<{ whereKey: string, whereValue: string | number }> }>,
+	filter?: Array<{ key: string, value: string }>,
+	sort?: Array<{ key: string, desc?: boolean }>
 	take?: Number,
-	chapters?: boolean
+	chapters?: boolean | Array<{ whereKey: string, whereValue: string | number }>
 }) {
 	let urlParamsArr = [];
 
 	if (fields?.length) {
 		urlParamsArr.push(fields.map((field) => {
-			let fieldsStr = `field[]=${field.fieldKey}`;
-			if (field.fieldValue) {
-				fieldsStr += ":" + field.fieldValue.map(({ whereKey, whereValue }) => {
-					return `${whereKey}=${whereValue}`;
+			let fieldsStr = `field[]=${field.key}`;
+			if (field.value) {
+				fieldsStr += ":" + field.value.map(({ whereKey, whereValue }) => {
+					let temp = `${whereKey}=${whereValue}`;
+					if (typeof whereValue === "number") {
+						temp += "|n";
+					}
+					return temp;
 				}).join(",");
 			}
 			return fieldsStr;
@@ -78,14 +81,14 @@ export function buildURLParams({ fields, filter, sort, take, chapters }: {
 	}
 
 	if (filter?.length) {
-		urlParamsArr.push(filter.map(({ filterKey, filterValue }) => {
-			return `filter[]=${filterKey},${filterValue}`;
+		urlParamsArr.push(filter.map(({ key, value }) => {
+			return `filter[]=${key},${value}`;
 		}).join("&"));
 	}
 
 	if (sort?.length) {
-		urlParamsArr.push(sort.map(({ sortKey, desc }) => {
-			return `sort[]=${desc ? "-" : ""}${sortKey}`;
+		urlParamsArr.push(sort.map(({ key, desc }) => {
+			return `sort[]=${desc ? "-" : ""}${key}`;
 		}).join("&"));
 	}
 
@@ -94,7 +97,17 @@ export function buildURLParams({ fields, filter, sort, take, chapters }: {
 	}
 
 	if (chapters) {
-		urlParamsArr.push("chapters=true");
+		if (chapters === true) {
+			urlParamsArr.push("chapters=true");
+		} else {
+			urlParamsArr.push("chapters=" + chapters.map(({ whereKey, whereValue }) => {
+				let temp = `${whereKey}=${whereValue}`;
+					if (typeof whereValue === "number") {
+						temp += "|n";
+					}
+				return temp;
+			}).join(","));
+		}
 	}
 
 	return "?" + urlParamsArr.join("&");
@@ -112,11 +125,18 @@ export function processSearchParams(searchParams: URLSearchParams) {
 							...fArr[1].split(",")
 								.reduce((obj, w) => {
 									const wArr = w.split("=");
-									return Object.assign(obj, { [String(wArr[0])]: String(wArr[1]) })
+									let isNum = wArr[1].split("|");
+									let temp;
+									if (isNum[1] === "n") {
+										temp = Number(isNum[0])
+									} else {
+										temp = String(isNum[0])
+									}
+									return Object.assign(obj, { [String(wArr[0])]: temp })
 								}, {})
-							}
 						}
 					}
+				}
 			} else {
 				return Object.assign(obj, { [String(f)]: true });
 			}
@@ -174,7 +194,18 @@ export function processSearchParams(searchParams: URLSearchParams) {
 				include = {
 					chapters: {
 						where: {
-							chapterNum: String(urlChapters)
+							...urlChapters.split(",")
+								.reduce((obj, w) => {
+									const wArr = w.split("=");
+									let isNum = wArr[1].split("|");
+									let temp;
+									if (isNum[1] === "n") {
+										temp = Number(isNum[0])
+									} else {
+										temp = String(isNum[0])
+									}
+									return Object.assign(obj, { [String(wArr[0])]: temp })
+								}, {})
 						}
 					}
 				};

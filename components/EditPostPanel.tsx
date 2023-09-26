@@ -78,8 +78,8 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	//making GET requests
 	const postTypesResponse = useSWR(`${getBaseUrl()}/api/postTypes`, fetcher);
 	const postsParams = buildURLParams({
-		fields: [{ fieldKey: "title" }, { fieldKey: "path" }, { fieldKey: "postTypeId" }],
-		sort: [{ sortKey: "dateModified", desc: true }]
+		fields: [{ key: "title" }, { key: "path" }, { key: "postTypeId" }],
+		sort: [{ key: "dateModified", desc: true }]
 	});
 	const postsResponse = useSWR(`${getBaseUrl()}/api/posts${postsParams}`, fetcher);
 	if (postTypesResponse.isLoading || postsResponse.isLoading) return <div>Loading...</div>;

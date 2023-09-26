@@ -19,3 +19,11 @@ export interface PostWithChaptersCount extends Post {
 		chapters: number
 	}
 }
+
+export type URLParams = {
+	fields?: Array<{ key: string, value?: Array<{ whereKey: string, whereValue: string }> }>,
+	filter?: Array<{ key: string, value: string }>,
+	sort?: Array<{ key: string, desc?: boolean }>
+	take?: Number,
+	chapters?: boolean | Array<{ whereKey: string, whereValue: string }>
+}

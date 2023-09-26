@@ -18,7 +18,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	]);
 
 	const postTypesResponse = useSWR(`${getBaseUrl()}/api/postTypes`, fetcher);
-	const titlesParams = buildURLParams({ fields: [{ fieldKey: "title" }] });
+	const titlesParams = buildURLParams({ fields: [{ key: "title" }] });
 	const postTitlesResponse = useSWR(`${getBaseUrl()}/api/posts${titlesParams}`, fetcher);
 	if (postTypesResponse.isLoading || postTitlesResponse.isLoading) return <div>Loading...</div>;
   	if (postTypesResponse.error || postTitlesResponse.error) return <div>Error</div>;

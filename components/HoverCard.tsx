@@ -1,8 +1,16 @@
-import Link from "next/link";
-import { getBaseUrl, fixDate, smartTrim } from "@/lib/utils";
-import type { PostWithChapters } from "@/types/types.d"
+"use client"
 
-export default function HoverCard({ posts, contentLen = 500 }: { posts: Array<PostWithChapters>, contentLen?: number }) {
+import Link from "next/link";
+import type { PostWithChapters } from "@/types/types.d";
+import useSWR from "swr";
+import { getBaseUrl, fixDate, smartTrim, fetcher } from "@/lib/utils";
+
+export default function HoverCard({ urlParams, contentLen = 500 }: { urlParams: string, contentLen?: number }) {
+	const postsRes = useSWR(`${getBaseUrl()}/api/posts${urlParams}`, fetcher, { refreshInterval: 10000 });
+	if (postsRes.isLoading) return <div>Loading...</div>;
+  	if (postsRes.error) return <div>Error</div>;
+	const posts: Array<PostWithChapters> = postsRes.data;
+
 	return (
 		<div className="card w-96 bg-neutral text-primary-content max-w-full items-stretch overflow-hidden">
 			{posts.map((post, i) => (

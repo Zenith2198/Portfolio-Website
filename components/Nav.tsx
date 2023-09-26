@@ -7,8 +7,8 @@ import { fetcher, getBaseUrl, buildURLParams } from "@/lib/utils";
 
 export default function Nav() {
 	const urlParams = buildURLParams({
-		fields: [{ fieldKey: "title" }, { fieldKey: "path" }, { fieldKey: "postTypeId" }],
-		sort: [{ sortKey: "dateModified", desc: true }]
+		fields: [{ key: "title" }, { key: "path" }, { key: "postTypeId" }],
+		sort: [{ key: "dateModified", desc: true }]
 	});
 	const postsRes = useSWR(`${getBaseUrl()}/api/posts${urlParams}`, fetcher, { refreshInterval: 10000 });
 	if (postsRes.isLoading) return <div>Loading...</div>;
