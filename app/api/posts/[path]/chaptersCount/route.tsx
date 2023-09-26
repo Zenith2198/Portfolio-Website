@@ -8,7 +8,7 @@ export async function GET(request: NextRequest, { params }: { params: {path: str
 	let findUnique = processSearchParams(searchParams);
 
 	findUnique.where = {
-		path: params.path
+		path: encodeURIComponent(params.path)
 	};
 	if (findUnique.select) {
 		findUnique.select = {

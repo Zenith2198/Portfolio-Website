@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { fetcher, getBaseUrl, buildURLParams } from "@/lib/utils";
 // import Search from "./Search";
 
-export default async function SmallNav() {
+export default function SmallNav() {
 	const urlParams = buildURLParams({
 		fields: [{ key: "title" }, { key: "path" }, { key: "postTypeId" }],
 		sort: [{ key: "dateModified", desc: true }]

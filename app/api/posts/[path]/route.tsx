@@ -9,7 +9,7 @@ export async function GET(request: NextRequest, { params }: { params: {path: str
 	let findUnique = processSearchParams(searchParams);
 
 	findUnique.where = {
-		path: params.path
+		path: encodeURIComponent(params.path)
 	};
 
 	const response = await prisma.post.findUnique(findUnique as Prisma.PostFindUniqueArgs) as PostWithChapters;

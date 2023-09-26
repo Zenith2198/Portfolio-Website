@@ -109,6 +109,26 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		blogs
 	}
 
+	function resetPage() {
+		const editPostLoadingModal = document.getElementById("editPostLoadingModal") as HTMLInputElement;
+		if (editPostLoadingModal) {
+			editPostLoadingModal.checked = false;
+		}
+
+		postsResponse.mutate();
+		setPostTypeId("");
+		setPath("");
+		setTitle("");
+		setEditedFields({
+			title: false,
+			image: false,
+			primaryStory: false,
+			wip: false
+		});
+		setPostResponse("");
+		setPrevPost({} as PostWithChapters);
+	}
+
 	//onChange handlers
 	function handlePostType(event: ChangeEvent<HTMLSelectElement>) {
 		setPostTypeId(event.target.value);
@@ -369,9 +389,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 
 	//onClick handler for delete button
 	async function handleDelete() {
-		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
-		if (editLoadingModal) {
-			editLoadingModal.checked = true;
+		const editPostLoadingModal = document.getElementById("editPostLoadingModal") as HTMLInputElement;
+		if (editPostLoadingModal) {
+			editPostLoadingModal.checked = true;
 		}
 		const deleteRes = await fetch(`${getBaseUrl()}/api/admin/deletePost`, {
 			method: "POST",
@@ -399,9 +419,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			return false;
 		}
 
-		const editLoadingModal = document.getElementById("editLoadingModal") as HTMLInputElement;
-		if (editLoadingModal) {
-			editLoadingModal.checked = true;
+		const editPostLoadingModal = document.getElementById("editPostLoadingModal") as HTMLInputElement;
+		if (editPostLoadingModal) {
+			editPostLoadingModal.checked = true;
 		}
 		const submitRes = await fetch(`${getBaseUrl()}/api/admin/editPost`, {
 			method: "POST",
@@ -451,7 +471,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 						{!isEmpty(prevPost) ? 
 							<div>
 								{/* @ts-ignore */}
-								<input onClick={()=>document.getElementById("editDeleteModal").showModal()} type="button" value="Delete" className="btn btn-outline btn-error"/>
+								<input onClick={()=>document.getElementById("editPostDeleteModal").showModal()} type="button" value="Delete" className="btn btn-outline btn-error"/>
 								<div className="form-control w-full max-w-xs">
 									<label className="label">
 										<span className="label-text">Post Title</span>
@@ -479,7 +499,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 										<div>
 											<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
 											{/* @ts-ignore */}
-											<input onClick={()=>document.getElementById("editRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
+											<input onClick={()=>document.getElementById("editPostRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
 										</div>
 									}
 									{chapters.map(({ title: chapterTitle }, i) => (
@@ -505,7 +525,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 					<div></div>
 				}
 			</form>
-			<dialog id="editRemoveChapterModal" className="modal">
+			<dialog id="editPostRemoveChapterModal" className="modal">
 				<div className="modal-box">
 					<h3 className="font-bold text-lg">Remove Chapter</h3>
 					<p className="py-4">Are you sure you want to remove the last chapter? You will lose all content in that chapter.</p>
@@ -518,7 +538,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 					<button>close</button>
 				</form>
 			</dialog>
-			<dialog id="editDeleteModal" className="modal">
+			<dialog id="editPostDeleteModal" className="modal">
 				<div className="modal-box">
 					<h3 className="font-bold text-lg">Delete Pose</h3>
 					<p className="py-4">Are you sure you want to delete this post?</p>
@@ -531,7 +551,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 					<button>close</button>
 				</form>
 			</dialog>
-			<input type="checkbox" id="editLoadingModal" className="modal-toggle" />
+			<input type="checkbox" id="editPostLoadingModal" className="modal-toggle" />
 			<div className="modal">
 				{!postResponse ?
 					<div className="modal-box p-0 w-min h-min bg-transparent">
@@ -543,14 +563,14 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 							<div>
 								<h3 className="font-bold text-lg">Success</h3>
 								<div className="modal-action">
-									<label htmlFor="editLoadingModal" onClick={postsResponse.mutate} className="btn">Close</label>
+									<label htmlFor="editPostLoadingModal" onClick={resetPage} className="btn">Close</label>
 								</div>
 							</div>
 							:
 							<div>
 								<h3 className="font-bold text-lg">Error</h3>
 								<div className="modal-action">
-									<label htmlFor="editLoadingModal" className="btn">Close</label>
+									<label htmlFor="editPostLoadingModal" className="btn">Close</label>
 								</div>
 							</div>
 						}

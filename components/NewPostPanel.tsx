@@ -25,6 +25,23 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 	const allPostTypes: Array<PostType> = postTypesResponse.data;
 	const allPostTitles: Array<{ title: string }> = postTitlesResponse.data;
 
+	function resetPage(){
+		const newPostLoadingModal = document.getElementById("newPostLoadingModal") as HTMLInputElement;
+		if (newPostLoadingModal) {
+			newPostLoadingModal.checked = false;
+		}
+
+		postTitlesResponse.mutate();
+		setPostResponse("");
+		setPostType("");
+		setChapters([
+			{
+				title: "",
+				content: ""
+			}
+		]);
+	}
+
 	function handleTitle(event: ChangeEvent<HTMLInputElement>) {
 		const titleMatchArr = allPostTitles.filter((str) => event.target.value?.toLowerCase() === str.title.toLowerCase());
 		const titleError = document.getElementById("newTitleError");
@@ -84,9 +101,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 
 		formData.append("chapters", JSON.stringify(chapters));
 
-		const newLoadingModal = document.getElementById("newLoadingModal") as HTMLInputElement;
-		if (newLoadingModal) {
-			newLoadingModal.checked = true;
+		const newPostLoadingModal = document.getElementById("newPostLoadingModal") as HTMLInputElement;
+		if (newPostLoadingModal) {
+			newPostLoadingModal.checked = true;
 		}
 		const submitRes = await fetch(`${getBaseUrl()}/api/admin/newPost`, {
 			method: "POST",
@@ -148,7 +165,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 								<div>
 									<input onClick={handleAddChapter} type="button" value="+" className="btn btn-outline" />
 									{/* @ts-ignore */}
-									<input onClick={()=>document.getElementById("newRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
+									<input onClick={()=>document.getElementById("newPostRemoveChapterModal").showModal()} type="button" value="-" className={`btn btn-outline ${chapters.length===1?"hidden":""}`} />
 								</div>
 							}
 							{chapters.map(({ title: chapterTitle }, i) => (
@@ -169,7 +186,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 				: <div></div>
 				}
 			</form>
-			<dialog id="newRemoveChapterModal" className="modal">
+			<dialog id="newPostRemoveChapterModal" className="modal">
 				<div className="modal-box">
 					<h3 className="font-bold text-lg">Remove chapter</h3>
 					<p className="py-4">Are you sure you want to remove the last chapter? You will lose all content in that chapter.</p>
@@ -182,7 +199,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 					<button>close</button>
 				</form>
 			</dialog>
-			<input type="checkbox" id="newLoadingModal" className="modal-toggle" />
+			<input type="checkbox" id="newPostLoadingModal" className="modal-toggle" />
 			<div className="modal">
 				{!postResponse ?
 					<div className="modal-box p-0 w-min h-min bg-transparent">
@@ -194,14 +211,14 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 							<div>
 								<h3 className="font-bold text-lg">Success</h3>
 								<div className="modal-action">
-									<label htmlFor="newLoadingModal" onClick={postTitlesResponse.mutate} className="btn">Close</label>
+									<label htmlFor="newPostLoadingModal" onClick={resetPage} className="btn">Close</label>
 								</div>
 							</div>
 							:
 							<div>
 								<h3 className="font-bold text-lg">Error</h3>
 								<div className="modal-action">
-									<label htmlFor="newLoadingModal" className="btn">Close</label>
+									<label htmlFor="newPostLoadingModal" className="btn">Close</label>
 								</div>
 							</div>
 						}

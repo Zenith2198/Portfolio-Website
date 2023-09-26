@@ -9,11 +9,22 @@ import { fetcher, getBaseUrl } from "@/lib/utils";
 export default function AdminPanel({ className="" }: { className?: string }) {
 	const [postResponse, setPostResponse] = useState("");
 	const [userId, setUserId] = useState("");
-	
+
 	const usersResponse = useSWR(`${getBaseUrl()}/api/admin/users`, fetcher);
 	if (usersResponse.isLoading) return <div>Loading...</div>;
   	if (usersResponse.error) return <div>Error</div>;
 	const allUsers: Array<User> = usersResponse.data;
+
+	function resetPage() {
+		const editUserLoadingModal = document.getElementById("editUserLoadingModal") as HTMLInputElement;
+		if (editUserLoadingModal) {
+			editUserLoadingModal.checked = false;
+		}
+
+		usersResponse.mutate();
+		setPostResponse("");
+		setUserId("");
+	}
 
 	function handleTitle(event: ChangeEvent<HTMLInputElement>) {
 		const nameMatchErr = allUsers.filter((str) => event.target.value?.toLowerCase() === str.name.toLowerCase());
@@ -149,7 +160,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 							<div>
 								<h3 className="font-bold text-lg">Success</h3>
 								<div className="modal-action">
-									<label htmlFor="editUserLoadingModal" onClick={usersResponse.mutate} className="btn">Close</label>
+									<label htmlFor="editUserLoadingModal" onClick={resetPage} className="btn">Close</label>
 								</div>
 							</div>
 							:
