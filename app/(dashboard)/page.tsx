@@ -3,6 +3,8 @@ import { postFindMany } from "@/lib/db";
 import { fixChaptersArr } from "@/lib/utils";
 import type { PostWithChapters } from "@/types/types.d";
 
+export const revalidate = 1;
+
 export default async function Dashboard() {
 	const primaryStoryArr = await postFindMany({
 		where: {
