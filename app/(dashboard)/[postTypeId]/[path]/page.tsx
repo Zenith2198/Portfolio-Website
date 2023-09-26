@@ -20,7 +20,7 @@ export default async function Post({ params }: { params: { postTypeId: string, p
 			}
 		}
 	}) as PostWithChaptersCount;
-	if (!chaptersCount) return <div>Error1</div>;
+	if (!chaptersCount) return <div>Error1 {path} {params.path}</div>;
 
 	if (chaptersCount._count.chapters === 0) {
 		return (

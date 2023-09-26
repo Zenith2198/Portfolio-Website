@@ -12,8 +12,8 @@ export default function SmallNav() {
 		sort: [{ key: "dateModified", desc: true }]
 	});
 	const postsRes = useSWR(`${getBaseUrl()}/api/posts${urlParams}`, fetcher, { refreshInterval: 10000 });
-	if (postsRes.isLoading) return <div>Loading...</div>;
-  	if (postsRes.error) return <div>Error</div>;
+	if (postsRes.isLoading) return <div className="lg:hidden">Loading...</div>;
+  	if (postsRes.error) return <div className="lg:hidden">Error</div>;
 	const posts: Array<Post> = postsRes.data;
 
 	let shortStories: Array<Post> = [];
