@@ -57,9 +57,9 @@ export default function Nav() {
 
 	return (
 		<ul className="menu menu-horizontal">
-			<li onClick={unfocus} key="longWorks" className="dropdown dropdown-hover">
-				<label className="btn m-1 flex flex-col text-2xl">
-					<Link href={`${getBaseUrl()}/long-stories`} className="break-words">Long Works</Link>
+			<li onClick={unfocus} key="longWorks" className="dropdown dropdown-hover m-1">
+				<label className="btn flex flex-col text-2xl p-0">
+					<Link href={`${getBaseUrl()}/long-stories`} className="px-5">Long Works</Link>
 				</label>
 				<ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
 					{longStories.map(({ title, path }, i) => (
@@ -69,9 +69,9 @@ export default function Nav() {
 					))}
 				</ul>
 			</li>
-			<li onClick={unfocus} key="shortWorks" className="dropdown dropdown-hover">
-				<label className="btn m-1 flex flex-col text-2xl">
-					<Link href={`${getBaseUrl()}/short-stories`} className="break-words">Short Works</Link>
+			<li onClick={unfocus} key="shortWorks" className="dropdown dropdown-hover m-1">
+				<label className="btn flex flex-col text-2xl p-0">
+					<Link href={`${getBaseUrl()}/short-stories`} className="px-5">Short Works</Link>
 				</label>
 				<ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
 					{shortStories.map(({ title, path }, i) => (
@@ -81,9 +81,9 @@ export default function Nav() {
 					))}
 				</ul>
 			</li>
-			<li onClick={unfocus} key="blogs" className="dropdown dropdown-hover">
-				<label className="btn m-1 flex flex-col text-2xl">
-					<Link href={`${getBaseUrl()}/blogs`} className="break-words ">Blogs</Link>
+			<li onClick={unfocus} key="blogs" className="dropdown dropdown-hover m-1">
+				<label className="btn flex flex-col text-2xl p-0">
+					<Link href={`${getBaseUrl()}/blogs`} className="px-5">Blogs</Link>
 				</label>
 				<ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
 					{blogs.map(({ title, path }, i) => (
