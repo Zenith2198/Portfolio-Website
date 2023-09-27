@@ -18,10 +18,9 @@ export function fixDate(unixTimestamp: number) {
 	return moment(unixTimestamp * 1000).format("M.D.YYYY");
 }
 
-export function smartTrim(str: string, len: number) {
-	return str;
+export function smartTrim(str: string, len: number = 500) {
+	// return str;
 	//TODO: make it trim HTML neatly
-	//keep track of all unclosed HTML tags, and close them
 	if (!str) {
 		return "";
 	}

@@ -5,10 +5,22 @@ import type { PostWithChapters } from "@/types/types.d";
 import useSWR from "swr";
 import { getBaseUrl, fixDate, smartTrim, fetcher } from "@/lib/utils";
 
-export default function HoverCard({ urlParams, contentLen = 500 }: { urlParams: string, contentLen?: number }) {
+export default function HoverCard({ urlParams, preview = true }: { urlParams: string, preview?: boolean }) {
 	const postsRes = useSWR(`${getBaseUrl()}/api/posts${urlParams}`, fetcher, { refreshInterval: 10000 });
-	if (postsRes.isLoading) return <div>Loading...</div>;
-  	if (postsRes.error) return <div>Error</div>;
+	if (postsRes.isLoading) {
+		return (
+			<div className="card w-96 bg-neutral text-primary-content max-w-full overflow-hidden items-center justify-center">
+				<span className="loading loading-ring loading-lg min-w-[50%]"></span>
+			</div>
+		);
+	}
+	if (postsRes.isLoading) {
+		return (
+			<div className="card w-96 bg-neutral text-primary-content max-w-full overflow-hidden items-center justify-center">
+				Error
+			</div>
+		);
+	}
 	const posts: Array<PostWithChapters> = postsRes.data;
 
 	return (
@@ -26,7 +38,7 @@ export default function HoverCard({ urlParams, contentLen = 500 }: { urlParams: 
 							{fixDate(post.dateModified)}
 						</h1>
 						<div className="text-2xl">{post.chapters[0]?.title}</div>
-						<div dangerouslySetInnerHTML={{__html: post.chapters[0]?.content ? smartTrim(post.chapters[0].content, contentLen) : ""}}>
+						<div dangerouslySetInnerHTML={{__html: preview ? smartTrim(post.chapters[0].content) : ""}}>
 							{/* {`${smartTrim(post.chapters[0].content, contentLen)}...`} */}
 						</div>
 						<h1 className="text-info text-3xl text-center pt-2">
