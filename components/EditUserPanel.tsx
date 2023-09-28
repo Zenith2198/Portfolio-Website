@@ -128,20 +128,20 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 								<span className="label-text">User name</span>
 								<span id="editUserNameError" className="label-text-alt hidden"></span>
 							</label>
-							<input name="name" onChange={handleTitle} type="text" placeholder="Enter new user name" className="input input-bordered w-full max-w-xs"/>
+							<input name="name" onChange={handleTitle} autoComplete="off" type="text" placeholder="Enter new user name" className="input input-bordered w-full max-w-xs"/>
 						</div>
 						<div className="form-control w-full max-w-xs">
 							<label className="label">
 								<span className="label-text">Password</span>
 								<span id="editUserPasswordError" className="label-text-alt hidden">Passwords must match</span>
 							</label>
-							<input name="password" id="editUserPassword" onChange={handlePassword} type="password" placeholder="Enter new password" className="input input-bordered w-full max-w-xs"/>
+							<input name="password" id="editUserPassword" onChange={handlePassword} autoComplete="off" type="password" placeholder="Enter new password" className="input input-bordered w-full max-w-xs"/>
 						</div>
 						<div className="form-control w-full max-w-xs">
 							<label className="label">
 								<span className="label-text">Retype Password</span>
 							</label>
-							<input name="retypePassword" id="editUserRetypePassword" onChange={handlePassword} type="password" placeholder="Retype password" className="input input-bordered w-full max-w-xs"/>
+							<input name="retypePassword" id="editUserRetypePassword" onChange={handlePassword} autoComplete="off" type="password" placeholder="Retype password" className="input input-bordered w-full max-w-xs"/>
 						</div>
 						<button type="submit" className="btn btn-outline">Submit</button>
 					</div>
