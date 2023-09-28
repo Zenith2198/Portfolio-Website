@@ -7,6 +7,7 @@ import type { PostWithChapters } from "@/types/types.d";
 import useSWR from "swr";
 import { getBaseUrl, fetcher, isEmpty, buildURLParams } from "@/lib/utils";
 import Editor from "@/components/Editor";
+import { upload } from '@vercel/blob/client';
 
 export default function AdminPanel({ className="" }: { className?: string }) {
 	//setting up useStates
@@ -423,9 +424,22 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (editPostLoadingModal) {
 			editPostLoadingModal.checked = true;
 		}
+
+		let formData = getEditedForm();
+
+		const image = formData.get("image") as File;
+		formData.delete("image");
+		if (image) {
+			const imageBlob = await upload(image.name, image, {
+				access: 'public',
+				handleUploadUrl: '/api/admin/image/upload',
+			});
+			formData.append("imageUrl", imageBlob.url);
+		}
+
 		const submitRes = await fetch(`${getBaseUrl()}/api/admin/editPost`, {
 			method: "POST",
-			body: getEditedForm()
+			body: formData
 		});
 		if (!submitRes.ok) return false;
 		const res = await submitRes.json();

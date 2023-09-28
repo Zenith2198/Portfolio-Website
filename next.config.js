@@ -8,7 +8,7 @@ const nextConfig = {
 		return config;
 	},
 	images: {
-		domains: ["localhost", "https://www.paradoxacrania.com/"]
+		domains: ["localhost", "https://www.paradoxacrania.com/", "ncfqgd9bsio5uu1z.public.blob.vercel-storage.com"]
 	}
 };
 

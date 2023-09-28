@@ -13,8 +13,6 @@ export async function POST(request: NextRequest) {
 
 	const chaptersDeleted = JSON.parse(formData.get("chaptersDeleted") as string);
 	formData.delete("chaptersDeleted");
-	const image = formData.get("image");
-	formData.delete("image");
 
 	let post = {
 		dateModified: Math.floor(Date.now() / 1000)
@@ -53,11 +51,6 @@ export async function POST(request: NextRequest) {
 						throw err;
 					}
 				}
-			}
-
-			if (image) {
-				//TODO: upload image to AWS S3 and add URL to post.image
-				post.imageUrl = `/images/bonebreaker.png`;
 			}
 
 			const { postId } = await tx.post.update({
@@ -108,9 +101,6 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json({ response: "success" });
 	} catch (err) {
-		if (image) {
-			//TODO: remove image from AWS s3 if it got uploaded
-		}
 		console.log(err)
 		return NextResponse.json({ response: err });
 	}

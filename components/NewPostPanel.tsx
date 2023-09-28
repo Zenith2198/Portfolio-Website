@@ -6,7 +6,6 @@ import type { ChangeEvent, FormEvent } from "react";
 import type { PostType } from "@prisma/client";
 import useSWR from "swr";
 import { fetcher, getBaseUrl, buildURLParams } from "@/lib/utils";
-import { type PutBlobResult } from '@vercel/blob';
 import { upload } from '@vercel/blob/client';
 
 export default function AdminPanel({ className="" }: { className?: string }) {

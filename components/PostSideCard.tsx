@@ -19,7 +19,7 @@ export default async function PostSideCard({ path }: { path: string }) {
 			<div className="card lg:card-side bg-base-100 shadow-xl">
 				{post.imageUrl ?
 					<figure><Image src={post.imageUrl} alt="" className="object-contain max-h-lg" width={512} height={100} /></figure>
-				: <div></div>
+				: <span className="loading loading-ring loading-lg min-w-[50%]"></span>
 				}
 				<div className="card-body">
 					<h2 className="card-title">{post?.title}</h2>
