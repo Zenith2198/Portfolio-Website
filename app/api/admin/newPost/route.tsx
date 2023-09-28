@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
 import { Prisma } from "@prisma/client";
 import type { Post, Chapter } from "@prisma/client";
 import { ChapterStringContent } from "@/types/types.d";
+// import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export async function POST(request: NextRequest) {
 	const formData = await request.formData();
@@ -17,16 +18,16 @@ export async function POST(request: NextRequest) {
 	});
 	formData.delete("chapters");
 
-	const image = formData.get("image") as File;
-	formData.delete("image");
+	// const image = formData.get("image") as File;
+	// formData.delete("image");
 
 	let post = {
 		dateModified: Math.floor(Date.now() / 1000),
 		datePosted: Math.floor(Date.now() / 1000)
 	} as Post;
-	if (image) {
-		post.imageLink = `mydata/date=${Date.now()}/${image.name}`;
-	}
+	// if (image) {
+	// 	post.imageUrl = `${image.name}/${Date.now()}`;
+	// }
 	for (const [name, value] of formData.entries()) {
 		//@ts-ignore
 		post[name] = value;
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
 					});
 				} catch (err) {
 					//there is no primary story in the database yet, we want to simply ignore this exception
-					if (!(err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025')) {
+					if (!(err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025")) {
 						throw err;
 					}
 				}
@@ -74,14 +75,23 @@ export async function POST(request: NextRequest) {
 				}
 			});
 
-			if (post.imageLink) {
-				
-			}
+			// if (post.imageUrl) {
+				// const s3Client = new S3Client({});
+
+				// const uploadCommand = new PutObjectCommand({
+				// 	Bucket: process.env.S3_BUCKET_NAME,
+				// 	Key: post.imageUrl,
+				// 	Body: Buffer.from(image.toString()),
+				// 	ContentType: image.type
+				// });
+
+				// await s3Client.send(uploadCommand);
+			// }
 		});
 
 		return NextResponse.json({ response: "success" });
 	} catch (err) {
-		console.log("ERROR: ", err);
+		console.log("ERROR:", err);
 		return NextResponse.json({ response: err });
 	}
 }

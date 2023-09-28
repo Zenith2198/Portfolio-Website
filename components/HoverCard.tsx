@@ -29,7 +29,7 @@ export default function HoverCard({ urlParams, title, preview = true }: { urlPar
 						<div className="card-body pb-5 transition duration-300 ease-in-out group-hover:opacity-0">
 							<h2 className="card-title flex justify-center text-3xl">{post.title}</h2>
 						</div>
-						<div className="bg-cover bg-no-repeat bg-center h-full" style={preview && post.imageLink ? {backgroundImage: `url(${post.imageLink})`} : {}}></div>
+						<div className="bg-cover bg-no-repeat bg-center h-full" style={preview && post.imageUrl ? {backgroundImage: `url(${post.imageUrl})`} : {}}></div>
 					</div>
 					<div className={`card px-10 py-5 absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-black bg-fixed opacity-0 transition duration-300 ease-in-out group-hover:opacity-[90%] rounded-b-none rounded-t-none`}>
 						<h1 className="text-info text-xl pb-2 mb-5 border-default border-b-2">

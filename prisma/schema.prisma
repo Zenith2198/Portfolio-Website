@@ -20,7 +20,7 @@ model Post {
 	postTypeId String
 	postType PostType @relation(fields: [postTypeId], references: [postTypeId])
 	@@index([postTypeId])
-	imageLink String?
+	imageUrl String?
 	primaryStory Boolean? @unique
 	wip Boolean?
 	chapters Chapter[]

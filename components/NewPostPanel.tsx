@@ -6,6 +6,8 @@ import type { ChangeEvent, FormEvent } from "react";
 import type { PostType } from "@prisma/client";
 import useSWR from "swr";
 import { fetcher, getBaseUrl, buildURLParams } from "@/lib/utils";
+import { type PutBlobResult } from '@vercel/blob';
+import { upload } from '@vercel/blob/client';
 
 export default function AdminPanel({ className="" }: { className?: string }) {
 	const [postResponse, setPostResponse] = useState("");
@@ -105,11 +107,24 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		if (newPostLoadingModal) {
 			newPostLoadingModal.checked = true;
 		}
+
+		const image = formData.get("image") as File;
+		formData.delete("image");
+		if (image) {
+			const imageBlob = await upload(image.name, image, {
+				access: 'public',
+				handleUploadUrl: '/api/admin/image/upload',
+			});
+			formData.append("imageUrl", imageBlob.url);
+		}
+
 		const submitRes = await fetch(`${getBaseUrl()}/api/admin/newPost`, {
 			method: "POST",
 			body: formData
 		});
-		if (!submitRes.ok) return false;
+		if (!submitRes.ok) {
+			return false;
+		}
 		const res = await submitRes.json();
 		setPostResponse(res.response);
 	};
