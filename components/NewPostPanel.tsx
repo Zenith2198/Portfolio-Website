@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from 'react';
+import { useState } from "react";
 import Editor from "@/components/Editor";
 import type { ChangeEvent, FormEvent } from "react";
 import type { PostType } from "@prisma/client";
 import useSWR from "swr";
 import { fetcher, getBaseUrl, buildURLParams } from "@/lib/utils";
-import { upload } from '@vercel/blob/client';
+import { upload } from "@vercel/blob/client";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
 	const [postResponse, setPostResponse] = useState("");
@@ -111,8 +111,8 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		formData.delete("image");
 		if (image) {
 			const imageBlob = await upload(image.name, image, {
-				access: 'public',
-				handleUploadUrl: '/api/admin/image/upload',
+				access: "public",
+				handleUploadUrl: "/api/admin/image/upload",
 			});
 			formData.append("imageUrl", imageBlob.url);
 		}
@@ -122,6 +122,9 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			body: formData
 		});
 		if (!submitRes.ok) {
+			await fetch(`${getBaseUrl()}/api/admin/image/delete?url=${formData.get("imageUrl")}`, {
+				method: "DELETE"
+			});
 			return false;
 		}
 		const res = await submitRes.json();

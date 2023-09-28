@@ -7,7 +7,7 @@ import type { PostWithChapters } from "@/types/types.d";
 import useSWR from "swr";
 import { getBaseUrl, fetcher, isEmpty, buildURLParams } from "@/lib/utils";
 import Editor from "@/components/Editor";
-import { upload } from '@vercel/blob/client';
+import { upload } from "@vercel/blob/client";
 
 export default function AdminPanel({ className="" }: { className?: string }) {
 	//setting up useStates
@@ -416,7 +416,7 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		}
 
 		if (!isEdited(editedFields) && !chaptersIsEdited) {
-			window.scrollTo({ top: 0, behavior: 'smooth' });
+			window.scrollTo({ top: 0, behavior: "smooth" });
 			return false;
 		}
 
@@ -431,8 +431,8 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 		formData.delete("image");
 		if (image) {
 			const imageBlob = await upload(image.name, image, {
-				access: 'public',
-				handleUploadUrl: '/api/admin/image/upload',
+				access: "public",
+				handleUploadUrl: "/api/admin/image/upload",
 			});
 			formData.append("imageUrl", imageBlob.url);
 		}
@@ -441,7 +441,12 @@ export default function AdminPanel({ className="" }: { className?: string }) {
 			method: "POST",
 			body: formData
 		});
-		if (!submitRes.ok) return false;
+		if (!submitRes.ok) {
+			await fetch(`${getBaseUrl()}/api/admin/image/delete?url=${formData.get("imageUrl")}`, {
+				method: "DELETE"
+			});
+			return false;
+		}
 		const res = await submitRes.json();
 		if (res.response === "success") {
 			setPostResponse(res.response);
