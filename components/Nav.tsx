@@ -20,9 +20,7 @@ export default function Nav() {
 	}
   	if (postsRes.error) {
 		return (
-			<div className="menu menu-horizontal">
-				Error
-			</div>
+			<div className="menu menu-horizontal"></div>
 		);
 	}
 	const posts: Array<Post> = postsRes.data;

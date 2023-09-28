@@ -13,16 +13,14 @@
 		"@ckeditor/ckeditor5-react": "^6.1.0",
 		"@prisma/client": "^5.3.1",
 		"autoprefixer": "10.4.15",
-		"aws-sdk": "^2.1462.0",
+		"aws-sdk": "^2.1466.0",
 		"bcrypt": "^5.1.1",
 		"daisyui": "^3.6.3",
 		"eslint": "8.48.0",
 		"eslint-config-next": "13.4.19",
-		"mock-aws-s3": "^4.0.2",
 		"moment": "^2.29.4",
 		"next": "13.4.19",
 		"next-auth": "^4.23.1",
-		"nock": "^13.3.3",
 		"postcss": "8.4.28",
 		"prisma": "^5.3.1",
 		"react": "18.2.0",
@@ -35,7 +33,6 @@
 		"@types/bcrypt": "^5.0.0",
 		"@types/node": "20.5.7",
 		"@types/react": "18.2.21",
-		"@types/react-dom": "18.2.7",
-		"@types/sqlstring": "^2.3.0"
+		"@types/react-dom": "18.2.7"
 	}
 }

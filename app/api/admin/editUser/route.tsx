@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { hashPass } from "@/lib/crypto";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
 	const formData = await request.formData();
 
 	let data = {} as {name?: string, passwordHash?: string};

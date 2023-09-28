@@ -1,11 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { Prisma } from "@prisma/client";
 import type { Post, Chapter } from "@prisma/client";
 import { ChapterStringContent } from "@/types/types.d";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
 	const formData = await request.formData();
+
 	let chapters: Array<Chapter> = JSON.parse(formData.get("chapters") as string);
 	chapters.forEach((chapter: Chapter | ChapterStringContent, i: number) => {
 		if (chapter.content) {
@@ -15,13 +16,17 @@ export async function POST(request: Request) {
 		chapter.chapterNum = i + 1;
 	});
 	formData.delete("chapters");
-	const image = formData.get("image");
+
+	const image = formData.get("image") as File;
 	formData.delete("image");
 
 	let post = {
 		dateModified: Math.floor(Date.now() / 1000),
 		datePosted: Math.floor(Date.now() / 1000)
 	} as Post;
+	if (image) {
+		post.imageLink = `mydata/date=${Date.now()}/${image.name}`;
+	}
 	for (const [name, value] of formData.entries()) {
 		//@ts-ignore
 		post[name] = value;
@@ -58,11 +63,6 @@ export async function POST(request: Request) {
 				}
 			}
 
-			if (image) {
-				//TODO: upload image to AWS S3 and add URL to post.image
-				post.imageLink = `/images/bonebreaker.png`;
-			}
-
 			await tx.post.create({
 				data: {
 					...post,
@@ -73,14 +73,15 @@ export async function POST(request: Request) {
 					}
 				}
 			});
+
+			if (post.imageLink) {
+				
+			}
 		});
 
 		return NextResponse.json({ response: "success" });
 	} catch (err) {
-		if (image) {
-			//TODO: remove image from AWS s3 if it got uploaded
-		}
-		console.log(err)
-		return NextResponse.json({ response: "error" });
+		console.log("ERROR: ", err);
+		return NextResponse.json({ response: err });
 	}
 }

@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
 	const postData = await request.json();
 
 	await prisma.post.delete({

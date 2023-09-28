@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { Prisma } from "@prisma/client";
 import type { Post } from "@prisma/client";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
 	const formData = await request.formData();
 	const oldTitle = formData.get("oldTitle") as string;
 	formData.delete("oldTitle");
@@ -112,6 +112,6 @@ export async function POST(request: Request) {
 			//TODO: remove image from AWS s3 if it got uploaded
 		}
 		console.log(err)
-		return NextResponse.json({ response: "error" });
+		return NextResponse.json({ response: err });
 	}
 }

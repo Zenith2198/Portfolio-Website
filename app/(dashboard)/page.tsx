@@ -22,9 +22,9 @@ export default async function Dashboard() {
 	return (
 		<main className="min-w-full">
 			<div className="flex flex-col lg:flex-row justify-evenly p-10 min-h-full max-w-full">
-				<HoverCard urlParams={primaryStoryParams} />
-				<HoverCard urlParams={recentShortStoryParams} />
-				<HoverCard urlParams={recentBlogsParams} preview={false} />
+				<HoverCard urlParams={primaryStoryParams} title="Primary Story" />
+				<HoverCard urlParams={recentShortStoryParams} title="Recent Short Story" />
+				<HoverCard urlParams={recentBlogsParams} title="Blogs" preview={false} />
 			</div>
 		</main>
 	);
